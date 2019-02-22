@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Prestacao.Models.Database;
+using Repositorio;
+using Repositorio.Models.Database;
 
 namespace Prestacao.Controllers
 {
@@ -18,38 +17,28 @@ namespace Prestacao.Controllers
             _context = context;
         }
 
-        // GET: Usuarios
-        public async Task<IActionResult> Index()
-        {
-            var prestacaoDbContext = _context.Usuario.Include(u => u.Gerente).Include(u => u.GerenteFinanceiro);
-            return View(await prestacaoDbContext.ToListAsync());
-        }
-
-        // GET: Usuarios/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var usuario = await _context.Usuario
-                .Include(u => u.Gerente)
-                .Include(u => u.GerenteFinanceiro)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (usuario == null)
-            {
-                return NotFound();
-            }
-
-            return View(usuario);
-        }
-
         // GET: Usuarios/Create
         public IActionResult Create()
         {
-            ViewData["GerenteId"] = new SelectList(_context.Usuario, "Id", "Email");
-            ViewData["GerenteFinanceiroId"] = new SelectList(_context.Usuario, "Id", "Email");
+            var gerentes = _context.Usuario
+                .Where(x => x.FlagGerente)
+                .Select(x => new
+                {
+                    x.Id,
+                    NomeCompleto = x.Nome + " " + x.Sobrenome.ToString()
+                });
+
+            var gerentesFinanceiros = _context.Usuario
+                .Where(x => x.FlagGerenteFinanceiro)
+                .Select(x => new
+                {
+                    x.Id,
+                    NomeCompleto = x.Nome + " " + x.Sobrenome.ToString()
+                });
+
+
+            ViewData["GerenteId"] = new SelectList(gerentes, "Id", "NomeCompleto");
+            ViewData["GerenteFinanceiroId"] = new SelectList(gerentesFinanceiros, "Id", "NomeCompleto");
             return View();
         }
 
@@ -58,34 +47,105 @@ namespace Prestacao.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Sobrenome,Email,Senha,FlagGerente,FlagGerenteFinanceiro,GerenteId,GerenteFinanceiroId")] Usuario usuario)
+        public async Task<IActionResult> Create(
+            [Bind("Nome,Sobrenome,Email,Senha,FlagGerente,FlagGerenteFinanceiro,GerenteId,GerenteFinanceiroId")]
+            Usuario usuario)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(usuario);
-                await _context.SaveChangesAsync();
+                //await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GerenteId"] = new SelectList(_context.Usuario, "Id", "Email", usuario.GerenteId);
-            ViewData["GerenteFinanceiroId"] = new SelectList(_context.Usuario, "Id", "Email", usuario.GerenteFinanceiroId);
+
+            var gerentes = _context.Usuario
+                .Where(x => x.FlagGerente)
+                .Select(x => new
+                {
+                    x.Id,
+                    NomeCompleto = x.Nome + " " + x.Sobrenome.ToString()
+                });
+
+            var gerentesFinanceiros = _context.Usuario
+                .Where(x => x.FlagGerenteFinanceiro)
+                .Select(x => new
+                {
+                    x.Id,
+                    NomeCompleto = x.Nome + " " + x.Sobrenome.ToString()
+                });
+
+            ViewData["GerenteId"] = new SelectList(gerentes, "Id", "NomeCompleto");
+            ViewData["GerenteFinanceiroId"] = new SelectList(gerentesFinanceiros, "Id", "NomeCompleto");
+
+            return View(usuario);
+        }
+
+        // GET: Usuarios/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var usuario = await _context.Usuario
+                .Include(u => u.Gerente)
+                .Include(u => u.GerenteFinanceiro)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (usuario == null) return NotFound();
+
+            return View(usuario);
+        }
+
+        // POST: Usuarios/Delete/5
+        [HttpPost]
+        [ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var usuario = await _context.Usuario.FindAsync(id);
+            _context.Usuario.Remove(usuario);
+            //await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Usuarios/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var usuario = await _context.Usuario
+                .Include(u => u.Gerente)
+                .Include(u => u.GerenteFinanceiro)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (usuario == null) return NotFound();
+
             return View(usuario);
         }
 
         // GET: Usuarios/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var usuario = await _context.Usuario.FindAsync(id);
-            if (usuario == null)
-            {
-                return NotFound();
-            }
-            ViewData["GerenteId"] = new SelectList(_context.Usuario, "Id", "Email", usuario.GerenteId);
-            ViewData["GerenteFinanceiroId"] = new SelectList(_context.Usuario, "Id", "Email", usuario.GerenteFinanceiroId);
+            if (usuario == null) return NotFound();
+
+            var gerentes = _context.Usuario
+                .Where(x => x.FlagGerente)
+                .Select(x => new
+                {
+                    x.Id,
+                    NomeCompleto = x.Nome + " " + x.Sobrenome.ToString()
+                });
+
+            var gerentesFinanceiros = _context.Usuario
+                .Where(x => x.FlagGerenteFinanceiro)
+                .Select(x => new
+                {
+                    x.Id,
+                    NomeCompleto = x.Nome + " " + x.Sobrenome.ToString()
+                });
+
+            ViewData["GerenteId"] = new SelectList(gerentes, "Id", "NomeCompleto");
+            ViewData["GerenteFinanceiroId"] = new SelectList(gerentesFinanceiros, "Id", "NomeCompleto");
             return View(usuario);
         }
 
@@ -94,67 +154,56 @@ namespace Prestacao.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Sobrenome,Email,Senha,FlagGerente,FlagGerenteFinanceiro,GerenteId,GerenteFinanceiroId")] Usuario usuario)
+        public async Task<IActionResult> Edit(int id,
+            [Bind("Id,Nome,Sobrenome,Email,Senha,FlagGerente,FlagGerenteFinanceiro,GerenteId,GerenteFinanceiroId")]
+            Usuario usuario)
         {
-            if (id != usuario.Id)
-            {
-                return NotFound();
-            }
+            if (id != usuario.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
                 try
                 {
                     _context.Update(usuario);
-                    await _context.SaveChangesAsync();
+                    //await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!UsuarioExists(usuario.Id))
-                    {
                         return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GerenteId"] = new SelectList(_context.Usuario, "Id", "Email", usuario.GerenteId);
-            ViewData["GerenteFinanceiroId"] = new SelectList(_context.Usuario, "Id", "Email", usuario.GerenteFinanceiroId);
-            return View(usuario);
-        }
 
-        // GET: Usuarios/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var gerentes = _context.Usuario
+                .Where(x => x.FlagGerente)
+                .Select(x => new
+                {
+                    x.Id,
+                    NomeCompleto = x.Nome + " " + x.Sobrenome.ToString()
+                });
 
-            var usuario = await _context.Usuario
-                .Include(u => u.Gerente)
-                .Include(u => u.GerenteFinanceiro)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (usuario == null)
-            {
-                return NotFound();
-            }
+            var gerentesFinanceiros = _context.Usuario
+                .Where(x => x.FlagGerenteFinanceiro)
+                .Select(x => new
+                {
+                    x.Id,
+                    NomeCompleto = x.Nome + " " + x.Sobrenome.ToString()
+                });
+
+            ViewData["GerenteId"] = new SelectList(gerentes, "Id", "NomeCompleto");
+            ViewData["GerenteFinanceiroId"] = new SelectList(gerentesFinanceiros, "Id", "NomeCompleto");
 
             return View(usuario);
         }
 
-        // POST: Usuarios/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        // GET: Usuarios
+        public async Task<IActionResult> Index()
         {
-            var usuario = await _context.Usuario.FindAsync(id);
-            _context.Usuario.Remove(usuario);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            var prestacaoDbContext = _context.Usuario.Include(u => u.Gerente).Include(u => u.GerenteFinanceiro);
+            return View(await prestacaoDbContext.ToListAsync());
         }
 
         private bool UsuarioExists(int id)

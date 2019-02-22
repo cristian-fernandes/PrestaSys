@@ -1,0 +1,61 @@
+@model Repositorio.Models.Database.Prestacao
+
+@{
+    ViewData["Title"] = "Criar Nova Prestação de Contas";
+}
+
+<h1>Criar Nova Prestação de Contas</h1>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="AprovadorId" value="@ViewBag.AprovadorId" />
+            <input type="hidden" asp-for="AprovadorFinanceiroId" value="@ViewBag.AprovadorFinanceiroId" />
+            <input type="hidden" asp-for="EmitenteId" value="@ViewBag.EmitenteId" />
+            <input type="hidden" asp-for="StatusId" value="@ViewBag.StatusId" />
+            <div class="form-group">
+                <label asp-for="Titulo" class="control-label"></label>
+                <input asp-for="Titulo" class="form-control" />
+                <span asp-validation-for="Titulo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TipoId" class="control-label"></label>
+                <select asp-for="TipoId" class="form-control" asp-items="ViewBag.TipoId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Data" class="control-label"></label>
+                <input asp-for="Data" class="form-control" />
+                <span asp-validation-for="Data" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ImagemComprovante" class="control-label"></label>
+                <input type="file" asp-for="ImagemComprovante" class="form-control" style="height:auto" />
+                <span asp-validation-for="ImagemComprovante" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Justificativa" class="control-label"></label>
+                <textarea rows="10" asp-for="Justificativa" class="form-control"></textarea>
+                <span asp-validation-for="Justificativa" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Valor" class="control-label"></label>
+                <input asp-for="Valor" class="form-control" />
+                <span asp-validation-for="Valor" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Criar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Voltar para a Lista</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

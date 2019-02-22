@@ -1,11 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace Prestacao.Models
 {
     public class LoginViewModel
     {
-        [Required]
-        [Display(Name = "E-mail")]
+        [Required] [Display(Name = "E-mail")]
         public string Email { get; set; }
 
         [Required]

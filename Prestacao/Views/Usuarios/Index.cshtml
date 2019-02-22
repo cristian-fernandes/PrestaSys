@@ -1,12 +1,14 @@
-﻿@model IEnumerable<Prestacao.Models.Database.Usuario>
+@model IEnumerable<Repositorio.Models.Database.Usuario>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Lista de Usuários";
 }
 
 <h1>Lista de Usuários</h1>
 
-<table class="table">
+<hr/>
+
+<table class="table table-bordered table-striped table-hover">
     <thead>
     <tr>
         <th>
@@ -34,7 +36,8 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model) {
+    @foreach (var item in Model)
+    {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Nome)
@@ -68,5 +71,5 @@
 </table>
 
 <p>
-    <a asp-action="Create">Criar Novo Usuário</a>
+    <a asp-action="Create" class="btn btn-primary">Criar Novo Usuário</a>
 </p>

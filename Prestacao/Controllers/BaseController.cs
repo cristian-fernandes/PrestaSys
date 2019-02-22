@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -10,10 +10,8 @@ namespace Prestacao.Controllers
         {
             try
             {
-                if (!this.User.Identity.IsAuthenticated)
-                {
+                if (!User.Identity.IsAuthenticated)
                     filterContext.Result = new RedirectResult(Url.Action("Index", "Login"));
-                }
             }
             catch (Exception ex)
             {

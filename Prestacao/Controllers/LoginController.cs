@@ -1,35 +1,36 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Prestacao.Models.Database;
-
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using Repositorio;
+using Repositorio.Models.Database;
 
 namespace Prestacao.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly PrestacaoDbContext databaseManager;
+        private readonly PrestacaoDbContext _dbContext;
 
-        public LoginController(PrestacaoDbContext databaseManagerContext)
+        public LoginController(PrestacaoDbContext dbContext)
         {
-            try
-            {
-                // Settings.  
-                this.databaseManager = databaseManagerContext;
-            }
-            catch (Exception ex)
-            {
-                // Info  
-                Console.Write(ex);
-            }
+            _dbContext = dbContext;
         }
 
         public IActionResult Index()
+        {
+            return View();
+        }
+
+        public IActionResult About()
+        {
+            return View();
+        }
+
+        public IActionResult Privacy()
         {
             return View();
         }
@@ -40,31 +41,24 @@ namespace Prestacao.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    // Initialization.  
-                    var loginInfo = await this.databaseManager.LoginByEmailSenhaMethodAsync(email, senha);
+                    //var listaUsuarios = _dbContext.Usuario.Where(u => u.Email == email && u.Senha == senha).ToList();
 
-                    // Verification.  
-                    if (loginInfo != null && loginInfo.Count > 0)
+                    var listaUsuarios = _dbContext.Usuario.Where(u => u.Id == 1).ToList();
+
+                    if (listaUsuarios.Count > 0)
                     {
-                        // Initialization.  
-                        var logindetails = loginInfo.First();
+                        var usuario = listaUsuarios.First();
 
-                        // Login In.  
-                        await this.LogarUsuario(logindetails, false);
+                        await LogarUsuario(usuario, false);
 
-                        // Info.  
-                        return this.RedirectToAction("Index", "Home");
+                        return RedirectToAction("Index", "Home");
                     }
-                    else
-                    {
-                        // Setting.  
-                        ModelState.AddModelError("IncorrectUser", "Usuário ou Senha inválidos.");
-                    }
+
+                    ModelState.AddModelError("IncorrectUser", "Usuário ou Senha inválidos.");
                 }
             }
             catch (Exception ex)
             {
-                // Info  
                 Console.Write(ex);
             }
 
@@ -74,7 +68,7 @@ namespace Prestacao.Controllers
         public async Task<IActionResult> Logoff()
         {
             try
-            {  
+            {
                 var authenticationManager = Request.HttpContext;
 
                 await authenticationManager.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -87,7 +81,7 @@ namespace Prestacao.Controllers
             return View("Index");
         }
 
-        private async Task LogarUsuario(LoginUsuario loginUsuario, bool isPersistent)
+        private async Task LogarUsuario(Usuario loginUsuario, bool isPersistent)
         {
             var claims = new List<Claim>();
 
@@ -99,12 +93,11 @@ namespace Prestacao.Controllers
                 var claimPrincipal = new ClaimsPrincipal(claimIdenties);
                 var authenticationManager = Request.HttpContext;
 
-                // Log In
-                await authenticationManager.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimPrincipal, new AuthenticationProperties() { IsPersistent = isPersistent });
+                await authenticationManager.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                    claimPrincipal, new AuthenticationProperties {IsPersistent = isPersistent});
             }
             catch (Exception ex)
             {
-                // Info  
                 throw ex;
             }
         }

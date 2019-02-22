@@ -1,9 +1,9 @@
-﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
-namespace Prestacao.Models.Database
+namespace Repositorio.Models.Database
 {
-    public partial class PrestacaoStatus
+    public class PrestacaoStatus
     {
         public PrestacaoStatus()
         {
@@ -11,8 +11,9 @@ namespace Prestacao.Models.Database
         }
 
         public int Id { get; set; }
-        public string Status { get; set; }
 
         public virtual ICollection<Prestacao> Prestacao { get; set; }
+        [Display(Name = "Status da Prestação")]
+        public string Status { get; set; }
     }
 }

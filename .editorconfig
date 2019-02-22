@@ -1,0 +1,23 @@
+root = true
+
+[*]
+end_of_line = crlf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+indent_style = space
+indent_size = 4
+
+# The indent size used in the `package.json` file cannot be changed
+# https://github.com/npm/npm/pull/3180#issuecomment-16336516
+[*.json]
+indent_style = space
+indent_size = 2
+
+# Per GitHub Guidelines xml files should follow 2 space indentation.
+# https://github.com/roots/guidelines/blob/master/ruleset.xml
+# Per Google Guidelines xml files pretty-print should have 2 spaces.
+# https://google.github.io/styleguide/xmlstyle.html
+[*.config]
+indent_style = space
+indent_size = 2

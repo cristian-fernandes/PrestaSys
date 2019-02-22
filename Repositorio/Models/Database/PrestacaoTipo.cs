@@ -1,9 +1,9 @@
-﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
-namespace Prestacao.Models.Database
+namespace Repositorio.Models.Database
 {
-    public partial class PrestacaoTipo
+    public class PrestacaoTipo
     {
         public PrestacaoTipo()
         {
@@ -11,8 +11,9 @@ namespace Prestacao.Models.Database
         }
 
         public int Id { get; set; }
-        public string Tipo { get; set; }
 
         public virtual ICollection<Prestacao> Prestacao { get; set; }
+        [Display(Name = "Tipo da Prestação")]
+        public string Tipo { get; set; }
     }
 }

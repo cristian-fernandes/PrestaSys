@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+using Repositorio.Models.Database;
 
-namespace Prestacao.Models.Database
+namespace Repositorio
 {
-    public partial class PrestacaoDbContext : DbContext
+    public class PrestacaoDbContext : DbContext
     {
         public PrestacaoDbContext()
         {
@@ -29,8 +25,6 @@ namespace Prestacao.Models.Database
 
             modelBuilder.Entity<Prestacao>(entity =>
             {
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
                 entity.Property(e => e.Data).HasColumnType("datetime");
 
                 entity.Property(e => e.Justificativa).IsRequired();
@@ -74,8 +68,6 @@ namespace Prestacao.Models.Database
 
             modelBuilder.Entity<PrestacaoStatus>(entity =>
             {
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
                 entity.Property(e => e.Status)
                     .IsRequired()
                     .HasMaxLength(50);
@@ -83,8 +75,6 @@ namespace Prestacao.Models.Database
 
             modelBuilder.Entity<PrestacaoTipo>(entity =>
             {
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
                 entity.Property(e => e.Tipo)
                     .IsRequired()
                     .HasMaxLength(50);
@@ -95,8 +85,6 @@ namespace Prestacao.Models.Database
                 entity.HasIndex(e => e.Email)
                     .HasName("U_UsuarioEmail")
                     .IsUnique();
-
-                entity.Property(e => e.Id).ValueGeneratedNever();
 
                 entity.Property(e => e.Email)
                     .IsRequired()
@@ -124,29 +112,6 @@ namespace Prestacao.Models.Database
                     .HasForeignKey(d => d.GerenteId)
                     .HasConstraintName("FK_Usuario_Id_GerenteId");
             });
-
-            modelBuilder.Query<LoginUsuario>();
-        }
-
-        public async Task<List<LoginUsuario>> LoginByEmailSenhaMethodAsync(string email, string senha)
-        {
-            List<LoginUsuario> lst;
-
-            try
-            {
-                var emailParameter = new SqlParameter("@email", email ?? (object)DBNull.Value);
-                var senhaParameter = new SqlParameter("@senha", senha ?? (object)DBNull.Value);
-
-                const string sqlQuery = "EXEC [dbo].[LoginByEmailSenha] @email, @senha";
-
-                lst = await this.Query<LoginUsuario>().FromSql(sqlQuery, emailParameter, senhaParameter).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-            return lst;
         }
     }
 }

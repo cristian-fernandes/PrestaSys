@@ -1,10 +1,9 @@
-﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Prestacao.Models.Database
+namespace Repositorio.Models.Database
 {
-    public partial class Usuario
+    public class Usuario
     {
         public Usuario()
         {
@@ -15,24 +14,35 @@ namespace Prestacao.Models.Database
             PrestacaoEmitente = new HashSet<Prestacao>();
         }
 
-        public int Id { get; set; }
-        public string Nome { get; set; }
-        public string Sobrenome { get; set; }
+        [Display(Name = "E-mail")]
         public string Email { get; set; }
-        public string Senha { get; set; }
+
+        [Display(Name = "É Gerente?")]
         public bool FlagGerente { get; set; }
+
+        [Display(Name = "É Gerente Financeiro?")]
         public bool FlagGerenteFinanceiro { get; set; }
-        public int? GerenteId { get; set; }
-        public int? GerenteFinanceiroId { get; set; }
 
         [Display(Name = "Gerente")]
         public virtual Usuario Gerente { get; set; }
+
         [Display(Name = "Gerente Financeiro")]
         public virtual Usuario GerenteFinanceiro { get; set; }
+
+        [Display(Name = "Gerente Financeiro")]
+        public int? GerenteFinanceiroId { get; set; }
+
+        [Display(Name = "Gerente")]
+        public int? GerenteId { get; set; }
+
+        public int Id { get; set; }
         public virtual ICollection<Usuario> InverseGerente { get; set; }
         public virtual ICollection<Usuario> InverseGerenteFinanceiro { get; set; }
+        public string Nome { get; set; }
         public virtual ICollection<Prestacao> PrestacaoAprovador { get; set; }
         public virtual ICollection<Prestacao> PrestacaoAprovadorFinanceiro { get; set; }
         public virtual ICollection<Prestacao> PrestacaoEmitente { get; set; }
+        public string Senha { get; set; }
+        public string Sobrenome { get; set; }
     }
 }

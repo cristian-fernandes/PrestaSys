@@ -1,5 +1,3 @@
-using System;
-
 namespace Prestacao.Models
 {
     public class ErrorViewModel
