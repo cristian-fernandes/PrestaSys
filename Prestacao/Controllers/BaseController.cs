@@ -35,6 +35,9 @@ namespace Prestacao.Controllers
                 }
                 else
                 {
+                    if (filterContext.RouteData.Values["Controller"].ToString() == "Login")
+                        return;
+
                     filterContext.Result = new RedirectResult(Url.Action("Index", "Login"));
                 }
             }
