@@ -1,11 +1,19 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Prestacao.Models;
+using Repositorio;
 
 namespace Prestacao.Controllers
 {
     public class HomeController : BaseController
     {
+        private readonly PrestacaoDbContext _context;
+
+        public HomeController(PrestacaoDbContext context) : base(context)
+        {
+            _context = context;
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

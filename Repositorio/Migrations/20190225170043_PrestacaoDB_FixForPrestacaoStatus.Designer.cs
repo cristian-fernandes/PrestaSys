@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Repositorio;
 
 namespace Repositorio.Migrations
 {
     [DbContext(typeof(PrestacaoDbContext))]
-    partial class PrestacaoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190225170043_PrestacaoDB_FixForPrestacaoStatus")]
+    partial class PrestacaoDB_FixForPrestacaoStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,10 +40,6 @@ namespace Repositorio.Migrations
 
                     b.Property<string>("Justificativa")
                         .IsRequired();
-
-                    b.Property<string>("JustificativaAprovacao");
-
-                    b.Property<string>("JustificativaAprovacaoFinanceira");
 
                     b.Property<int>("StatusId");
 

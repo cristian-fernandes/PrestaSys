@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +13,15 @@ namespace Prestacao.Controllers
     {
         private readonly PrestacaoDbContext _context;
 
-        public PrestacoesController(PrestacaoDbContext context)
+        private enum PrestacaoStatus
+        {
+            Em_Aprovacao_Operacional = 1,
+            Em_Aprovacao_Financeira = 2,
+            Finalizada = 3,
+            Rejeitada = 4
+        }
+
+        public PrestacoesController(PrestacaoDbContext context) : base(context)
         {
             _context = context;
         }
@@ -25,7 +29,9 @@ namespace Prestacao.Controllers
         // GET: Prestacoes
         public async Task<IActionResult> Index()
         {
-            var prestacaoDbContext = _context.Prestacao.Include(p => p.Aprovador).Include(p => p.AprovadorFinanceiro).Include(p => p.Emitente).Include(p => p.Status).Include(p => p.Tipo);
+            var prestacaoDbContext = _context.Prestacao.Where(p => p.EmitenteId == GetLoggedUser().Id)
+                .Include(p => p.Aprovador).Include(p => p.AprovadorFinanceiro).Include(p => p.Emitente)
+                .Include(p => p.Status).Include(p => p.Tipo);
             return View(await prestacaoDbContext.ToListAsync());
         }
 
@@ -33,21 +39,22 @@ namespace Prestacao.Controllers
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var prestacao = await _context.Prestacao
+            var usuarioLogado = GetLoggedUser();
+
+            var prestacao = await _context.Prestacao.Where(p =>
+                    p.EmitenteId == usuarioLogado.Id || p.AprovadorFinanceiroId == usuarioLogado.Id ||
+                    p.AprovadorId == usuarioLogado.Id)
                 .Include(p => p.Aprovador)
                 .Include(p => p.AprovadorFinanceiro)
                 .Include(p => p.Emitente)
                 .Include(p => p.Status)
                 .Include(p => p.Tipo)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (prestacao == null)
-            {
                 return NotFound();
-            }
 
             return View(prestacao);
         }
@@ -60,7 +67,7 @@ namespace Prestacao.Controllers
             ViewData["AprovadorId"] = usuarioLogado.GerenteId;
             ViewData["AprovadorFinanceiroId"] = usuarioLogado.GerenteFinanceiroId;
             ViewData["EmitenteId"] = usuarioLogado.Id;
-            ViewData["StatusId"] = _context.PrestacaoStatus.First(s => s.Status == "Iniciada").Id;
+            ViewData["StatusId"] = (int)PrestacaoStatus.Em_Aprovacao_Operacional;
             ViewData["TipoId"] = new SelectList(_context.PrestacaoTipo, "Id", "Tipo");
 
             return View();
@@ -71,16 +78,21 @@ namespace Prestacao.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("AprovadorFinanceiroId,AprovadorId,Data,EmitenteId,ImagemComprovante,Justificativa,StatusId,TipoId,Titulo,Valor")] Repositorio.Models.Database.Prestacao prestacao)
+        public async Task<IActionResult> Create(
+            [Bind(
+                "AprovadorFinanceiroId,AprovadorId,Data,EmitenteId,ImagemComprovante,Justificativa,StatusId,TipoId,Titulo,Valor")]
+            Repositorio.Models.Database.Prestacao prestacao)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(prestacao);
-                //await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["AprovadorId"] = new SelectList(_context.Usuario, "Id", "Email", prestacao.AprovadorId);
-            ViewData["AprovadorFinanceiroId"] = new SelectList(_context.Usuario, "Id", "Email", prestacao.AprovadorFinanceiroId);
+            ViewData["AprovadorFinanceiroId"] =
+                new SelectList(_context.Usuario, "Id", "Email", prestacao.AprovadorFinanceiroId);
             ViewData["EmitenteId"] = new SelectList(_context.Usuario, "Id", "Email", prestacao.EmitenteId);
             ViewData["StatusId"] = new SelectList(_context.PrestacaoStatus, "Id", "Status", prestacao.StatusId);
             ViewData["TipoId"] = new SelectList(_context.PrestacaoTipo, "Id", "Tipo", prestacao.TipoId);
@@ -91,23 +103,22 @@ namespace Prestacao.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var prestacao = await _context.Prestacao.FindAsync(id);
 
             if (prestacao == null)
-            {
                 return NotFound();
-            }
 
             var usuarioLogado = GetLoggedUser();
+
+            if (prestacao.EmitenteId != usuarioLogado.Id)
+                return Forbid();
 
             ViewData["AprovadorId"] = usuarioLogado.GerenteId;
             ViewData["AprovadorFinanceiroId"] = usuarioLogado.GerenteFinanceiroId;
             ViewData["EmitenteId"] = usuarioLogado.Id;
-            ViewData["StatusId"] = _context.PrestacaoStatus.First(s => s.Status == "Iniciada").Id;
+            ViewData["StatusId"] = (int)PrestacaoStatus.Em_Aprovacao_Operacional;
             ViewData["TipoId"] = new SelectList(_context.PrestacaoTipo, "Id", "Tipo");
 
             return View(prestacao);
@@ -118,31 +129,28 @@ namespace Prestacao.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("AprovadorFinanceiroId,AprovadorId,Data,EmitenteId,Id,ImagemComprovante,Justificativa,StatusId,TipoId,Titulo,Valor")] Repositorio.Models.Database.Prestacao prestacao)
+        public async Task<IActionResult> Edit(int id,
+            [Bind(
+                "AprovadorFinanceiroId,AprovadorId,Data,EmitenteId,Id,ImagemComprovante,Justificativa,StatusId,TipoId,Titulo,Valor")]
+            Repositorio.Models.Database.Prestacao prestacao)
         {
             if (id != prestacao.Id)
-            {
                 return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
                 try
                 {
                     _context.Update(prestacao);
-                    //await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!PrestacaoExists(prestacao.Id))
-                    {
                         return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -160,10 +168,7 @@ namespace Prestacao.Controllers
         // GET: Prestacoes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var prestacao = await _context.Prestacao
                 .Include(p => p.Aprovador)
@@ -172,22 +177,20 @@ namespace Prestacao.Controllers
                 .Include(p => p.Status)
                 .Include(p => p.Tipo)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (prestacao == null)
-            {
-                return NotFound();
-            }
+            if (prestacao == null) return NotFound();
 
             return View(prestacao);
         }
 
         // POST: Prestacoes/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
+        [ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var prestacao = await _context.Prestacao.FindAsync(id);
             _context.Prestacao.Remove(prestacao);
-            //await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -196,24 +199,146 @@ namespace Prestacao.Controllers
             return _context.Prestacao.Any(e => e.Id == id);
         }
 
-        private Usuario GetLoggedUser()
+        // GET: Prestacoes para Aprovar
+        public async Task<IActionResult> PrestacoesParaAprovar()
         {
-            var listaUsuarios = _context.Usuario.Where(u => u.Email == GetClaimValuebyType(ClaimTypes.Email)).ToList();
-
-            if (listaUsuarios.Count > 0)
-            {
-                var usuarioLogado = listaUsuarios.First();
-
-                return usuarioLogado;
-            }
-
-            RedirectToAction("Index", "Home");
-            return null;
+            var prestacaoDbContext = _context.Prestacao.Where(p =>
+                    p.AprovadorId == GetLoggedUser().Id &&
+                    p.StatusId == (int) PrestacaoStatus.Em_Aprovacao_Operacional)
+                .Include(p => p.Aprovador).Include(p => p.AprovadorFinanceiro).Include(p => p.Emitente)
+                .Include(p => p.Status).Include(p => p.Tipo);
+            return View(await prestacaoDbContext.ToListAsync());
         }
 
-        private string GetClaimValuebyType(string type)
+        public async Task<IActionResult> Reject(int? id)
         {
-            return Request.HttpContext.User.Claims.First(t => t.Type == type).Value;
+            if (id == null) return NotFound();
+
+            var prestacao = await _context.Prestacao
+                .Include(p => p.Aprovador)
+                .Include(p => p.AprovadorFinanceiro)
+                .Include(p => p.Emitente)
+                .Include(p => p.Status)
+                .Include(p => p.Tipo)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (prestacao == null) return NotFound();
+
+            return View(prestacao);
+        }
+
+        public async Task<IActionResult> Approve(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var prestacao = await _context.Prestacao
+                .Include(p => p.Aprovador)
+                .Include(p => p.AprovadorFinanceiro)
+                .Include(p => p.Emitente)
+                .Include(p => p.Status)
+                .Include(p => p.Tipo)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (prestacao == null) return NotFound();
+
+            return View(prestacao);
+        }
+
+        // POST: Prestacoes/Delete/5
+        [HttpPost]
+        [ActionName("Reject")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RejectConfirmed(int id, string justificativaAprovacao)
+        {
+            var prestacao = await _context.Prestacao.FindAsync(id);
+            prestacao.StatusId = (int)PrestacaoStatus.Rejeitada;
+            prestacao.JustificativaAprovacao = justificativaAprovacao;
+            _context.Update(prestacao);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(PrestacoesParaAprovar));
+        }
+
+        // POST: Prestacoes/Delete/5
+        [HttpPost]
+        [ActionName("Approve")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ApproveConfirmed(int id, string justificativaAprovacao)
+        {
+            var prestacao = await _context.Prestacao.FindAsync(id);
+            prestacao.StatusId = (int)PrestacaoStatus.Em_Aprovacao_Financeira;
+            prestacao.JustificativaAprovacao = justificativaAprovacao;
+            _context.Update(prestacao);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(PrestacoesParaAprovar));
+        }
+
+        // GET: Prestacoes para Aprovar Financeiro
+        public async Task<IActionResult> PrestacoesParaAprovarFinanceiro()
+        {
+            var prestacaoDbContext = _context.Prestacao.Where(p =>
+                    p.AprovadorFinanceiroId == GetLoggedUser().Id &&
+                    p.StatusId == (int) PrestacaoStatus.Em_Aprovacao_Financeira)
+                .Include(p => p.Aprovador).Include(p => p.AprovadorFinanceiro).Include(p => p.Emitente)
+                .Include(p => p.Status).Include(p => p.Tipo);
+            return View(await prestacaoDbContext.ToListAsync());
+        }
+
+        public async Task<IActionResult> RejectFinanceiro(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var prestacao = await _context.Prestacao
+                .Include(p => p.Aprovador)
+                .Include(p => p.AprovadorFinanceiro)
+                .Include(p => p.Emitente)
+                .Include(p => p.Status)
+                .Include(p => p.Tipo)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (prestacao == null) return NotFound();
+
+            return View(prestacao);
+        }
+
+        public async Task<IActionResult> ApproveFinanceiro(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var prestacao = await _context.Prestacao
+                .Include(p => p.Aprovador)
+                .Include(p => p.AprovadorFinanceiro)
+                .Include(p => p.Emitente)
+                .Include(p => p.Status)
+                .Include(p => p.Tipo)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (prestacao == null) return NotFound();
+
+            return View(prestacao);
+        }
+
+        // POST: Prestacoes/Delete/5
+        [HttpPost]
+        [ActionName("RejectFinanceiro")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RejectFinanceiroConfirmed(int id, string justificativaAprovacaoFinanceira)
+        {
+            var prestacao = await _context.Prestacao.FindAsync(id);
+            prestacao.StatusId = (int)PrestacaoStatus.Rejeitada;
+            prestacao.JustificativaAprovacaoFinanceira = justificativaAprovacaoFinanceira;
+            _context.Update(prestacao);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(PrestacoesParaAprovar));
+        }
+
+        // POST: Prestacoes/Delete/5
+        [HttpPost]
+        [ActionName("ApproveFinanceiro")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ApproveFinanceirpConfirmed(int id, string justificativaAprovacaoFinanceira)
+        {
+            var prestacao = await _context.Prestacao.FindAsync(id);
+            prestacao.StatusId = (int)PrestacaoStatus.Finalizada;
+            prestacao.JustificativaAprovacaoFinanceira = justificativaAprovacaoFinanceira;
+            _context.Update(prestacao);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(PrestacoesParaAprovar));
         }
     }
 }

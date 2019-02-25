@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Repositorio;
 
 namespace Repositorio.Migrations
 {
     [DbContext(typeof(PrestacaoDbContext))]
-    partial class PrestacaoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190225171031_PrestacaoDB_AddedJustificativaParaAprovacao")]
+    partial class PrestacaoDB_AddedJustificativaParaAprovacao
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

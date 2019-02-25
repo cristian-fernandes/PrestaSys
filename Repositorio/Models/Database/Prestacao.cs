@@ -17,6 +17,10 @@ namespace Repositorio.Models.Database
         [Display(Name = "Comprovante das Despesas")]
         public byte[] ImagemComprovante { get; set; }
         public string Justificativa { get; set; }
+        [Display(Name = "Justificativa para Aprovação/Rejeição")]
+        public string JustificativaAprovacao { get; set; }
+        [Display(Name = "Justificativa para Aprovação/Rejeição do Financeiro")]
+        public string JustificativaAprovacaoFinanceira { get; set; }
         public virtual PrestacaoStatus Status { get; set; }
         [Display(Name = "Status")]
         public int StatusId { get; set; }

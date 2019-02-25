@@ -11,11 +11,11 @@ using Repositorio.Models.Database;
 
 namespace Prestacao.Controllers
 {
-    public class LoginController : Controller
+    public class LoginController : BaseController
     {
         private readonly PrestacaoDbContext _dbContext;
 
-        public LoginController(PrestacaoDbContext dbContext)
+        public LoginController(PrestacaoDbContext dbContext) : base(dbContext)
         {
             _dbContext = dbContext;
         }
@@ -41,9 +41,7 @@ namespace Prestacao.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    //var listaUsuarios = _dbContext.Usuario.Where(u => u.Email == email && u.Senha == senha).ToList();
-
-                    var listaUsuarios = _dbContext.Usuario.Where(u => u.Id == 1).ToList();
+                    var listaUsuarios = _dbContext.Usuario.Where(u => u.Email == email && u.Senha == senha).ToList();
 
                     if (listaUsuarios.Count > 0)
                     {
@@ -51,7 +49,7 @@ namespace Prestacao.Controllers
 
                         await LogarUsuario(usuario, false);
 
-                        return RedirectToAction("Index", "Home");
+                        return RedirectToAction("Index", "Prestacoes");
                     }
 
                     ModelState.AddModelError("IncorrectUser", "Usuário ou Senha inválidos.");

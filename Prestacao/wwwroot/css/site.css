@@ -1,7 +1,12 @@
-﻿a.navbar-brand {
+a.navbar-brand {
     text-align: center;
     white-space: normal;
     word-break: break-all;
+}
+
+.ml-auto .dropdown-menu {
+    left: auto !important;
+    right: 0px;
 }
 
 html { font-size: 14px; }

@@ -1,12 +1,12 @@
 @model Repositorio.Models.Database.Prestacao
 
 @{
-    ViewData["Title"] = "Excluir Prestação de Contas";
+    ViewData["Title"] = "Aprovar Prestação de Contas";
 }
 
-<h1>Excluir Prestação de Contas</h1>
+<h1>Aprovar Prestação de Contas</h1>
 
-<h3>Tem certeza que deseja excluir esta Prestação de Contas?</h3>
+<h3>Tem certeza que deseja aprovar esta Peestação de Contas?</h3>
 
 <hr />
 
@@ -74,9 +74,12 @@
         </dd>
     </dl>
     
-    <form asp-action="Delete">
+    <form asp-action="Approve">
+        <label asp-for="JustificativaAprovacao" class="control-label"></label>
+        <textarea rows="10" asp-for="JustificativaAprovacao" class="form-control"></textarea>
+        <span asp-validation-for="JustificativaAprovacao" class="text-danger"></span>
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Excluír Prestação" class="btn btn-danger" /> |
-        <a asp-action="Index">Voltar para a Lista</a>
+        <input type="submit" value="Aprovar Prestação" class="btn btn-success" /> |
+        <a asp-action="PrestacoesParaAprovar">Voltar para a Lista</a>
     </form>
 </div>

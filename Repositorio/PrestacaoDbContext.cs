@@ -77,26 +77,21 @@ namespace Repositorio
                 new PrestacaoStatus
                 {
                     Id = 1,
-                    Status = "Iniciada"
-                },
-                new PrestacaoStatus
-                {
-                    Id = 2,
                     Status = "Em Aprovação Operacional"
                 },
                 new PrestacaoStatus
                 {
-                    Id = 3,
+                    Id = 2,
                     Status = "Em Aprovação Financeira"
                 },
                 new PrestacaoStatus
                 {
-                    Id = 4,
+                    Id = 3,
                     Status = "Finalizada"
                 },
                 new PrestacaoStatus
                 {
-                    Id = 5,
+                    Id = 4,
                     Status = "Rejeitada"
                 }
             );

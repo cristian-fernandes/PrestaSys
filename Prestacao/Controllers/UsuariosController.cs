@@ -12,7 +12,7 @@ namespace Prestacao.Controllers
     {
         private readonly PrestacaoDbContext _context;
 
-        public UsuariosController(PrestacaoDbContext context)
+        public UsuariosController(PrestacaoDbContext context) : base(context)
         {
             _context = context;
         }
@@ -54,7 +54,7 @@ namespace Prestacao.Controllers
             if (ModelState.IsValid)
             {
                 _context.Add(usuario);
-                //await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
@@ -102,14 +102,15 @@ namespace Prestacao.Controllers
         {
             var usuario = await _context.Usuario.FindAsync(id);
             _context.Usuario.Remove(usuario);
-            //await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         // GET: Usuarios/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+                return NotFound();
 
             var usuario = await _context.Usuario
                 .Include(u => u.Gerente)
@@ -165,7 +166,7 @@ namespace Prestacao.Controllers
                 try
                 {
                     _context.Update(usuario);
-                    //await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {

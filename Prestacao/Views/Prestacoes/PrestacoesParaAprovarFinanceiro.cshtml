@@ -1,12 +1,12 @@
 @model IEnumerable<Repositorio.Models.Database.Prestacao>
 
 @{
-    ViewData["Title"] = "Lista de Prestações de Contas";
+    ViewData["Title"] = "Lista de Prestações de Contas para Aprovação Financeira";
 }
 
-<h1>Lista de Prestações de Contas</h1>
+<h1>Lista de Prestações de Contas para Aprovação Financeira</h1>
 
-<hr/>
+<hr />
 
 <table class="table table-bordered table-striped table-hover">
     <thead>
@@ -49,14 +49,10 @@
                     @Html.DisplayFor(modelItem => item.Valor)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary">Editar</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary">Detalhes</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">Excluir</a>
+                    <a asp-action="RejectFinanceiro" asp-route-id="@item.Id" class="btn btn-danger">Rejeitar</a> |
+                    <a asp-action="ApproveFinanceiro" asp-route-id="@item.Id" class="btn btn-success">Aprovar</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
-<p>
-    <a asp-action="Create"  class="btn btn-primary">Criar Nova Prestaçao de Contas</a>
-</p>
