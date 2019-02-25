@@ -73,12 +73,63 @@ namespace Repositorio
                     .HasMaxLength(50);
             });
 
+            modelBuilder.Entity<PrestacaoStatus>().HasData(
+                new PrestacaoStatus
+                {
+                    Id = 1,
+                    Status = "Iniciada"
+                },
+                new PrestacaoStatus
+                {
+                    Id = 2,
+                    Status = "Em Aprovação Operacional"
+                },
+                new PrestacaoStatus
+                {
+                    Id = 3,
+                    Status = "Em Aprovação Financeira"
+                },
+                new PrestacaoStatus
+                {
+                    Id = 4,
+                    Status = "Finalizada"
+                },
+                new PrestacaoStatus
+                {
+                    Id = 5,
+                    Status = "Rejeitada"
+                }
+            );
+
             modelBuilder.Entity<PrestacaoTipo>(entity =>
             {
                 entity.Property(e => e.Tipo)
                     .IsRequired()
                     .HasMaxLength(50);
             });
+
+            modelBuilder.Entity<PrestacaoTipo>().HasData(
+                new PrestacaoTipo
+                {
+                    Id = 1,
+                    Tipo = "Viagem"
+                },
+                new PrestacaoTipo
+                {
+                    Id = 2,
+                    Tipo = "Curso de Idioma"
+                },
+                new PrestacaoTipo
+                {
+                    Id = 3,
+                    Tipo = "Alimentação"
+                },
+                new PrestacaoTipo
+                {
+                    Id = 4,
+                    Tipo = "Taxi/Uber"
+                }
+            );
 
             modelBuilder.Entity<Usuario>(entity =>
             {
@@ -112,6 +163,20 @@ namespace Repositorio
                     .HasForeignKey(d => d.GerenteId)
                     .HasConstraintName("FK_Usuario_Id_GerenteId");
             });
+
+            modelBuilder.Entity<Usuario>().HasData(
+                new Usuario
+                {
+                    Id = 1,
+                    Nome = "Cristian",
+                    Sobrenome = "Fernandes",
+                    Email = "cristian.fernandes@unisul.br",
+                    Senha = "asdf",
+                    GerenteId = 1,
+                    GerenteFinanceiroId = 1,
+                    FlagGerenteFinanceiro = true,
+                    FlagGerente = true
+                });
         }
     }
 }
