@@ -32,9 +32,7 @@ namespace Repositorio.Models.Database
         public int TipoId { get; set; }
         [Display(Name = "Título da Prestação")]
         public string Titulo { get; set; }
-        [Range(1, 100)]
         [DataType(DataType.Currency)]
-        [Column(TypeName = "decimal(18, 2)")]
         public decimal Valor { get; set; }
     }
 }

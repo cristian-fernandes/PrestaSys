@@ -27,11 +27,16 @@ namespace Prestacao.Controllers
         }
 
         // GET: Prestacoes
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int p = 1, int s = 8)
         {
-            var prestacaoDbContext = _context.Prestacao.Where(p => p.EmitenteId == GetLoggedUser().Id)
-                .Include(p => p.Aprovador).Include(p => p.AprovadorFinanceiro).Include(p => p.Emitente)
-                .Include(p => p.Status).Include(p => p.Tipo);
+            var prestacaoDbContext = _context.Prestacao.Where(pr => pr.EmitenteId == GetLoggedUser().Id)
+                .Include(pr => pr.Aprovador).Include(pr => pr.AprovadorFinanceiro).Include(pr => pr.Emitente)
+                .Include(pr => pr.Status).Include(pr => pr.Tipo)
+                .OrderByDescending(pr => pr.Data).Skip((p - 1) * s).Take(s);
+
+            ViewBag.TotalRecords = _context.Prestacao.Count(pr => pr.EmitenteId == GetLoggedUser().Id);
+            ViewBag.PageNumber = p;
+
             return View(await prestacaoDbContext.ToListAsync());
         }
 
@@ -200,13 +205,19 @@ namespace Prestacao.Controllers
         }
 
         // GET: Prestacoes para Aprovar
-        public async Task<IActionResult> PrestacoesParaAprovar()
+        public async Task<IActionResult> PrestacoesParaAprovar(int p = 1, int s = 8)
         {
-            var prestacaoDbContext = _context.Prestacao.Where(p =>
-                    p.AprovadorId == GetLoggedUser().Id &&
-                    p.StatusId == (int) PrestacaoStatus.Em_Aprovacao_Operacional)
-                .Include(p => p.Aprovador).Include(p => p.AprovadorFinanceiro).Include(p => p.Emitente)
-                .Include(p => p.Status).Include(p => p.Tipo);
+            var prestacaoDbContext = _context.Prestacao.Where(pr =>
+                    pr.AprovadorId == GetLoggedUser().Id &&
+                    pr.StatusId == (int) PrestacaoStatus.Em_Aprovacao_Operacional)
+                .Include(pr => pr.Aprovador).Include(pr => pr.AprovadorFinanceiro).Include(pr => pr.Emitente)
+                .Include(pr => pr.Status).Include(pr => pr.Tipo)
+                .OrderByDescending(pr => pr.Data).Skip((p - 1) * s).Take(s);
+
+            ViewBag.TotalRecords = _context.Prestacao.Count(pr => pr.AprovadorId == GetLoggedUser().Id &&
+                                                                  pr.StatusId == (int) PrestacaoStatus.Em_Aprovacao_Operacional);
+            ViewBag.PageNumber = p;
+
             return View(await prestacaoDbContext.ToListAsync());
         }
 
@@ -271,13 +282,19 @@ namespace Prestacao.Controllers
         }
 
         // GET: Prestacoes para Aprovar Financeiro
-        public async Task<IActionResult> PrestacoesParaAprovarFinanceiro()
+        public async Task<IActionResult> PrestacoesParaAprovarFinanceiro(int p = 1, int s = 8)
         {
-            var prestacaoDbContext = _context.Prestacao.Where(p =>
-                    p.AprovadorFinanceiroId == GetLoggedUser().Id &&
-                    p.StatusId == (int) PrestacaoStatus.Em_Aprovacao_Financeira)
-                .Include(p => p.Aprovador).Include(p => p.AprovadorFinanceiro).Include(p => p.Emitente)
-                .Include(p => p.Status).Include(p => p.Tipo);
+            var prestacaoDbContext = _context.Prestacao.Where(pr =>
+                    pr.AprovadorFinanceiroId == GetLoggedUser().Id &&
+                    pr.StatusId == (int) PrestacaoStatus.Em_Aprovacao_Financeira)
+                .Include(pr => pr.Aprovador).Include(pr => pr.AprovadorFinanceiro).Include(pr => pr.Emitente)
+                .Include(pr => pr.Status).Include(pr => pr.Tipo)
+                .OrderByDescending(pr => pr.Data).Skip((p - 1) * s).Take(s);
+
+            ViewBag.TotalRecords = _context.Prestacao.Count(pr => pr.AprovadorFinanceiroId == GetLoggedUser().Id &&
+                                                                  pr.StatusId == (int)PrestacaoStatus.Em_Aprovacao_Financeira);
+            ViewBag.PageNumber = p;
+
             return View(await prestacaoDbContext.ToListAsync());
         }
 

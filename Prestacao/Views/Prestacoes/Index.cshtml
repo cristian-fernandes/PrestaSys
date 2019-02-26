@@ -6,7 +6,10 @@
 
 <h1>Lista de Prestações de Contas</h1>
 
-<hr/>
+<hr />
+<p>
+    <a asp-action="Create" class="btn btn-primary">Criar Nova Prestaçao de Contas</a>
+</p>
 
 <table class="table table-bordered table-striped table-hover">
     <thead>
@@ -32,31 +35,29 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Titulo)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Tipo.Tipo)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Status.Status)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Data)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Valor)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary">Editar</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary">Detalhes</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">Excluir</a>
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Titulo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Tipo.Tipo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Data)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Valor)
+            </td>
+            <td style="text-align:center">
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary">Editar</a> |
+                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary">Detalhes</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">Excluir</a>
+            </td>
+        </tr>
         }
     </tbody>
 </table>
-<p>
-    <a asp-action="Create"  class="btn btn-primary">Criar Nova Prestaçao de Contas</a>
-</p>
+<paging class-paging-control="pagination float-right" total-records="@ViewBag.TotalRecords" page-no="@ViewBag.PageNumber" page-size="8"></paging>

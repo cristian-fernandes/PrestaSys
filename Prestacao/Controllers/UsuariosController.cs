@@ -1,8 +1,11 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Remotion.Linq.Parsing.Structure.IntermediateModel;
 using Repositorio;
 using Repositorio.Models.Database;
 
@@ -201,10 +204,15 @@ namespace Prestacao.Controllers
         }
 
         // GET: Usuarios
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int p = 1, int s = 8)
         {
-            var prestacaoDbContext = _context.Usuario.Include(u => u.Gerente).Include(u => u.GerenteFinanceiro);
-            return View(await prestacaoDbContext.ToListAsync());
+            var usuarios = _context.Usuario.Include(u => u.Gerente).Include(u => u.GerenteFinanceiro)
+                .OrderBy(u => u.Nome).Skip((p - 1) * s).Take(s);
+
+            ViewBag.TotalRecords = _context.Usuario.Count();
+            ViewBag.PageNumber = p;
+
+            return View(await usuarios.ToListAsync());
         }
 
         private bool UsuarioExists(int id)
