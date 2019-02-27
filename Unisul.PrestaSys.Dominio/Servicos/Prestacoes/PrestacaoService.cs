@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.Query;
 using Unisul.PrestaSys.Entidades.Prestacoes;
-using Unisul.PrestaSys.Repositorio.Comum;
+using Unisul.PrestaSys.Comum;
 using Unisul.PrestaSys.Repositorio.Prestacoes;
 
 namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes

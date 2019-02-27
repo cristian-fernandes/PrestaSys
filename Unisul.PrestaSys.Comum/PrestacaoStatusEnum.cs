@@ -1,4 +1,4 @@
-namespace Unisul.PrestaSys.Repositorio.Comum
+namespace Unisul.PrestaSys.Comum
 {
     public enum PrestacaoStatusEnum
     {

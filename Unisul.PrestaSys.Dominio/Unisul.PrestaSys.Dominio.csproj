@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Unisul.PrestaSys.Comum\Unisul.PrestaSys.Comum.csproj" />
     <ProjectReference Include="..\Unisul.PrestaSys.Repositorio\Unisul.PrestaSys.Repositorio.csproj" />
   </ItemGroup>
 

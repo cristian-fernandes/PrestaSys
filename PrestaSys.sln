@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Unisul.PrestaSys.Repositori
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Unisul.PrestaSys.Dominio", "Unisul.PrestaSys.Dominio\Unisul.PrestaSys.Dominio.csproj", "{BA409172-C406-43CE-A470-FBD69613EBBC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unisul.PrestaSys.Entidades", "Unisul.PrestaSys.Entidades\Unisul.PrestaSys.Entidades.csproj", "{037FD57E-4993-438D-ACB8-D4BE5143FBFD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Unisul.PrestaSys.Entidades", "Unisul.PrestaSys.Entidades\Unisul.PrestaSys.Entidades.csproj", "{037FD57E-4993-438D-ACB8-D4BE5143FBFD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unisul.PrestaSys.Comum", "Unisul.PrestaSys.Comum\Unisul.PrestaSys.Comum.csproj", "{9C34C13B-E741-4DD7-8CB2-EC0CF9375B43}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{037FD57E-4993-438D-ACB8-D4BE5143FBFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{037FD57E-4993-438D-ACB8-D4BE5143FBFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{037FD57E-4993-438D-ACB8-D4BE5143FBFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C34C13B-E741-4DD7-8CB2-EC0CF9375B43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C34C13B-E741-4DD7-8CB2-EC0CF9375B43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C34C13B-E741-4DD7-8CB2-EC0CF9375B43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C34C13B-E741-4DD7-8CB2-EC0CF9375B43}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

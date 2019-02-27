@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
 using Unisul.PrestaSys.Repositorio;
-using Unisul.PrestaSys.Entidades.Prestacoes;
-using Unisul.PrestaSys.Repositorio.Comum;
+using Unisul.PrestaSys.Comum;
 
 namespace Unisul.PrestaSys.Web.Controllers
 {
