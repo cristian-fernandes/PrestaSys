@@ -15,6 +15,7 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Usuarios
         IQueryable<Usuario> GetAllGerentesFinanceiros();
         Usuario GetById(int id);
         Usuario GetUsuarioByEmail(string email);
+        Usuario GetUsuarioByEmailAndSenha(string email, string senha);
         int Update(Usuario usuario);
     }
 
@@ -65,6 +66,13 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Usuarios
         public Usuario GetUsuarioByEmail(string email)
         {
             var listaUsuarios = _repositorio.GetAll().Where(u => u.Email == email).ToList();
+
+            return listaUsuarios.Count > 0 ? listaUsuarios.First() : null;
+        }
+
+        public Usuario GetUsuarioByEmailAndSenha(string email, string senha)
+        {
+            var listaUsuarios = _repositorio.GetAll().Where(u => u.Email == email && u.Senha == senha).ToList();
 
             return listaUsuarios.Count > 0 ? listaUsuarios.First() : null;
         }

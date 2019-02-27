@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -44,12 +43,10 @@ namespace Unisul.PrestaSys.Web.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var listaUsuarios = _dbContext.Usuario.Where(u => u.Email == email && u.Senha == senha).ToList();
+                    var usuario = _usuarioService.GetUsuarioByEmailAndSenha(email, senha);
 
-                    if (listaUsuarios.Count > 0)
+                    if (usuario != null)
                     {
-                        var usuario = listaUsuarios.First();
-
                         await LogarUsuario(usuario, false);
 
                         return RedirectToAction("Index", "Prestacoes");
