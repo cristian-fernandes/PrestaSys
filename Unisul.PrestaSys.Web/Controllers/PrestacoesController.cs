@@ -3,26 +3,22 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
 using Unisul.PrestaSys.Repositorio;
 using Unisul.PrestaSys.Entidades.Prestacoes;
+using Unisul.PrestaSys.Repositorio.Comum;
 
 namespace Unisul.PrestaSys.Web.Controllers
 {
     public class PrestacoesController : BaseController
     {
-        private readonly PrestacaoDbContext _context;
+        private readonly IPrestaSysDbContext _context;
+        private readonly IUsuarioService _usuarioService;
 
-        private enum PrestacaoStatus
-        {
-            Em_Aprovacao_Operacional = 1,
-            Em_Aprovacao_Financeira = 2,
-            Finalizada = 3,
-            Rejeitada = 4
-        }
-
-        public PrestacoesController(PrestacaoDbContext context) : base(context)
+        public PrestacoesController(IPrestaSysDbContext context, IUsuarioService usuarioService) : base(usuarioService)
         {
             _context = context;
+            _usuarioService = usuarioService;
         }
 
         // GET: Prestacoes
@@ -71,7 +67,7 @@ namespace Unisul.PrestaSys.Web.Controllers
             ViewData["AprovadorId"] = usuarioLogado.GerenteId;
             ViewData["AprovadorFinanceiroId"] = usuarioLogado.GerenteFinanceiroId;
             ViewData["EmitenteId"] = usuarioLogado.Id;
-            ViewData["StatusId"] = (int)PrestacaoStatus.Em_Aprovacao_Operacional;
+            ViewData["StatusId"] = (int)PrestacaoStatusEnum.EmAprovacaoOperacional;
             ViewData["TipoId"] = new SelectList(_context.PrestacaoTipo, "Id", "Tipo");
 
             return View();
@@ -122,7 +118,7 @@ namespace Unisul.PrestaSys.Web.Controllers
             ViewData["AprovadorId"] = usuarioLogado.GerenteId;
             ViewData["AprovadorFinanceiroId"] = usuarioLogado.GerenteFinanceiroId;
             ViewData["EmitenteId"] = usuarioLogado.Id;
-            ViewData["StatusId"] = (int)PrestacaoStatus.Em_Aprovacao_Operacional;
+            ViewData["StatusId"] = (int)PrestacaoStatusEnum.EmAprovacaoOperacional;
             ViewData["TipoId"] = new SelectList(_context.PrestacaoTipo, "Id", "Tipo");
 
             return View(prestacao);
@@ -208,13 +204,13 @@ namespace Unisul.PrestaSys.Web.Controllers
         {
             var prestacaoDbContext = _context.Prestacao.Where(pr =>
                     pr.AprovadorId == GetLoggedUser().Id &&
-                    pr.StatusId == (int) PrestacaoStatus.Em_Aprovacao_Operacional)
+                    pr.StatusId == (int)PrestacaoStatusEnum.EmAprovacaoOperacional)
                 .Include(pr => pr.Aprovador).Include(pr => pr.AprovadorFinanceiro).Include(pr => pr.Emitente)
                 .Include(pr => pr.Status).Include(pr => pr.Tipo)
                 .OrderByDescending(pr => pr.Data).Skip((p - 1) * s).Take(s);
 
             ViewBag.TotalRecords = _context.Prestacao.Count(pr => pr.AprovadorId == GetLoggedUser().Id &&
-                                                                  pr.StatusId == (int) PrestacaoStatus.Em_Aprovacao_Operacional);
+                                                                  pr.StatusId == (int)PrestacaoStatusEnum.EmAprovacaoOperacional);
             ViewBag.PageNumber = p;
 
             return View(await prestacaoDbContext.ToListAsync());
@@ -259,7 +255,7 @@ namespace Unisul.PrestaSys.Web.Controllers
         public async Task<IActionResult> RejectConfirmed(int id, string justificativaAprovacao)
         {
             var prestacao = await _context.Prestacao.FindAsync(id);
-            prestacao.StatusId = (int)PrestacaoStatus.Rejeitada;
+            prestacao.StatusId = (int)PrestacaoStatusEnum.Rejeitada;
             prestacao.JustificativaAprovacao = justificativaAprovacao;
             _context.Update(prestacao);
             await _context.SaveChangesAsync();
@@ -273,7 +269,7 @@ namespace Unisul.PrestaSys.Web.Controllers
         public async Task<IActionResult> ApproveConfirmed(int id, string justificativaAprovacao)
         {
             var prestacao = await _context.Prestacao.FindAsync(id);
-            prestacao.StatusId = (int)PrestacaoStatus.Em_Aprovacao_Financeira;
+            prestacao.StatusId = (int)PrestacaoStatusEnum.EmAprovacaoFinanceira;
             prestacao.JustificativaAprovacao = justificativaAprovacao;
             _context.Update(prestacao);
             await _context.SaveChangesAsync();
@@ -285,13 +281,13 @@ namespace Unisul.PrestaSys.Web.Controllers
         {
             var prestacaoDbContext = _context.Prestacao.Where(pr =>
                     pr.AprovadorFinanceiroId == GetLoggedUser().Id &&
-                    pr.StatusId == (int) PrestacaoStatus.Em_Aprovacao_Financeira)
+                    pr.StatusId == (int)PrestacaoStatusEnum.EmAprovacaoFinanceira)
                 .Include(pr => pr.Aprovador).Include(pr => pr.AprovadorFinanceiro).Include(pr => pr.Emitente)
                 .Include(pr => pr.Status).Include(pr => pr.Tipo)
                 .OrderByDescending(pr => pr.Data).Skip((p - 1) * s).Take(s);
 
             ViewBag.TotalRecords = _context.Prestacao.Count(pr => pr.AprovadorFinanceiroId == GetLoggedUser().Id &&
-                                                                  pr.StatusId == (int)PrestacaoStatus.Em_Aprovacao_Financeira);
+                                                                  pr.StatusId == (int)PrestacaoStatusEnum.EmAprovacaoFinanceira);
             ViewBag.PageNumber = p;
 
             return View(await prestacaoDbContext.ToListAsync());
@@ -336,7 +332,7 @@ namespace Unisul.PrestaSys.Web.Controllers
         public async Task<IActionResult> RejectFinanceiroConfirmed(int id, string justificativaAprovacaoFinanceira)
         {
             var prestacao = await _context.Prestacao.FindAsync(id);
-            prestacao.StatusId = (int)PrestacaoStatus.Rejeitada;
+            prestacao.StatusId = (int)PrestacaoStatusEnum.Rejeitada;
             prestacao.JustificativaAprovacaoFinanceira = justificativaAprovacaoFinanceira;
             _context.Update(prestacao);
             await _context.SaveChangesAsync();
@@ -350,7 +346,7 @@ namespace Unisul.PrestaSys.Web.Controllers
         public async Task<IActionResult> ApproveFinanceirpConfirmed(int id, string justificativaAprovacaoFinanceira)
         {
             var prestacao = await _context.Prestacao.FindAsync(id);
-            prestacao.StatusId = (int)PrestacaoStatus.Finalizada;
+            prestacao.StatusId = (int)PrestacaoStatusEnum.Finalizada;
             prestacao.JustificativaAprovacaoFinanceira = justificativaAprovacaoFinanceira;
             _context.Update(prestacao);
             await _context.SaveChangesAsync();

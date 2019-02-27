@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Unisul.PrestaSys.Repositorio.Migrations
 {
-    [DbContext(typeof(PrestacaoDbContext))]
+    [DbContext(typeof(PrestaSysDbContext))]
     partial class PrestacaoDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

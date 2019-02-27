@@ -1,23 +1,85 @@
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Unisul.PrestaSys.Entidades.Prestacoes;
 using Unisul.PrestaSys.Entidades.Usuarios;
 
 namespace Unisul.PrestaSys.Repositorio
 {
-    public class PrestacaoDbContext : DbContext
+    public class PrestaSysDbContext : DbContext, IPrestaSysDbContext
     {
-        public PrestacaoDbContext()
+        private readonly DbContextOptions<PrestaSysDbContext> _options;
+
+        public PrestaSysDbContext()
         {
         }
 
-        public PrestacaoDbContext(DbContextOptions<PrestacaoDbContext> options)
+        public PrestaSysDbContext(DbContextOptions<PrestaSysDbContext> options)
             : base(options)
         {
+            _options = options;
+        }
+
+        public new EntityEntry Add(object entity)
+        {
+            return base.Add(entity);
+        }
+
+        public new bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+        public new int GetHashCode()
+        {
+            return base.GetHashCode();
         }
 
         public virtual DbSet<Prestacao> Prestacao { get; set; }
         public virtual DbSet<PrestacaoStatus> PrestacaoStatus { get; set; }
         public virtual DbSet<PrestacaoTipo> PrestacaoTipo { get; set; }
+
+        public new EntityEntry Remove<TEntity>(TEntity entity) where TEntity : class
+        {
+            return base.Remove(entity);
+        }
+
+        public new int SaveChanges()
+        {
+            return base.SaveChanges();
+        }
+
+        public new int SaveChanges(bool acceptAllChangesOnSuccess)
+        {
+            return base.SaveChanges(acceptAllChangesOnSuccess);
+        }
+
+        public new Task<int> SaveChangesAsync(CancellationToken cancellationToken)
+        {
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
+        public new Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+        {
+            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+
+        public Task<int> SaveChangesAsync()
+        {
+            return base.SaveChangesAsync();
+        }
+
+        public new string ToString()
+        {
+            return base.ToString();
+        }
+
+        public new EntityEntry Update(object entity)
+        {
+            return base.Update(entity);
+        }
+
         public virtual DbSet<Usuario> Usuario { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

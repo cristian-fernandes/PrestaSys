@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
 using Unisul.PrestaSys.Entidades.Usuarios;
 using Unisul.PrestaSys.Repositorio;
 
@@ -10,11 +11,13 @@ namespace Unisul.PrestaSys.Web.Controllers
 {
     public class UsuariosController : BaseController
     {
-        private readonly PrestacaoDbContext _context;
+        private readonly IPrestaSysDbContext _context;
+        private readonly IUsuarioService _usuarioService;
 
-        public UsuariosController(PrestacaoDbContext context) : base(context)
+        public UsuariosController(IPrestaSysDbContext context, IUsuarioService usuarioService) : base(usuarioService)
         {
             _context = context;
+            _usuarioService = usuarioService;
         }
 
         // GET: Usuarios/Create

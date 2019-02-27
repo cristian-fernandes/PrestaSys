@@ -9,7 +9,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Unisul.PrestaSys.Dominio.Servicos.Prestacoes;
+using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
 using Unisul.PrestaSys.Repositorio;
+using Unisul.PrestaSys.Repositorio.Prestacoes;
+using Unisul.PrestaSys.Repositorio.Usuarios;
 
 namespace Unisul.PrestaSys.Web
 {
@@ -22,11 +26,12 @@ namespace Unisul.PrestaSys.Web
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            var cultureInfo = new CultureInfo("pt-BR");
-            cultureInfo.NumberFormat.CurrencySymbol = "R$";
+            var cultureInfo = new CultureInfo("pt-BR")
+            {
+                NumberFormat = {CurrencySymbol = "R$"}
+            };
 
             Thread.CurrentThread.CurrentCulture = cultureInfo;
             Thread.CurrentThread.CurrentUICulture = cultureInfo;
@@ -49,7 +54,6 @@ namespace Unisul.PrestaSys.Web
             });
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<CookiePolicyOptions>(options =>
@@ -77,8 +81,14 @@ namespace Unisul.PrestaSys.Web
                 options.Conventions.AllowAnonymousToPage("/Login");
             });
 
-            services.AddDbContext<PrestacaoDbContext>(options =>
+            services.AddDbContext<PrestaSysDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("PrestacaoDb")));
+
+            services.AddScoped<IPrestaSysDbContext>(provider => provider.GetService<PrestaSysDbContext>());
+            services.AddTransient<IPrestacaoRepositorio, PrestacaoRepositorio>();
+            services.AddTransient<IUsuarioRepositorio, UsuarioRepositorio>();
+            services.AddTransient<IUsuarioService, UsuarioService>();
+            services.AddTransient<IPrestacaoService, PrestacaoService>();
         }
     }
 }

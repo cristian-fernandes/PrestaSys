@@ -3,19 +3,18 @@ using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
 using Unisul.PrestaSys.Entidades.Usuarios;
-using Unisul.PrestaSys.Repositorio;
 
 namespace Unisul.PrestaSys.Web.Controllers
 {
     public class BaseController : Controller
     {
-        private readonly PrestacaoDbContext _context;
+        private readonly IUsuarioService _service;
 
-
-        public BaseController(PrestacaoDbContext context)
+        public BaseController(IUsuarioService service)
         {
-            _context = context;
+            _service = service;
         }
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
@@ -31,7 +30,6 @@ namespace Unisul.PrestaSys.Web.Controllers
                     ViewBag.Email = usuario.Email;
                     ViewBag.FlagGerenteMenu = usuario.FlagGerente;
                     ViewBag.FlagGerenteFinanceiroMenu = usuario.FlagGerenteFinanceiro;
-
                 }
                 else
                 {
@@ -47,16 +45,12 @@ namespace Unisul.PrestaSys.Web.Controllers
             }
         }
 
-        public Usuario GetLoggedUser()
+        protected Usuario GetLoggedUser()
         {
-            var listaUsuarios = _context.Usuario.Where(u => u.Email == GetClaimValueByType(ClaimTypes.Email)).ToList();
+            var usuarioLogado = _service.GetUsuarioByEmail(GetClaimValueByType(ClaimTypes.Email));
 
-            if (listaUsuarios.Count > 0)
-            {
-                var usuarioLogado = listaUsuarios.First();
-
+            if (usuarioLogado != null)
                 return usuarioLogado;
-            }
 
             RedirectToAction("Index", "Home");
             return null;

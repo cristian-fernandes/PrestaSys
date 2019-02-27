@@ -14,11 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Usuarios\" />
-    <Folder Include="Prestacoes\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Unisul.PrestaSys.Entidades\Unisul.PrestaSys.Entidades.csproj" />
   </ItemGroup>
 

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Unisul.PrestaSys.Repositorio.Migrations
 {
-    [DbContext(typeof(PrestacaoDbContext))]
+    [DbContext(typeof(PrestaSysDbContext))]
     [Migration("20190225171031_PrestacaoDB_AddedJustificativaParaAprovacao")]
     partial class PrestacaoDB_AddedJustificativaParaAprovacao
     {

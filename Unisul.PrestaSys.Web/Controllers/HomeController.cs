@@ -1,17 +1,17 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
 using Unisul.PrestaSys.Web.Models;
-using Unisul.PrestaSys.Repositorio;
 
 namespace Unisul.PrestaSys.Web.Controllers
 {
     public class HomeController : BaseController
     {
-        private readonly PrestacaoDbContext _context;
+        private readonly IUsuarioService _usuarioService;
 
-        public HomeController(PrestacaoDbContext context) : base(context)
+        public HomeController(IUsuarioService usuarioService) : base(usuarioService)
         {
-            _context = context;
+            _usuarioService = usuarioService;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

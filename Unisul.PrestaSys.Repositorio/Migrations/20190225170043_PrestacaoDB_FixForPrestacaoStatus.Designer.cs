@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Unisul.PrestaSys.Repositorio.Migrations
 {
-    [DbContext(typeof(PrestacaoDbContext))]
+    [DbContext(typeof(PrestaSysDbContext))]
     [Migration("20190225170043_PrestacaoDB_FixForPrestacaoStatus")]
     partial class PrestacaoDB_FixForPrestacaoStatus
     {

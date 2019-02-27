@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
 using Unisul.PrestaSys.Entidades.Usuarios;
 using Unisul.PrestaSys.Repositorio;
 
@@ -13,11 +14,13 @@ namespace Unisul.PrestaSys.Web.Controllers
 {
     public class LoginController : BaseController
     {
-        private readonly PrestacaoDbContext _dbContext;
+        private readonly IPrestaSysDbContext _dbContext;
+        private readonly IUsuarioService _usuarioService;
 
-        public LoginController(PrestacaoDbContext dbContext) : base(dbContext)
+        public LoginController(IPrestaSysDbContext dbContext, IUsuarioService usuarioService) : base(usuarioService)
         {
             _dbContext = dbContext;
+            _usuarioService = usuarioService;
         }
 
         public IActionResult Index()
