@@ -1,0 +1,85 @@
+@model Unisul.PrestaSys.Entidades.Prestacoes.Prestacao
+
+@{
+    ViewData["Title"] = "Aprovar Prestação de Contas";
+}
+
+<h1>Aprovar Prestação de Contas</h1>
+
+<h3>Tem certeza que deseja aprovar esta Peestação de Contas?</h3>
+
+<hr />
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Titulo)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Titulo)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Tipo)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Tipo.Tipo)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Status.Status)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Data)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Data)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ImagemComprovante)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ImagemComprovante)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Justificativa)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Justificativa)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Emitente)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(modelItem => modelItem.Emitente.Nome) @Html.DisplayFor(modelItem => modelItem.Emitente.Sobrenome)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Aprovador)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(modelItem => modelItem.Aprovador.Nome) @Html.DisplayFor(modelItem => modelItem.Aprovador.Sobrenome)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AprovadorFinanceiro)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(modelItem => modelItem.AprovadorFinanceiro.Nome) @Html.DisplayFor(modelItem => modelItem.AprovadorFinanceiro.Sobrenome)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Valor)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Valor)
+        </dd>
+    </dl>
+    
+    <form asp-action="Approve">
+        <label asp-for="JustificativaAprovacao" class="control-label"></label>
+        <textarea rows="10" asp-for="JustificativaAprovacao" class="form-control"></textarea>
+        <span asp-validation-for="JustificativaAprovacao" class="text-danger"></span>
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Aprovar Prestação" class="btn btn-success" /> |
+        <a asp-action="PrestacoesParaAprovar">Voltar para a Lista</a>
+    </form>
+</div>
