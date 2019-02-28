@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
 using Unisul.PrestaSys.Entidades.Usuarios;
+using Unisul.PrestaSys.Web.Models.Base;
 
 namespace Unisul.PrestaSys.Web.Controllers
 {
@@ -22,27 +23,36 @@ namespace Unisul.PrestaSys.Web.Controllers
             try
             {
                 if (User.Identity.IsAuthenticated)
-                {
-                    var usuario = GetLoggedUser();
+                    return;
 
-                    ViewBag.Nome = usuario.Nome;
-                    ViewBag.Sobrenome = usuario.Sobrenome;
-                    ViewBag.Email = usuario.Email;
-                    ViewBag.FlagGerenteMenu = usuario.FlagGerente;
-                    ViewBag.FlagGerenteFinanceiroMenu = usuario.FlagGerenteFinanceiro;
-                }
-                else
-                {
-                    if (filterContext.RouteData.Values["Controller"].ToString() == "Login")
-                        return;
+                if (filterContext.RouteData.Values["Controller"].ToString() == "Login")
+                    return;
 
-                    filterContext.Result = new RedirectResult(Url.Action("Index", "Login"));
-                }
+                filterContext.Result = new RedirectResult(Url.Action("Index", "Login"));
             }
             catch (Exception ex)
             {
                 Console.Write(ex);
             }
+        }
+
+        public override void OnActionExecuted(ActionExecutedContext filterContext)
+        {
+            if (User.Identity.IsAuthenticated && ViewData.Model is BaseViewModel model)
+            {
+                var usuario = GetLoggedUser();
+
+                model.UsuarioLogado = new DadosLogin
+                {
+                    Nome = usuario.Nome,
+                    Sobrenome = usuario.Sobrenome,
+                    Email = usuario.Email,
+                    FlagGerente = usuario.FlagGerente,
+                    FlagGerenteFinanceiro = usuario.FlagGerenteFinanceiro
+                };
+            }
+
+            base.OnActionExecuted(filterContext);
         }
 
         protected Usuario GetLoggedUser()

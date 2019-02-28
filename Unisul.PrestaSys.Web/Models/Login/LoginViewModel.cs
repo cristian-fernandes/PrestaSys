@@ -1,10 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using Unisul.PrestaSys.Web.Models.Base;
 
-namespace Unisul.PrestaSys.Web.Models
+namespace Unisul.PrestaSys.Web.Models.Login
 {
-    public class LoginViewModel
+    public class LoginViewModel : BaseViewModel
     {
-        [Required] [Display(Name = "E-mail")]
+        [Required]
+        [Display(Name = "E-mail")]
         public string Email { get; set; }
 
         [Required]

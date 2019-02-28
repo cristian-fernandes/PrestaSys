@@ -1,6 +1,8 @@
-namespace Unisul.PrestaSys.Web.Models
+using Unisul.PrestaSys.Web.Models.Base;
+
+namespace Unisul.PrestaSys.Web.Models.Home
 {
-    public class ErrorViewModel
+    public class ErrorViewModel : BaseViewModel
     {
         public string RequestId { get; set; }
 

@@ -5,7 +5,7 @@ using Unisul.PrestaSys.Entidades.Prestacoes;
 
 namespace Unisul.PrestaSys.Repositorio.Prestacoes
 {
-    public interface IPrestacaoRepositorio
+    public interface IPrestacaoRepository
     {
         int Create(Prestacao prestacao);
         int Delete(int id);
@@ -15,11 +15,11 @@ namespace Unisul.PrestaSys.Repositorio.Prestacoes
         int Update(Prestacao prestacao);
     }
 
-    public class PrestacaoRepositorio : IPrestacaoRepositorio
+    public class PrestacaoRepository : IPrestacaoRepository
     {
         private readonly IPrestaSysDbContext _context;
 
-        public PrestacaoRepositorio(IPrestaSysDbContext context)
+        public PrestacaoRepository(IPrestaSysDbContext context)
         {
             _context = context;
         }

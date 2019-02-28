@@ -5,7 +5,7 @@ using Unisul.PrestaSys.Entidades.Usuarios;
 
 namespace Unisul.PrestaSys.Repositorio.Usuarios
 {
-    public interface IUsuarioRepositorio
+    public interface IUsuarioRepository
     {
         int Create(Usuario usuario);
         int Delete(int id);
@@ -15,11 +15,11 @@ namespace Unisul.PrestaSys.Repositorio.Usuarios
         int Update(Usuario usuario);
     }
 
-    public class UsuarioRepositorio : IUsuarioRepositorio
+    public class UsuarioRepository : IUsuarioRepository
     {
         private readonly IPrestaSysDbContext _context;
 
-        public UsuarioRepositorio(IPrestaSysDbContext context)
+        public UsuarioRepository(IPrestaSysDbContext context)
         {
             _context = context;
         }

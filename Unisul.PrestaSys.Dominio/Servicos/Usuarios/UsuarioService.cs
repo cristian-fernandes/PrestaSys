@@ -21,65 +21,66 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Usuarios
 
     public class UsuarioService : IUsuarioService
     {
-        private readonly IUsuarioRepositorio _repositorio;
+        private readonly IUsuarioRepository _repository;
 
-        public UsuarioService(IUsuarioRepositorio repositorio)
+        public UsuarioService(IUsuarioRepository repository)
         {
-            _repositorio = repositorio;
+            _repository = repository;
         }
 
         public int Create(Usuario usuario)
         {
-            return _repositorio.Create(usuario);
+            return _repository.Create(usuario);
         }
 
         public int Delete(int id)
         {
-            return _repositorio.Delete(id);
+            return _repository.Delete(id);
         }
 
         public bool Exists(int id)
         {
-            return _repositorio.Exists(id);
+            return _repository.Exists(id);
         }
 
         public IIncludableQueryable<Usuario, Usuario> GetAll()
         {
-            return _repositorio.GetAll();
+            return _repository.GetAll();
         }
 
         public IQueryable<Usuario> GetAllGerentes()
         {
-            return _repositorio.GetAll().Where(x => x.FlagGerente);
+            return _repository.GetAll().Where(x => x.FlagGerente);
         }
 
         public IQueryable<Usuario> GetAllGerentesFinanceiros()
         {
-            return _repositorio.GetAll().Where(x => x.FlagGerenteFinanceiro);
+
+            return _repository.GetAll().Where(x => x.FlagGerenteFinanceiro);
         }
 
         public Usuario GetById(int id)
         {
-            return _repositorio.GetById(id);
+            return _repository.GetById(id);
         }
 
         public Usuario GetUsuarioByEmail(string email)
         {
-            var listaUsuarios = _repositorio.GetAll().Where(u => u.Email == email).ToList();
+            var listaUsuarios = _repository.GetAll().Where(u => u.Email == email).ToList();
 
             return listaUsuarios.Count > 0 ? listaUsuarios.First() : null;
         }
 
         public Usuario GetUsuarioByEmailAndSenha(string email, string senha)
         {
-            var listaUsuarios = _repositorio.GetAll().Where(u => u.Email == email && u.Senha == senha).ToList();
+            var listaUsuarios = _repository.GetAll().Where(u => u.Email == email && u.Senha == senha).ToList();
 
             return listaUsuarios.Count > 0 ? listaUsuarios.First() : null;
         }
 
         public int Update(Usuario usuario)
         {
-            return _repositorio.Update(usuario);
+            return _repository.Update(usuario);
         }
     }
 }

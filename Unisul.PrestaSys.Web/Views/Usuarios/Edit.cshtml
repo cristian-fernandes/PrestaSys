@@ -1,4 +1,4 @@
-@model Unisul.PrestaSys.Entidades.Usuarios.Usuario
+@model Unisul.PrestaSys.Web.Models.Usuarios.UsuarioViewModel
 
 @{
     ViewData["Title"] = "Editar Usuário";
@@ -45,12 +45,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="GerenteId" class="control-label"></label>
-                <select asp-for="GerenteId" class="form-control" asp-items="ViewBag.GerenteId"></select>
+                <select asp-for="GerenteId" class="form-control" asp-items="Model.GerenteSelectList"></select>
                 <span asp-validation-for="GerenteId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="GerenteFinanceiroId" class="control-label"></label>
-                <select asp-for="GerenteFinanceiroId" class="form-control" asp-items="ViewBag.GerenteFinanceiroId"></select>
+                <select asp-for="GerenteFinanceiroId" class="form-control" asp-items="Model.GerenteFinanceiroSelectList"></select>
                 <span asp-validation-for="GerenteFinanceiroId" class="text-danger"></span>
             </div>
             <div class="form-group">

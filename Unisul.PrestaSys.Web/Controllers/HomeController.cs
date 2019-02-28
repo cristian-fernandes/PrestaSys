@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
-using Unisul.PrestaSys.Web.Models;
+using Unisul.PrestaSys.Web.Models.Home;
 
 namespace Unisul.PrestaSys.Web.Controllers
 {

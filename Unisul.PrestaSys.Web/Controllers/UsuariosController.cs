@@ -1,179 +1,130 @@
+using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Unisul.PrestaSys.Comum;
 using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
 using Unisul.PrestaSys.Entidades.Usuarios;
-using Unisul.PrestaSys.Repositorio;
+using Unisul.PrestaSys.Web.Models.Usuarios;
 
 namespace Unisul.PrestaSys.Web.Controllers
 {
     public class UsuariosController : BaseController
     {
-        private readonly IPrestaSysDbContext _context;
         private readonly IUsuarioService _usuarioService;
+        private readonly IMapper _mapper;
 
-        public UsuariosController(IPrestaSysDbContext context, IUsuarioService usuarioService) : base(usuarioService)
+        public UsuariosController(IUsuarioService usuarioService, IMapper mapper) : base(usuarioService)
         {
-            _context = context;
             _usuarioService = usuarioService;
+            _mapper = mapper;
         }
 
         // GET: Usuarios/Create
         public IActionResult Create()
         {
-            var gerentes = _context.Usuario
-                .Where(x => x.FlagGerente)
-                .Select(x => new
-                {
-                    x.Id,
-                    NomeCompleto = x.Nome + " " + x.Sobrenome.ToString()
-                });
+            var usuarioViewModel = new UsuarioViewModel
+            {
+                GerenteSelectList = GetAllGerentesSelectList(),
+                GerenteFinanceiroSelectList = GetAllGerentesFinanceirosSelectList()
+            };
 
-            var gerentesFinanceiros = _context.Usuario
-                .Where(x => x.FlagGerenteFinanceiro)
-                .Select(x => new
-                {
-                    x.Id,
-                    NomeCompleto = x.Nome + " " + x.Sobrenome.ToString()
-                });
-
-
-            ViewData["GerenteId"] = new SelectList(gerentes, "Id", "NomeCompleto");
-            ViewData["GerenteFinanceiroId"] = new SelectList(gerentesFinanceiros, "Id", "NomeCompleto");
-            return View();
+            return View(usuarioViewModel);
         }
 
         // POST: Usuarios/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(
-            [Bind("Nome,Sobrenome,Email,Senha,FlagGerente,FlagGerenteFinanceiro,GerenteId,GerenteFinanceiroId")]
-            Usuario usuario)
+        public IActionResult Create(UsuarioViewModel usuarioViewModel)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(usuario);
-                await _context.SaveChangesAsync();
+                _usuarioService.Create(_mapper.Map<Usuario>(usuarioViewModel));
                 return RedirectToAction(nameof(Index));
             }
 
-            var gerentes = _context.Usuario
-                .Where(x => x.FlagGerente)
-                .Select(x => new
-                {
-                    x.Id,
-                    NomeCompleto = x.Nome + " " + x.Sobrenome.ToString()
-                });
+            usuarioViewModel.GerenteSelectList = GetAllGerentesSelectList();
+            usuarioViewModel.GerenteFinanceiroSelectList = GetAllGerentesFinanceirosSelectList();
 
-            var gerentesFinanceiros = _context.Usuario
-                .Where(x => x.FlagGerenteFinanceiro)
-                .Select(x => new
-                {
-                    x.Id,
-                    NomeCompleto = x.Nome + " " + x.Sobrenome.ToString()
-                });
-
-            ViewData["GerenteId"] = new SelectList(gerentes, "Id", "NomeCompleto");
-            ViewData["GerenteFinanceiroId"] = new SelectList(gerentesFinanceiros, "Id", "NomeCompleto");
-
-            return View(usuario);
+            return View(usuarioViewModel);
         }
 
         // GET: Usuarios/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+                return NotFound();
 
-            var usuario = await _context.Usuario
-                .Include(u => u.Gerente)
-                .Include(u => u.GerenteFinanceiro)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (usuario == null) return NotFound();
+            var usuario = _usuarioService.GetById(id.Value);
 
-            return View(usuario);
+            if (usuario == null)
+                return NotFound();
+
+            return View(_mapper.Map<UsuarioViewModel>(usuario));
         }
 
         // POST: Usuarios/Delete/5
         [HttpPost]
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            var usuario = await _context.Usuario.FindAsync(id);
-            _context.Usuario.Remove(usuario);
-            await _context.SaveChangesAsync();
+            _usuarioService.Delete(id);
             return RedirectToAction(nameof(Index));
         }
 
         // GET: Usuarios/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int? id)
         {
             if (id == null)
                 return NotFound();
 
-            var usuario = await _context.Usuario
-                .Include(u => u.Gerente)
-                .Include(u => u.GerenteFinanceiro)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (usuario == null) return NotFound();
+            var usuario = _usuarioService.GetById(id.Value);
 
-            return View(usuario);
+            if (usuario == null)
+                return NotFound();
+
+            return View(_mapper.Map<UsuarioViewModel>(usuario));
         }
 
         // GET: Usuarios/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+                return NotFound();
 
-            var usuario = await _context.Usuario.FindAsync(id);
-            if (usuario == null) return NotFound();
+            var usuario = _usuarioService.GetById(id.Value);
 
-            var gerentes = _context.Usuario
-                .Where(x => x.FlagGerente)
-                .Select(x => new
-                {
-                    x.Id,
-                    NomeCompleto = x.Nome + " " + x.Sobrenome.ToString()
-                });
+            if (usuario == null)
+                return NotFound();
 
-            var gerentesFinanceiros = _context.Usuario
-                .Where(x => x.FlagGerenteFinanceiro)
-                .Select(x => new
-                {
-                    x.Id,
-                    NomeCompleto = x.Nome + " " + x.Sobrenome.ToString()
-                });
+            var usuarioViewModel = _mapper.Map<UsuarioViewModel>(usuario);
 
-            ViewData["GerenteId"] = new SelectList(gerentes, "Id", "NomeCompleto");
-            ViewData["GerenteFinanceiroId"] = new SelectList(gerentesFinanceiros, "Id", "NomeCompleto");
-            return View(usuario);
+            usuarioViewModel.GerenteSelectList = GetAllGerentesSelectList();
+            usuarioViewModel.GerenteFinanceiroSelectList = GetAllGerentesFinanceirosSelectList();
+
+            return View(usuarioViewModel);
         }
 
         // POST: Usuarios/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id,
-            [Bind("Id,Nome,Sobrenome,Email,Senha,FlagGerente,FlagGerenteFinanceiro,GerenteId,GerenteFinanceiroId")]
-            Usuario usuario)
+        public IActionResult Edit(int id, UsuarioViewModel usuarioViewModel)
         {
-            if (id != usuario.Id) return NotFound();
+            if (id != usuarioViewModel.Id)
+                return NotFound();
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(usuario);
-                    await _context.SaveChangesAsync();
+                    _usuarioService.Update(_mapper.Map<Usuario>(usuarioViewModel));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UsuarioExists(usuario.Id))
+                    if (!_usuarioService.Exists(usuarioViewModel.Id))
                         return NotFound();
                     throw;
                 }
@@ -181,43 +132,52 @@ namespace Unisul.PrestaSys.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var gerentes = _context.Usuario
-                .Where(x => x.FlagGerente)
-                .Select(x => new
-                {
-                    x.Id,
-                    NomeCompleto = x.Nome + " " + x.Sobrenome.ToString()
-                });
+            usuarioViewModel.GerenteSelectList = GetAllGerentesSelectList();
+            usuarioViewModel.GerenteFinanceiroSelectList = GetAllGerentesFinanceirosSelectList();
 
-            var gerentesFinanceiros = _context.Usuario
-                .Where(x => x.FlagGerenteFinanceiro)
-                .Select(x => new
-                {
-                    x.Id,
-                    NomeCompleto = x.Nome + " " + x.Sobrenome.ToString()
-                });
-
-            ViewData["GerenteId"] = new SelectList(gerentes, "Id", "NomeCompleto");
-            ViewData["GerenteFinanceiroId"] = new SelectList(gerentesFinanceiros, "Id", "NomeCompleto");
-
-            return View(usuario);
+            return View(usuarioViewModel);
         }
 
         // GET: Usuarios
-        public async Task<IActionResult> Index(int p = 1, int s = 8)
+        public IActionResult Index(int page = 1)
         {
-            var usuarios = _context.Usuario.Include(u => u.Gerente).Include(u => u.GerenteFinanceiro)
-                .OrderBy(u => u.Nome).Skip((p - 1) * s).Take(s);
+            var todosUsuarios = _usuarioService.GetAll();
 
-            ViewBag.TotalRecords = _context.Usuario.Count();
-            ViewBag.PageNumber = p;
+            var usuariosLista = todosUsuarios
+                .OrderBy(u => u.Nome)
+                .Skip((page - 1) * Constants.PAGE_SIZE)
+                .Take(Constants.PAGE_SIZE);
 
-            return View(await usuarios.ToListAsync());
+            var usuariosListViewModel = new UsuarioListViewModel
+            {
+                PageNumber = page,
+                TotalRecords = todosUsuarios.Count(),
+                UsuariosList = _mapper.Map<List<Usuario>, List<UsuarioViewModel>>(usuariosLista.ToList())
+            };
+
+            return View(usuariosListViewModel);
         }
 
-        private bool UsuarioExists(int id)
+        private SelectList GetAllGerentesSelectList()
         {
-            return _context.Usuario.Any(e => e.Id == id);
+            var gerentes = _usuarioService.GetAllGerentes().Select(x => new
+            {
+                x.Id,
+                NomeCompleto = x.Nome + " " + x.Sobrenome.ToString()
+            });
+
+            return new SelectList(gerentes, "Id", "NomeCompleto");
+        }
+
+        private SelectList GetAllGerentesFinanceirosSelectList()
+        {
+            var gerentesFinanceiros = _usuarioService.GetAllGerentesFinanceiros().Select(x => new
+            {
+                x.Id,
+                NomeCompleto = x.Nome + " " + x.Sobrenome.ToString()
+            });
+
+            return new SelectList(gerentesFinanceiros, "Id", "NomeCompleto");
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Unisul.PrestaSys.Entidades.Usuarios
             InverseGerenteFinanceiro = new HashSet<Usuario>();
             PrestacaoAprovador = new HashSet<Prestacao>();
             PrestacaoAprovadorFinanceiro = new HashSet<Prestacao>();
-            PrestacaoEmitente = new HashSet<Prestacoes.Prestacao>();
+            PrestacaoEmitente = new HashSet<Prestacao>();
         }
 
         [Display(Name = "E-mail")]
@@ -53,6 +53,5 @@ namespace Unisul.PrestaSys.Entidades.Usuarios
         public string Senha { get; set; }
 
         public string Sobrenome { get; set; }
-
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Threading;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -63,6 +64,7 @@ namespace Unisul.PrestaSys.Web
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddAutoMapper();
 
             services.AddAuthentication(options =>
             {
@@ -85,10 +87,12 @@ namespace Unisul.PrestaSys.Web
                 options.UseSqlServer(Configuration.GetConnectionString("PrestacaoDb")));
 
             services.AddScoped<IPrestaSysDbContext>(provider => provider.GetService<PrestaSysDbContext>());
-            services.AddTransient<IPrestacaoRepositorio, PrestacaoRepositorio>();
-            services.AddTransient<IUsuarioRepositorio, UsuarioRepositorio>();
+            services.AddTransient<IPrestacaoRepository, PrestacaoRepository>();
+            services.AddTransient<IUsuarioRepository, UsuarioRepository>();
             services.AddTransient<IUsuarioService, UsuarioService>();
             services.AddTransient<IPrestacaoService, PrestacaoService>();
+
+
         }
     }
 }

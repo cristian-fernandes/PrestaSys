@@ -1,43 +1,40 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
 using Unisul.PrestaSys.Entidades.Usuarios;
-using Unisul.PrestaSys.Repositorio;
+using Unisul.PrestaSys.Web.Models.Login;
 
 namespace Unisul.PrestaSys.Web.Controllers
 {
     public class LoginController : BaseController
     {
-        private readonly IPrestaSysDbContext _dbContext;
         private readonly IUsuarioService _usuarioService;
 
-        public LoginController(IPrestaSysDbContext dbContext, IUsuarioService usuarioService) : base(usuarioService)
+        public LoginController(IUsuarioService usuarioService) : base(usuarioService)
         {
-            _dbContext = dbContext;
             _usuarioService = usuarioService;
         }
 
         public IActionResult Index()
         {
-            return View();
+            return View(new LoginViewModel());
         }
 
         public IActionResult About()
         {
-            return View();
+            return View(new LoginViewModel());
         }
 
         public IActionResult Privacy()
         {
-            return View();
+            return View(new LoginViewModel());
         }
 
-        public async Task<IActionResult> Login(string email, string senha)
+        public IActionResult Login(string email, string senha)
         {
             try
             {
@@ -47,7 +44,7 @@ namespace Unisul.PrestaSys.Web.Controllers
 
                     if (usuario != null)
                     {
-                        await LogarUsuario(usuario, false);
+                         LogarUsuario(usuario, false);
 
                         return RedirectToAction("Index", "Prestacoes");
                     }
@@ -63,13 +60,13 @@ namespace Unisul.PrestaSys.Web.Controllers
             return View("Index");
         }
 
-        public async Task<IActionResult> Logoff()
+        public IActionResult Logoff()
         {
             try
             {
                 var authenticationManager = Request.HttpContext;
 
-                await authenticationManager.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                 authenticationManager.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             }
             catch (Exception ex)
             {
@@ -79,7 +76,7 @@ namespace Unisul.PrestaSys.Web.Controllers
             return View("Index");
         }
 
-        private async Task LogarUsuario(Usuario loginUsuario, bool isPersistent)
+        private void LogarUsuario(Usuario loginUsuario, bool isPersistent)
         {
             var claims = new List<Claim>();
 
@@ -91,7 +88,7 @@ namespace Unisul.PrestaSys.Web.Controllers
                 var claimPrincipal = new ClaimsPrincipal(claimIdenties);
                 var authenticationManager = Request.HttpContext;
 
-                await authenticationManager.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                 authenticationManager.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                     claimPrincipal, new AuthenticationProperties {IsPersistent = isPersistent});
             }
             catch (Exception ex)
