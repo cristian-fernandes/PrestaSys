@@ -19,6 +19,7 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
         Prestacao GetById(int id);
         int RejeitarPrestacao(int prestacaoId, string justificativa, PrestacaoStatusEnum tipoAprovacao);
         int Update(Prestacao usuario);
+        IQueryable<PrestacaoTipo> GetAllPrestacaoTipos();
     }
 
     public class PrestacaoService : IPrestacaoService
@@ -138,6 +139,11 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
         public int Update(Prestacao usuario)
         {
             return _repository.Update(usuario);
+        }
+
+        public IQueryable<PrestacaoTipo> GetAllPrestacaoTipos()
+        {
+            return _repository.GetAllPrestacaoTipos();
         }
     }
 }

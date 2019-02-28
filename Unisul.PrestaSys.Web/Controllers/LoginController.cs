@@ -21,7 +21,7 @@ namespace Unisul.PrestaSys.Web.Controllers
 
         public IActionResult Index()
         {
-            return View(new LoginViewModel());
+            return View();
         }
 
         public IActionResult About()

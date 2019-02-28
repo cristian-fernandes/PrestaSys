@@ -1,11 +1,16 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
 using Unisul.PrestaSys.Repositorio;
 using Unisul.PrestaSys.Comum;
+using Unisul.PrestaSys.Dominio.Servicos.Prestacoes;
+using Unisul.PrestaSys.Entidades.Prestacoes;
+using Unisul.PrestaSys.Web.Models.Prestacoes;
 
 namespace Unisul.PrestaSys.Web.Controllers
 {
@@ -13,49 +18,50 @@ namespace Unisul.PrestaSys.Web.Controllers
     {
         private readonly IPrestaSysDbContext _context;
         private readonly IUsuarioService _usuarioService;
+        private readonly IPrestacaoService _prestacaoService;
+        private readonly IMapper _mapper;
 
-        public PrestacoesController(IPrestaSysDbContext context, IUsuarioService usuarioService) : base(usuarioService)
+        public PrestacoesController(IPrestaSysDbContext context, IUsuarioService usuarioService, IPrestacaoService prestacaoService, IMapper mapper) : base(usuarioService)
         {
             _context = context;
             _usuarioService = usuarioService;
+            _prestacaoService = prestacaoService;
+            _mapper = mapper;
         }
 
         // GET: Prestacoes
-        public async Task<IActionResult> Index(int p = 1, int s = 8)
+        public IActionResult Index(int page = 1)
         {
-            var prestacaoDbContext = _context.Prestacao.Where(pr => pr.EmitenteId == GetLoggedUser().Id)
-                .Include(pr => pr.Aprovador).Include(pr => pr.AprovadorFinanceiro).Include(pr => pr.Emitente)
-                .Include(pr => pr.Status).Include(pr => pr.Tipo)
-                .OrderByDescending(pr => pr.Data).Skip((p - 1) * s).Take(s);
+            var todasPrestacoes = _prestacaoService.GetAllByEmitenteId(GetLoggedUser().Id);
 
-            ViewBag.TotalRecords = _context.Prestacao.Count(pr => pr.EmitenteId == GetLoggedUser().Id);
-            ViewBag.PageNumber = p;
+            var prestacoesLista = todasPrestacoes.OrderByDescending(pr => pr.Data)
+                .Skip((page - 1) * Constants.PAGE_SIZE).Take(Constants.PAGE_SIZE);
 
-            return View(await prestacaoDbContext.ToListAsync());
+            var prestacoesListViewModel = new PrestacaoListViewModel
+            {
+                PageNumber = page,
+                TotalRecords = todasPrestacoes.Count(),
+                PrestacoesList = _mapper.Map<List<Prestacao>, List<PrestacaoViewModel>>(prestacoesLista.ToList())
+            };
+
+            return View(prestacoesListViewModel);
         }
 
         // GET: Prestacoes/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int? id)
         {
             if (id == null)
                 return NotFound();
 
+            //TODO Pegar somente as prestações que tem a ver com o usuário
             var usuarioLogado = GetLoggedUser();
 
-            var prestacao = await _context.Prestacao.Where(p =>
-                    p.EmitenteId == usuarioLogado.Id || p.AprovadorFinanceiroId == usuarioLogado.Id ||
-                    p.AprovadorId == usuarioLogado.Id)
-                .Include(p => p.Aprovador)
-                .Include(p => p.AprovadorFinanceiro)
-                .Include(p => p.Emitente)
-                .Include(p => p.Status)
-                .Include(p => p.Tipo)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var prestacao = _prestacaoService.GetById(id.Value);
 
             if (prestacao == null)
                 return NotFound();
 
-            return View(prestacao);
+            return View(_mapper.Map<PrestacaoViewModel>(prestacao));
         }
 
         // GET: Prestacoes/Create
@@ -63,48 +69,47 @@ namespace Unisul.PrestaSys.Web.Controllers
         {
             var usuarioLogado = GetLoggedUser();
 
-            ViewData["AprovadorId"] = usuarioLogado.GerenteId;
-            ViewData["AprovadorFinanceiroId"] = usuarioLogado.GerenteFinanceiroId;
-            ViewData["EmitenteId"] = usuarioLogado.Id;
-            ViewData["StatusId"] = (int)PrestacaoStatusEnum.EmAprovacaoOperacional;
-            ViewData["TipoId"] = new SelectList(_context.PrestacaoTipo, "Id", "Tipo");
+            var prestacaoViewModel = new PrestacaoViewModel
+            {
+                AprovadorId = usuarioLogado.GerenteId,
+                AprovadorFinanceiroId = usuarioLogado.GerenteFinanceiroId,
+                EmitenteId = usuarioLogado.Id,
+                StatusId = (int) PrestacaoStatusEnum.EmAprovacaoOperacional,
+                TipoPrestacaoSelectList = GetAllPrestacoesSelectList()
+            };
 
-            return View();
+            return View(prestacaoViewModel);
         }
 
         // POST: Prestacoes/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(
-            [Bind(
-                "AprovadorFinanceiroId,AprovadorId,Data,EmitenteId,ImagemComprovante,Justificativa,StatusId,TipoId,Titulo,Valor")]
-            Entidades.Prestacoes.Prestacao prestacao)
+        public IActionResult Create(PrestacaoViewModel prestacaoViewModel)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(prestacao);
-                await _context.SaveChangesAsync();
+                _prestacaoService.Create(_mapper.Map<Prestacao>(prestacaoViewModel));
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["AprovadorId"] = new SelectList(_context.Usuario, "Id", "Email", prestacao.AprovadorId);
-            ViewData["AprovadorFinanceiroId"] =
-                new SelectList(_context.Usuario, "Id", "Email", prestacao.AprovadorFinanceiroId);
-            ViewData["EmitenteId"] = new SelectList(_context.Usuario, "Id", "Email", prestacao.EmitenteId);
-            ViewData["StatusId"] = new SelectList(_context.PrestacaoStatus, "Id", "Status", prestacao.StatusId);
-            ViewData["TipoId"] = new SelectList(_context.PrestacaoTipo, "Id", "Tipo", prestacao.TipoId);
-            return View(prestacao);
+            var usuarioLogado = GetLoggedUser();
+
+            prestacaoViewModel.AprovadorId = usuarioLogado.GerenteId;
+            prestacaoViewModel.AprovadorFinanceiroId = usuarioLogado.GerenteFinanceiroId;
+            prestacaoViewModel.EmitenteId = usuarioLogado.Id;
+            prestacaoViewModel.StatusId = (int) PrestacaoStatusEnum.EmAprovacaoOperacional;
+            prestacaoViewModel.TipoPrestacaoSelectList = GetAllPrestacoesSelectList(prestacaoViewModel.TipoId);
+
+            return View(prestacaoViewModel);
         }
 
         // GET: Prestacoes/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             if (id == null)
                 return NotFound();
 
-            var prestacao = await _context.Prestacao.FindAsync(id);
+            var prestacao = _prestacaoService.GetById(id.Value);
 
             if (prestacao == null)
                 return NotFound();
@@ -114,13 +119,16 @@ namespace Unisul.PrestaSys.Web.Controllers
             if (prestacao.EmitenteId != usuarioLogado.Id)
                 return Forbid();
 
-            ViewData["AprovadorId"] = usuarioLogado.GerenteId;
-            ViewData["AprovadorFinanceiroId"] = usuarioLogado.GerenteFinanceiroId;
-            ViewData["EmitenteId"] = usuarioLogado.Id;
-            ViewData["StatusId"] = (int)PrestacaoStatusEnum.EmAprovacaoOperacional;
-            ViewData["TipoId"] = new SelectList(_context.PrestacaoTipo, "Id", "Tipo");
+            var prestacaoViewModel = new PrestacaoViewModel
+            {
+                AprovadorId = usuarioLogado.GerenteId,
+                AprovadorFinanceiroId = usuarioLogado.GerenteFinanceiroId,
+                EmitenteId = usuarioLogado.Id,
+                StatusId = (int)PrestacaoStatusEnum.EmAprovacaoOperacional,
+                TipoPrestacaoSelectList = GetAllPrestacoesSelectList(prestacao.TipoId)
+            };
 
-            return View(prestacao);
+            return View(prestacaoViewModel);
         }
 
         // POST: Prestacoes/Edit/5
@@ -350,6 +358,16 @@ namespace Unisul.PrestaSys.Web.Controllers
             _context.Update(prestacao);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(PrestacoesParaAprovar));
+        }
+
+        private SelectList GetAllPrestacoesSelectList()
+        {
+            return new SelectList(_prestacaoService.GetAllPrestacaoTipos(), "Id", "Tipo");
+        }
+
+        private SelectList GetAllPrestacoesSelectList(int tipoId)
+        {
+            return new SelectList(_prestacaoService.GetAllPrestacaoTipos(), "Id", "Tipo", tipoId);
         }
     }
 }

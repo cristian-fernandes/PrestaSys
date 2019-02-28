@@ -31,10 +31,10 @@ namespace Unisul.PrestaSys.Entidades.Usuarios
         public Usuario GerenteFinanceiro { get; set; }
 
         [Display(Name = "Gerente Financeiro")]
-        public int? GerenteFinanceiroId { get; set; }
+        public int GerenteFinanceiroId { get; set; }
 
         [Display(Name = "Gerente")]
-        public int? GerenteId { get; set; }
+        public int GerenteId { get; set; }
 
         public int Id { get; set; }
 

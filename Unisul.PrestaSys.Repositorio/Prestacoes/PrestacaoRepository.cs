@@ -13,6 +13,7 @@ namespace Unisul.PrestaSys.Repositorio.Prestacoes
         IIncludableQueryable<Prestacao, PrestacaoTipo> GetAll();
         Prestacao GetById(int id);
         int Update(Prestacao prestacao);
+        IQueryable<PrestacaoTipo> GetAllPrestacaoTipos();
     }
 
     public class PrestacaoRepository : IPrestacaoRepository
@@ -66,6 +67,11 @@ namespace Unisul.PrestaSys.Repositorio.Prestacoes
         {
             _context.Update(prestacao);
             return _context.SaveChanges();
+        }
+
+        public IQueryable<PrestacaoTipo> GetAllPrestacaoTipos()
+        {
+            return _context.PrestacaoTipo;
         }
     }
 }

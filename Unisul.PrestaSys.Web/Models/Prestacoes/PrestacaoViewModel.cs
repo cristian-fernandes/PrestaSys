@@ -1,5 +1,8 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Unisul.PrestaSys.Entidades.Prestacoes;
+using Unisul.PrestaSys.Entidades.Usuarios;
 using Unisul.PrestaSys.Web.Models.Base;
 
 namespace Unisul.PrestaSys.Web.Models.Prestacoes
@@ -36,10 +39,22 @@ namespace Unisul.PrestaSys.Web.Models.Prestacoes
         [Display(Name = "Tipo")]
         public int TipoId { get; set; }
 
+        public PrestacaoStatus Status { get; set; }
+
+        public PrestacaoTipo Tipo { get; set; }
+
         [Display(Name = "Título da Prestação")]
         public string Titulo { get; set; }
 
         [DataType(DataType.Currency)]
         public decimal Valor { get; set; }
+
+        public Usuario Aprovador { get; set; }
+
+        public Usuario AprovadorFinanceiro { get; set; }
+
+        public Usuario Emitente { get; set; }
+
+        public SelectList TipoPrestacaoSelectList { get; set; }
     }
 }

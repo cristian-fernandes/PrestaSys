@@ -1,4 +1,4 @@
-@model IEnumerable<Unisul.PrestaSys.Entidades.Prestacoes.Prestacao>
+@model Unisul.PrestaSys.Web.Models.Prestacoes.PrestacaoListViewModel
 
 @{
     ViewData["Title"] = "Lista de Prestações de Contas";
@@ -15,49 +15,49 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Titulo)
+                @Html.DisplayNameFor(model => model.PrestacoesList.First().Titulo)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Tipo)
+                @Html.DisplayNameFor(model => model.PrestacoesList.First().Tipo)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Status)
+                @Html.DisplayNameFor(model => model.PrestacoesList.First().Status)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Data)
+                @Html.DisplayNameFor(model => model.PrestacoesList.First().Data)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Valor)
+                @Html.DisplayNameFor(model => model.PrestacoesList.First().Valor)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.PrestacoesList)
         {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Titulo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Tipo.Tipo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Data)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Valor)
-            </td>
-            <td style="text-align:center">
-                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary">Editar</a> |
-                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary">Detalhes</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">Excluir</a>
-            </td>
-        </tr>
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Titulo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Tipo.Tipo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status.Status)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Data)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Valor)
+                </td>
+                <td style="text-align:center">
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary">Editar</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary">Detalhes</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">Excluir</a>
+                </td>
+            </tr>
         }
     </tbody>
 </table>
-<paging class-paging-control="pagination float-right" total-records="@ViewBag.TotalRecords" page-no="@ViewBag.PageNumber" page-size="8"></paging>
+<paging class-paging-control="pagination float-right" total-records="@Model.TotalRecords" page-no="@Model.PageNumber" page-size="8"></paging>
