@@ -32,31 +32,3 @@ function Download() {
     a.click();
     window.URL.revokeObjectURL(url);
 }
-
-$('#Data').datepicker({
-    uiLibrary: 'bootstrap4',
-    format: 'dd/mm/yyyy'
-});
-
-$('input[type="date"]').attr('type', 'text');
-
-$(function () {
-    $('#Valor').maskMoney({ prefix: 'R$ ', allowNegative: false, thousands: '.', decimal: ',', affixesStay: false });
-});
-
-$('a[href="' + this.location.pathname + '"]').parents('li,ul').addClass('active');
-
-$.validator.methods.range = function (value, element, param) {
-    var globalizedValue = value.replace(",", ".");
-    return this.optional(element) || (globalizedValue >= param[0] && globalizedValue <= param[1]);
-}
-
-$.validator.methods.number = function (value, element) {
-    return this.optional(element) || /-?(?:\d+|\d{1,3}(?:[\s\.,]\d{3})+)(?:[\.,]\d+)?$/.test(value);
-}
-
-//Date dd/MM/yyyy
-$.validator.methods.date = function (value, element) {
-    var date = value.split("/");
-    return this.optional(element) || !/Invalid|NaN/.test(new Date(date[2], date[1], date[0]).toString());
-}

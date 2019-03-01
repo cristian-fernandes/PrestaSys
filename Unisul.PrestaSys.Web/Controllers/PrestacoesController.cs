@@ -97,13 +97,13 @@ namespace Unisul.PrestaSys.Web.Controllers
         // POST: Prestacoes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(PrestacaoViewModel prestacaoViewModel, IFormFile imagemComprovante)
+        public IActionResult Create(PrestacaoViewModel prestacaoViewModel)
         {
             if (ModelState.IsValid)
             {
                 var prestacao = _mapper.Map<Prestacao>(prestacaoViewModel);
-                prestacao.ImagemComprovante = GetImageBytes(imagemComprovante);
-                _prestacaoService.Create(prestacao);
+                prestacao.ImagemComprovante = GetImageBytes(prestacaoViewModel.ImagemComprovante);
+                _prestacaoService.Update(prestacao);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -130,7 +130,9 @@ namespace Unisul.PrestaSys.Web.Controllers
                 return NotFound();
 
             var prestacaoViewModel = _mapper.Map<PrestacaoViewModel>(prestacao);
-            prestacaoViewModel.ImagemComprovanteSrc =
+
+            if (prestacao.ImagemComprovante != null)
+                prestacaoViewModel.ImagemComprovanteSrc =
                 "data:image;base64," + Convert.ToBase64String(prestacao.ImagemComprovante);
 
             return View(prestacaoViewModel);
@@ -158,7 +160,9 @@ namespace Unisul.PrestaSys.Web.Controllers
                 return NotFound();
 
             var prestacaoViewModel = _mapper.Map<PrestacaoViewModel>(prestacao);
-            prestacaoViewModel.ImagemComprovanteSrc =
+
+            if (prestacao.ImagemComprovante != null)
+                prestacaoViewModel.ImagemComprovanteSrc =
                 "data:image;base64," + Convert.ToBase64String(prestacao.ImagemComprovante);
 
             return View(prestacaoViewModel);
