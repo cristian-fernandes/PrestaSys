@@ -9,6 +9,7 @@ using Unisul.PrestaSys.Dominio.Servicos.Prestacoes;
 using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
 using Unisul.PrestaSys.Entidades.Prestacoes;
 using Unisul.PrestaSys.Web.Models.Prestacoes;
+using Unisul.PrestaSys.Web.Models.Usuarios;
 
 namespace Unisul.PrestaSys.Web.Controllers
 {
@@ -166,14 +167,13 @@ namespace Unisul.PrestaSys.Web.Controllers
             if (prestacao.EmitenteId != usuarioLogado.Id)
                 return Forbid();
 
-            var prestacaoViewModel = new PrestacaoViewModel
-            {
-                AprovadorId = usuarioLogado.GerenteId,
-                AprovadorFinanceiroId = usuarioLogado.GerenteFinanceiroId,
-                EmitenteId = usuarioLogado.Id,
-                StatusId = (int) PrestacaoStatusEnum.EmAprovacaoOperacional,
-                TipoPrestacaoSelectList = GetAllPrestacoesSelectList(prestacao.TipoId)
-            };
+            var prestacaoViewModel = _mapper.Map<PrestacaoViewModel>(prestacao);
+
+            prestacaoViewModel.AprovadorId = usuarioLogado.GerenteId;
+            prestacaoViewModel.AprovadorFinanceiroId = usuarioLogado.GerenteFinanceiroId;
+            prestacaoViewModel.EmitenteId = usuarioLogado.Id;
+            prestacaoViewModel.StatusId = (int) PrestacaoStatusEnum.EmAprovacaoOperacional;
+            prestacaoViewModel.TipoPrestacaoSelectList = GetAllPrestacoesSelectList(prestacaoViewModel.TipoId);
 
             return View(prestacaoViewModel);
         }
