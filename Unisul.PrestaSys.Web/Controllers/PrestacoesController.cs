@@ -1,6 +1,10 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Mime;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +13,6 @@ using Unisul.PrestaSys.Dominio.Servicos.Prestacoes;
 using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
 using Unisul.PrestaSys.Entidades.Prestacoes;
 using Unisul.PrestaSys.Web.Models.Prestacoes;
-using Unisul.PrestaSys.Web.Models.Usuarios;
 
 namespace Unisul.PrestaSys.Web.Controllers
 {
@@ -94,11 +97,13 @@ namespace Unisul.PrestaSys.Web.Controllers
         // POST: Prestacoes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(PrestacaoViewModel prestacaoViewModel)
+        public IActionResult Create(PrestacaoViewModel prestacaoViewModel, IFormFile imagemComprovante)
         {
             if (ModelState.IsValid)
             {
-                _prestacaoService.Create(_mapper.Map<Prestacao>(prestacaoViewModel));
+                var prestacao = _mapper.Map<Prestacao>(prestacaoViewModel);
+                prestacao.ImagemComprovante = GetImageBytes(imagemComprovante);
+                _prestacaoService.Create(prestacao);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -124,7 +129,11 @@ namespace Unisul.PrestaSys.Web.Controllers
             if (prestacao == null)
                 return NotFound();
 
-            return View(_mapper.Map<PrestacaoViewModel>(prestacao));
+            var prestacaoViewModel = _mapper.Map<PrestacaoViewModel>(prestacao);
+            prestacaoViewModel.ImagemComprovanteSrc =
+                "data:image;base64," + Convert.ToBase64String(prestacao.ImagemComprovante);
+
+            return View(prestacaoViewModel);
         }
 
         // POST: Prestacoes/Delete/5
@@ -148,7 +157,11 @@ namespace Unisul.PrestaSys.Web.Controllers
             if (prestacao == null)
                 return NotFound();
 
-            return View(_mapper.Map<PrestacaoViewModel>(prestacao));
+            var prestacaoViewModel = _mapper.Map<PrestacaoViewModel>(prestacao);
+            prestacaoViewModel.ImagemComprovanteSrc =
+                "data:image;base64," + Convert.ToBase64String(prestacao.ImagemComprovante);
+
+            return View(prestacaoViewModel);
         }
 
         // GET: Prestacoes/Edit/5
@@ -190,7 +203,9 @@ namespace Unisul.PrestaSys.Web.Controllers
             {
                 try
                 {
-                    _prestacaoService.Update(_mapper.Map<Prestacao>(prestacaoViewModel));
+                    var prestacao = _mapper.Map<Prestacao>(prestacaoViewModel);
+                    prestacao.ImagemComprovante = GetImageBytes(prestacaoViewModel.ImagemComprovante);
+                    _prestacaoService.Update(prestacao);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -324,6 +339,26 @@ namespace Unisul.PrestaSys.Web.Controllers
         private SelectList GetAllPrestacoesSelectList(int tipoId)
         {
             return new SelectList(_prestacaoService.GetAllPrestacaoTipos(), "Id", "Tipo", tipoId);
+        }
+
+        private static byte[] GetImageBytes(IFormFile image)
+        {
+            if (image == null)
+                return null;
+
+            if (image.Length <= 0)
+                return null;
+
+            byte[] imageByte;
+
+            using (var readStream = image.OpenReadStream())
+            using (var memoryStream = new MemoryStream())
+            {
+                readStream.CopyTo(memoryStream);
+                imageByte = memoryStream.ToArray();
+            }
+
+            return imageByte;
         }
     }
 }

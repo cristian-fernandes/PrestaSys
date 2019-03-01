@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Unisul.PrestaSys.Entidades.Prestacoes;
 using Unisul.PrestaSys.Entidades.Usuarios;
@@ -23,7 +24,9 @@ namespace Unisul.PrestaSys.Web.Models.Prestacoes
         public int Id { get; set; }
 
         [Display(Name = "Comprovante das Despesas")]
-        public byte[] ImagemComprovante { get; set; }
+        public IFormFile ImagemComprovante { get; set; }
+
+        public string ImagemComprovanteSrc { get; set; }
 
         public string Justificativa { get; set; }
 
@@ -51,6 +54,7 @@ namespace Unisul.PrestaSys.Web.Models.Prestacoes
 
         public Usuario Aprovador { get; set; }
 
+        [Display(Name = "Aprovador Financeiro")]
         public Usuario AprovadorFinanceiro { get; set; }
 
         public Usuario Emitente { get; set; }

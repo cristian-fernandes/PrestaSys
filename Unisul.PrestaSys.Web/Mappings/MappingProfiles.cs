@@ -11,7 +11,8 @@ namespace Unisul.PrestaSys.Web.Mappings
         public MappingProfiles()
         {
             CreateMap<Usuario, UsuarioViewModel>().ReverseMap();
-            CreateMap<Prestacao, PrestacaoViewModel>().ReverseMap();
+            CreateMap<Prestacao, PrestacaoViewModel>().ForMember(x => x.ImagemComprovante, opt => opt.Ignore());
+            CreateMap<PrestacaoViewModel, Prestacao>().ForMember(x => x.ImagemComprovante, opt => opt.Ignore());
         }
     }
 }

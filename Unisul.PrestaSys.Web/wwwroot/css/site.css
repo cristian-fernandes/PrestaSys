@@ -163,3 +163,20 @@ table { white-space: nowrap; }
     background-color: #c6dff2;
     color: #000000;
 }
+
+.modal,body.modal-open {
+    padding-right: 0!important
+}
+
+body.modal-open {
+    overflow: auto
+}
+
+body.scrollable {
+    overflow-y: auto
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-start;
+}
