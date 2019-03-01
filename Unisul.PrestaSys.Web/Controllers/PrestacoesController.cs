@@ -1,14 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
-using Unisul.PrestaSys.Repositorio;
 using Unisul.PrestaSys.Comum;
 using Unisul.PrestaSys.Dominio.Servicos.Prestacoes;
+using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
 using Unisul.PrestaSys.Entidades.Prestacoes;
 using Unisul.PrestaSys.Web.Models.Prestacoes;
 
@@ -16,45 +14,22 @@ namespace Unisul.PrestaSys.Web.Controllers
 {
     public class PrestacoesController : BaseController
     {
-        private readonly IPrestaSysDbContext _context;
-        private readonly IUsuarioService _usuarioService;
-        private readonly IPrestacaoService _prestacaoService;
         private readonly IMapper _mapper;
+        private readonly IPrestacaoService _prestacaoService;
+        private readonly IUsuarioService _usuarioService;
 
-        public PrestacoesController(IPrestaSysDbContext context, IUsuarioService usuarioService, IPrestacaoService prestacaoService, IMapper mapper) : base(usuarioService)
+        public PrestacoesController(IUsuarioService usuarioService, IPrestacaoService prestacaoService, IMapper mapper)
+            : base(usuarioService)
         {
-            _context = context;
             _usuarioService = usuarioService;
             _prestacaoService = prestacaoService;
             _mapper = mapper;
         }
 
-        // GET: Prestacoes
-        public IActionResult Index(int page = 1)
-        {
-            var todasPrestacoes = _prestacaoService.GetAllByEmitenteId(GetLoggedUser().Id);
-
-            var prestacoesLista = todasPrestacoes.OrderByDescending(pr => pr.Data)
-                .Skip((page - 1) * Constants.PAGE_SIZE).Take(Constants.PAGE_SIZE);
-
-            var prestacoesListViewModel = new PrestacaoListViewModel
-            {
-                PageNumber = page,
-                TotalRecords = todasPrestacoes.Count(),
-                PrestacoesList = _mapper.Map<List<Prestacao>, List<PrestacaoViewModel>>(prestacoesLista.ToList())
-            };
-
-            return View(prestacoesListViewModel);
-        }
-
-        // GET: Prestacoes/Details/5
-        public IActionResult Details(int? id)
+        public IActionResult Approve(int? id)
         {
             if (id == null)
                 return NotFound();
-
-            //TODO Pegar somente as prestações que tem a ver com o usuário
-            var usuarioLogado = GetLoggedUser();
 
             var prestacao = _prestacaoService.GetById(id.Value);
 
@@ -62,6 +37,40 @@ namespace Unisul.PrestaSys.Web.Controllers
                 return NotFound();
 
             return View(_mapper.Map<PrestacaoViewModel>(prestacao));
+        }
+
+        // POST: Prestacoes/Approve/5
+        [HttpPost]
+        [ActionName("Approve")]
+        [ValidateAntiForgeryToken]
+        public IActionResult ApproveConfirmed(int id, string justificativaAprovacao)
+        {
+            _prestacaoService.AprovarPrestacao(id, justificativaAprovacao, PrestacaoStatusEnum.EmAprovacaoOperacional);
+            return RedirectToAction(nameof(PrestacoesParaAprovar));
+        }
+
+        public IActionResult ApproveFinanceiro(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var prestacao = _prestacaoService.GetById(id.Value);
+
+            if (prestacao == null)
+                return NotFound();
+
+            return View(_mapper.Map<PrestacaoViewModel>(prestacao));
+        }
+
+        // POST: Prestacoes/Delete/5
+        [HttpPost]
+        [ActionName("ApproveFinanceiro")]
+        [ValidateAntiForgeryToken]
+        public IActionResult ApproveFinanceiroConfirmed(int id, string justificativaAprovacaoFinanceira)
+        {
+            _prestacaoService.AprovarPrestacao(id, justificativaAprovacaoFinanceira,
+                PrestacaoStatusEnum.EmAprovacaoFinanceira);
+            return RedirectToAction(nameof(PrestacoesParaAprovar));
         }
 
         // GET: Prestacoes/Create
@@ -103,6 +112,44 @@ namespace Unisul.PrestaSys.Web.Controllers
             return View(prestacaoViewModel);
         }
 
+        // GET: Prestacoes/Delete/5
+        public IActionResult Delete(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var prestacao = _prestacaoService.GetById(id.Value);
+
+            if (prestacao == null)
+                return NotFound();
+
+            return View(_mapper.Map<PrestacaoViewModel>(prestacao));
+        }
+
+        // POST: Prestacoes/Delete/5
+        [HttpPost]
+        [ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            _prestacaoService.Delete(id);
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Prestacoes/Details/5
+        public IActionResult Details(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var prestacao = _prestacaoService.GetById(id.Value);
+
+            if (prestacao == null)
+                return NotFound();
+
+            return View(_mapper.Map<PrestacaoViewModel>(prestacao));
+        }
+
         // GET: Prestacoes/Edit/5
         public IActionResult Edit(int? id)
         {
@@ -124,7 +171,7 @@ namespace Unisul.PrestaSys.Web.Controllers
                 AprovadorId = usuarioLogado.GerenteId,
                 AprovadorFinanceiroId = usuarioLogado.GerenteFinanceiroId,
                 EmitenteId = usuarioLogado.Id,
-                StatusId = (int)PrestacaoStatusEnum.EmAprovacaoOperacional,
+                StatusId = (int) PrestacaoStatusEnum.EmAprovacaoOperacional,
                 TipoPrestacaoSelectList = GetAllPrestacoesSelectList(prestacao.TipoId)
             };
 
@@ -132,28 +179,22 @@ namespace Unisul.PrestaSys.Web.Controllers
         }
 
         // POST: Prestacoes/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id,
-            [Bind(
-                "AprovadorFinanceiroId,AprovadorId,Data,EmitenteId,Id,ImagemComprovante,Justificativa,StatusId,TipoId,Titulo,Valor")]
-            Entidades.Prestacoes.Prestacao prestacao)
+        public IActionResult Edit(int id, PrestacaoViewModel prestacaoViewModel)
         {
-            if (id != prestacao.Id)
+            if (id != prestacaoViewModel.Id)
                 return NotFound();
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(prestacao);
-                    await _context.SaveChangesAsync();
+                    _prestacaoService.Update(_mapper.Map<Prestacao>(prestacaoViewModel));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PrestacaoExists(prestacao.Id))
+                    if (!_prestacaoService.Exists(prestacaoViewModel.Id))
                         return NotFound();
                     throw;
                 }
@@ -163,200 +204,115 @@ namespace Unisul.PrestaSys.Web.Controllers
 
             var usuarioLogado = GetLoggedUser();
 
-            ViewData["AprovadorId"] = usuarioLogado.GerenteId;
-            ViewData["AprovadorFinanceiroId"] = usuarioLogado.GerenteFinanceiroId;
-            ViewData["EmitenteId"] = usuarioLogado.Id;
-            ViewData["StatusId"] = _context.PrestacaoStatus.First(s => s.Status == "Iniciada").Id;
-            ViewData["TipoId"] = new SelectList(_context.PrestacaoTipo, "Id", "Tipo");
+            prestacaoViewModel.AprovadorId = usuarioLogado.GerenteId;
+            prestacaoViewModel.AprovadorFinanceiroId = usuarioLogado.GerenteFinanceiroId;
+            prestacaoViewModel.EmitenteId = usuarioLogado.Id;
+            prestacaoViewModel.StatusId = (int)PrestacaoStatusEnum.EmAprovacaoOperacional;
+            prestacaoViewModel.TipoPrestacaoSelectList = GetAllPrestacoesSelectList(prestacaoViewModel.TipoId);
 
-            return View(prestacao);
+            return View(prestacaoViewModel);
         }
 
-        // GET: Prestacoes/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // GET: Prestacoes
+        public IActionResult Index(int page = 1)
         {
-            if (id == null) return NotFound();
+            var todasPrestacoes = _prestacaoService.GetAllByEmitenteId(GetLoggedUser().Id);
 
-            var prestacao = await _context.Prestacao
-                .Include(p => p.Aprovador)
-                .Include(p => p.AprovadorFinanceiro)
-                .Include(p => p.Emitente)
-                .Include(p => p.Status)
-                .Include(p => p.Tipo)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (prestacao == null) return NotFound();
+            var prestacoesLista = todasPrestacoes.OrderByDescending(pr => pr.Data)
+                .Skip((page - 1) * Constants.PageSize).Take(Constants.PageSize);
 
-            return View(prestacao);
-        }
+            var prestacoesListViewModel = new PrestacaoListViewModel
+            {
+                PageNumber = page,
+                TotalRecords = todasPrestacoes.Count(),
+                PrestacoesList = _mapper.Map<List<Prestacao>, List<PrestacaoViewModel>>(prestacoesLista.ToList())
+            };
 
-        // POST: Prestacoes/Delete/5
-        [HttpPost]
-        [ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var prestacao = await _context.Prestacao.FindAsync(id);
-            _context.Prestacao.Remove(prestacao);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool PrestacaoExists(int id)
-        {
-            return _context.Prestacao.Any(e => e.Id == id);
+            return View(prestacoesListViewModel);
         }
 
         // GET: Prestacoes para Aprovar
-        public async Task<IActionResult> PrestacoesParaAprovar(int p = 1, int s = 8)
+        public IActionResult PrestacoesParaAprovar(int page = 1)
         {
-            var prestacaoDbContext = _context.Prestacao.Where(pr =>
-                    pr.AprovadorId == GetLoggedUser().Id &&
-                    pr.StatusId == (int)PrestacaoStatusEnum.EmAprovacaoOperacional)
-                .Include(pr => pr.Aprovador).Include(pr => pr.AprovadorFinanceiro).Include(pr => pr.Emitente)
-                .Include(pr => pr.Status).Include(pr => pr.Tipo)
-                .OrderByDescending(pr => pr.Data).Skip((p - 1) * s).Take(s);
+            var todasPrestacoes =
+                _prestacaoService.GetAllParaAprovacao(GetLoggedUser().Id, PrestacaoStatusEnum.EmAprovacaoOperacional);
 
-            ViewBag.TotalRecords = _context.Prestacao.Count(pr => pr.AprovadorId == GetLoggedUser().Id &&
-                                                                  pr.StatusId == (int)PrestacaoStatusEnum.EmAprovacaoOperacional);
-            ViewBag.PageNumber = p;
+            var prestacoesLista = todasPrestacoes.OrderByDescending(pr => pr.Data)
+                .Skip((page - 1) * Constants.PageSize).Take(Constants.PageSize);
 
-            return View(await prestacaoDbContext.ToListAsync());
-        }
+            var prestacoesListViewModel = new PrestacaoListViewModel
+            {
+                PageNumber = page,
+                TotalRecords = todasPrestacoes.Count(),
+                PrestacoesList = _mapper.Map<List<Prestacao>, List<PrestacaoViewModel>>(prestacoesLista.ToList())
+            };
 
-        public async Task<IActionResult> Reject(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var prestacao = await _context.Prestacao
-                .Include(p => p.Aprovador)
-                .Include(p => p.AprovadorFinanceiro)
-                .Include(p => p.Emitente)
-                .Include(p => p.Status)
-                .Include(p => p.Tipo)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (prestacao == null) return NotFound();
-
-            return View(prestacao);
-        }
-
-        public async Task<IActionResult> Approve(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var prestacao = await _context.Prestacao
-                .Include(p => p.Aprovador)
-                .Include(p => p.AprovadorFinanceiro)
-                .Include(p => p.Emitente)
-                .Include(p => p.Status)
-                .Include(p => p.Tipo)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (prestacao == null) return NotFound();
-
-            return View(prestacao);
-        }
-
-        // POST: Prestacoes/Delete/5
-        [HttpPost]
-        [ActionName("Reject")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RejectConfirmed(int id, string justificativaAprovacao)
-        {
-            var prestacao = await _context.Prestacao.FindAsync(id);
-            prestacao.StatusId = (int)PrestacaoStatusEnum.Rejeitada;
-            prestacao.JustificativaAprovacao = justificativaAprovacao;
-            _context.Update(prestacao);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(PrestacoesParaAprovar));
-        }
-
-        // POST: Prestacoes/Delete/5
-        [HttpPost]
-        [ActionName("Approve")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ApproveConfirmed(int id, string justificativaAprovacao)
-        {
-            var prestacao = await _context.Prestacao.FindAsync(id);
-            prestacao.StatusId = (int)PrestacaoStatusEnum.EmAprovacaoFinanceira;
-            prestacao.JustificativaAprovacao = justificativaAprovacao;
-            _context.Update(prestacao);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(PrestacoesParaAprovar));
+            return View(prestacoesListViewModel);
         }
 
         // GET: Prestacoes para Aprovar Financeiro
-        public async Task<IActionResult> PrestacoesParaAprovarFinanceiro(int p = 1, int s = 8)
+        public IActionResult PrestacoesParaAprovarFinanceiro(int page = 1)
         {
-            var prestacaoDbContext = _context.Prestacao.Where(pr =>
-                    pr.AprovadorFinanceiroId == GetLoggedUser().Id &&
-                    pr.StatusId == (int)PrestacaoStatusEnum.EmAprovacaoFinanceira)
-                .Include(pr => pr.Aprovador).Include(pr => pr.AprovadorFinanceiro).Include(pr => pr.Emitente)
-                .Include(pr => pr.Status).Include(pr => pr.Tipo)
-                .OrderByDescending(pr => pr.Data).Skip((p - 1) * s).Take(s);
+            var todasPrestacoes =
+                _prestacaoService.GetAllParaAprovacao(GetLoggedUser().Id, PrestacaoStatusEnum.EmAprovacaoFinanceira);
 
-            ViewBag.TotalRecords = _context.Prestacao.Count(pr => pr.AprovadorFinanceiroId == GetLoggedUser().Id &&
-                                                                  pr.StatusId == (int)PrestacaoStatusEnum.EmAprovacaoFinanceira);
-            ViewBag.PageNumber = p;
+            var prestacoesLista = todasPrestacoes.OrderByDescending(pr => pr.Data)
+                .Skip((page - 1) * Constants.PageSize).Take(Constants.PageSize);
 
-            return View(await prestacaoDbContext.ToListAsync());
+            var prestacoesListViewModel = new PrestacaoListViewModel
+            {
+                PageNumber = page,
+                TotalRecords = todasPrestacoes.Count(),
+                PrestacoesList = _mapper.Map<List<Prestacao>, List<PrestacaoViewModel>>(prestacoesLista.ToList())
+            };
+
+            return View(prestacoesListViewModel);
         }
 
-        public async Task<IActionResult> RejectFinanceiro(int? id)
+        public IActionResult Reject(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+                return NotFound();
 
-            var prestacao = await _context.Prestacao
-                .Include(p => p.Aprovador)
-                .Include(p => p.AprovadorFinanceiro)
-                .Include(p => p.Emitente)
-                .Include(p => p.Status)
-                .Include(p => p.Tipo)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (prestacao == null) return NotFound();
+            var prestacao = _prestacaoService.GetById(id.Value);
 
-            return View(prestacao);
+            if (prestacao == null)
+                return NotFound();
+
+            return View(_mapper.Map<PrestacaoViewModel>(prestacao));
         }
 
-        public async Task<IActionResult> ApproveFinanceiro(int? id)
+        // POST: Prestacoes/Reject/5
+        [HttpPost]
+        [ActionName("Reject")]
+        [ValidateAntiForgeryToken]
+        public IActionResult RejectConfirmed(int id, string justificativaAprovacao)
         {
-            if (id == null) return NotFound();
+            _prestacaoService.RejeitarPrestacao(id, justificativaAprovacao, PrestacaoStatusEnum.EmAprovacaoOperacional);
+            return RedirectToAction(nameof(PrestacoesParaAprovar));
+        }
 
-            var prestacao = await _context.Prestacao
-                .Include(p => p.Aprovador)
-                .Include(p => p.AprovadorFinanceiro)
-                .Include(p => p.Emitente)
-                .Include(p => p.Status)
-                .Include(p => p.Tipo)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (prestacao == null) return NotFound();
+        public IActionResult RejectFinanceiro(int? id)
+        {
+            if (id == null)
+                return NotFound();
 
-            return View(prestacao);
+            var prestacao = _prestacaoService.GetById(id.Value);
+
+            if (prestacao == null)
+                return NotFound();
+
+            return View(_mapper.Map<PrestacaoViewModel>(prestacao));
         }
 
         // POST: Prestacoes/Delete/5
         [HttpPost]
         [ActionName("RejectFinanceiro")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RejectFinanceiroConfirmed(int id, string justificativaAprovacaoFinanceira)
+        public IActionResult RejectFinanceiroConfirmed(int id, string justificativaAprovacaoFinanceira)
         {
-            var prestacao = await _context.Prestacao.FindAsync(id);
-            prestacao.StatusId = (int)PrestacaoStatusEnum.Rejeitada;
-            prestacao.JustificativaAprovacaoFinanceira = justificativaAprovacaoFinanceira;
-            _context.Update(prestacao);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(PrestacoesParaAprovar));
-        }
-
-        // POST: Prestacoes/Delete/5
-        [HttpPost]
-        [ActionName("ApproveFinanceiro")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ApproveFinanceirpConfirmed(int id, string justificativaAprovacaoFinanceira)
-        {
-            var prestacao = await _context.Prestacao.FindAsync(id);
-            prestacao.StatusId = (int)PrestacaoStatusEnum.Finalizada;
-            prestacao.JustificativaAprovacaoFinanceira = justificativaAprovacaoFinanceira;
-            _context.Update(prestacao);
-            await _context.SaveChangesAsync();
+            _prestacaoService.RejeitarPrestacao(id, justificativaAprovacaoFinanceira,
+                PrestacaoStatusEnum.EmAprovacaoFinanceira);
             return RedirectToAction(nameof(PrestacoesParaAprovar));
         }
 

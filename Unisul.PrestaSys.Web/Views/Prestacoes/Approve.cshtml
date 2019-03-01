@@ -1,4 +1,4 @@
-@model Unisul.PrestaSys.Entidades.Prestacoes.Prestacao
+@model Unisul.PrestaSys.Web.Models.Prestacoes.PrestacaoViewModel
 
 @{
     ViewData["Title"] = "Aprovar Prestação de Contas";
@@ -73,7 +73,7 @@
             @Html.DisplayFor(model => model.Valor)
         </dd>
     </dl>
-    
+
     <form asp-action="Approve">
         <label asp-for="JustificativaAprovacao" class="control-label"></label>
         <textarea rows="10" asp-for="JustificativaAprovacao" class="form-control"></textarea>

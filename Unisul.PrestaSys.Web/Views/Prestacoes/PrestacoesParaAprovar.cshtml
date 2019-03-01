@@ -1,4 +1,4 @@
-@model IEnumerable<Unisul.PrestaSys.Entidades.Prestacoes.Prestacao>
+@model Unisul.PrestaSys.Web.Models.Prestacoes.PrestacaoListViewModel
 
 @{
     ViewData["Title"] = "Lista de Prestações de Contas para Aprovação";
@@ -6,54 +6,54 @@
 
 <h1>Lista de Prestações de Contas para Aprovação</h1>
 
-<hr/>
+<hr />
 
 <table class="table table-bordered table-striped table-hover">
     <thead>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Titulo)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Tipo)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Status)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Data)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Valor)
-        </th>
-        <th></th>
-    </tr>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.PrestacoesList.First().Titulo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PrestacoesList.First().Tipo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PrestacoesList.First().Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PrestacoesList.First().Data)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PrestacoesList.First().Valor)
+            </th>
+            <th></th>
+        </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Titulo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Tipo.Tipo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Data)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Valor)
-            </td>
-            <td style="text-align:center">
-                <a asp-action="Reject" asp-route-id="@item.Id" class="btn btn-danger">Rejeitar</a> |
-                <a asp-action="Approve" asp-route-id="@item.Id" class="btn btn-success">Aprovar</a>
-            </td>
-        </tr>
-    }
+    @foreach (var item in Model.PrestacoesList)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Titulo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Tipo.Tipo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status.Status)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Data)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Valor)
+                </td>
+                <td style="text-align:center">
+                    <a asp-action="Reject" asp-route-id="@item.Id" class="btn btn-danger">Rejeitar</a> |
+                    <a asp-action="Approve" asp-route-id="@item.Id" class="btn btn-success">Aprovar</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 <paging class-paging-control="pagination float-right" total-records="@ViewBag.TotalRecords" page-no="@ViewBag.PageNumber" page-size="8"></paging>

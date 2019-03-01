@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace Unisul.PrestaSys.Entidades.Prestacoes
 {
@@ -14,7 +13,6 @@ namespace Unisul.PrestaSys.Entidades.Prestacoes
 
         public ICollection<Prestacao> Prestacao { get; set; }
 
-        [Display(Name = "Tipo da Prestação")]
         public string Tipo { get; set; }
     }
 }

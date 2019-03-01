@@ -18,24 +18,6 @@ namespace Unisul.PrestaSys.Web.Controllers
             _service = service;
         }
 
-        public override void OnActionExecuting(ActionExecutingContext filterContext)
-        {
-            try
-            {
-                if (User.Identity.IsAuthenticated)
-                    return;
-
-                if (filterContext.RouteData.Values["Controller"].ToString() == "Login")
-                    return;
-
-                filterContext.Result = new RedirectResult(Url.Action("Index", "Login"));
-            }
-            catch (Exception ex)
-            {
-                Console.Write(ex);
-            }
-        }
-
         public override void OnActionExecuted(ActionExecutedContext filterContext)
         {
             if (User.Identity.IsAuthenticated && ViewData.Model is BaseViewModel model)
@@ -53,6 +35,24 @@ namespace Unisul.PrestaSys.Web.Controllers
             }
 
             base.OnActionExecuted(filterContext);
+        }
+
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            try
+            {
+                if (User.Identity.IsAuthenticated)
+                    return;
+
+                if (filterContext.RouteData.Values["Controller"].ToString() == "Login")
+                    return;
+
+                filterContext.Result = new RedirectResult(Url.Action("Index", "Login"));
+            }
+            catch (Exception ex)
+            {
+                Console.Write(ex);
+            }
         }
 
         protected Usuario GetLoggedUser()

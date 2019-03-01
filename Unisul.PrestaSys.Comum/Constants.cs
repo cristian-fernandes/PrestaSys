@@ -1,8 +1,7 @@
-
 namespace Unisul.PrestaSys.Comum
 {
     public static class Constants
     {
-        public const int PAGE_SIZE = 8;
+        public const int PageSize = 8;
     }
 }

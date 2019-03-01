@@ -19,19 +19,14 @@ namespace Unisul.PrestaSys.Web.Controllers
             _usuarioService = usuarioService;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         public IActionResult About()
         {
             return View(new LoginViewModel());
         }
 
-        public IActionResult Privacy()
+        public IActionResult Index()
         {
-            return View(new LoginViewModel());
+            return View();
         }
 
         public IActionResult Login(string email, string senha)
@@ -44,7 +39,7 @@ namespace Unisul.PrestaSys.Web.Controllers
 
                     if (usuario != null)
                     {
-                         LogarUsuario(usuario, false);
+                        LogarUsuario(usuario, false);
 
                         return RedirectToAction("Index", "Prestacoes");
                     }
@@ -66,7 +61,7 @@ namespace Unisul.PrestaSys.Web.Controllers
             {
                 var authenticationManager = Request.HttpContext;
 
-                 authenticationManager.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                authenticationManager.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             }
             catch (Exception ex)
             {
@@ -74,6 +69,11 @@ namespace Unisul.PrestaSys.Web.Controllers
             }
 
             return View("Index");
+        }
+
+        public IActionResult Privacy()
+        {
+            return View(new LoginViewModel());
         }
 
         private void LogarUsuario(Usuario loginUsuario, bool isPersistent)
@@ -88,7 +88,7 @@ namespace Unisul.PrestaSys.Web.Controllers
                 var claimPrincipal = new ClaimsPrincipal(claimIdenties);
                 var authenticationManager = Request.HttpContext;
 
-                 authenticationManager.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                authenticationManager.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                     claimPrincipal, new AuthenticationProperties {IsPersistent = isPersistent});
             }
             catch (Exception ex)

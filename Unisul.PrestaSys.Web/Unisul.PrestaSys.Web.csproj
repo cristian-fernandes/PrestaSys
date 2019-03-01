@@ -20,7 +20,6 @@
     <ProjectReference Include="..\Unisul.PrestaSys.Comum\Unisul.PrestaSys.Comum.csproj" />
     <ProjectReference Include="..\Unisul.PrestaSys.Dominio\Unisul.PrestaSys.Dominio.csproj" />
     <ProjectReference Include="..\Unisul.PrestaSys.Entidades\Unisul.PrestaSys.Entidades.csproj" />
-    <ProjectReference Include="..\Unisul.PrestaSys.Repositorio\Unisul.PrestaSys.Repositorio.csproj" />
   </ItemGroup>
 
 </Project>

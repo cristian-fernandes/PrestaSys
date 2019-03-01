@@ -13,8 +13,8 @@ namespace Unisul.PrestaSys.Web.Controllers
 {
     public class UsuariosController : BaseController
     {
-        private readonly IUsuarioService _usuarioService;
         private readonly IMapper _mapper;
+        private readonly IUsuarioService _usuarioService;
 
         public UsuariosController(IUsuarioService usuarioService, IMapper mapper) : base(usuarioService)
         {
@@ -145,8 +145,8 @@ namespace Unisul.PrestaSys.Web.Controllers
 
             var usuariosLista = todosUsuarios
                 .OrderBy(u => u.Nome)
-                .Skip((page - 1) * Constants.PAGE_SIZE)
-                .Take(Constants.PAGE_SIZE);
+                .Skip((page - 1) * Constants.PageSize)
+                .Take(Constants.PageSize);
 
             var usuariosListViewModel = new UsuarioListViewModel
             {
@@ -158,17 +158,6 @@ namespace Unisul.PrestaSys.Web.Controllers
             return View(usuariosListViewModel);
         }
 
-        private SelectList GetAllGerentesSelectList()
-        {
-            var gerentes = _usuarioService.GetAllGerentes().Select(x => new
-            {
-                x.Id,
-                NomeCompleto = x.Nome + " " + x.Sobrenome.ToString()
-            });
-
-            return new SelectList(gerentes, "Id", "NomeCompleto");
-        }
-
         private SelectList GetAllGerentesFinanceirosSelectList()
         {
             var gerentesFinanceiros = _usuarioService.GetAllGerentesFinanceiros().Select(x => new
@@ -178,6 +167,17 @@ namespace Unisul.PrestaSys.Web.Controllers
             });
 
             return new SelectList(gerentesFinanceiros, "Id", "NomeCompleto");
+        }
+
+        private SelectList GetAllGerentesSelectList()
+        {
+            var gerentes = _usuarioService.GetAllGerentes().Select(x => new
+            {
+                x.Id,
+                NomeCompleto = x.Nome + " " + x.Sobrenome.ToString()
+            });
+
+            return new SelectList(gerentes, "Id", "NomeCompleto");
         }
     }
 }
