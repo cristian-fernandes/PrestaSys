@@ -15,12 +15,12 @@ namespace Unisul.PrestaSys.Dominio.Helpers
 
     public class EmailHelper : IEmailHelper
     {
+        private readonly EmailSettings _emailSettings;
+
         public EmailHelper(IOptions<EmailSettings> emailSettings)
         {
             _emailSettings = emailSettings.Value;
         }
-
-        private EmailSettings _emailSettings { get; set; }
 
         public bool EnviarEmail(Prestacao prestacao, PrestacaoStatusEnum statusAtual, string emailTo)
         {
@@ -52,7 +52,7 @@ namespace Unisul.PrestaSys.Dominio.Helpers
             }
             catch (Exception ex)
             {
-                return false;
+                throw;
             }
         }
 
