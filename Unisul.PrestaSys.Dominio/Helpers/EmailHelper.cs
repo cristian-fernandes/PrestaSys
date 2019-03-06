@@ -20,7 +20,7 @@ namespace Unisul.PrestaSys.Dominio.Helpers
             _emailSettings = emailSettings.Value;
         }
 
-        private EmailSettings _emailSettings { get; }
+        private EmailSettings _emailSettings { get; set; }
 
         public bool EnviarEmail(Prestacao prestacao, PrestacaoStatusEnum statusAtual, string emailTo)
         {
@@ -56,7 +56,7 @@ namespace Unisul.PrestaSys.Dominio.Helpers
             }
         }
 
-        private string GetEmailBody(Prestacao prestacao, PrestacaoStatusEnum statusAtual)
+        private static string GetEmailBody(Prestacao prestacao, PrestacaoStatusEnum statusAtual)
         {
             var text = GetMessageBodyText();
             text = text.Replace("{{TITULO}}", prestacao.Titulo);
@@ -87,7 +87,7 @@ namespace Unisul.PrestaSys.Dominio.Helpers
             return text;
         }
 
-        private string GetMessageBodyText()
+        private static string GetMessageBodyText()
         {
             return @"<h2>PrestaSys - Presta&ccedil;&atilde;o de Contas</h2>
                     <p> Presta&ccedil;&atilde;o: {{TITULO}} </p>
