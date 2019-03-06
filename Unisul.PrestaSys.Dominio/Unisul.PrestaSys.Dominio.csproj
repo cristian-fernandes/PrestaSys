@@ -9,4 +9,8 @@
     <ProjectReference Include="..\Unisul.PrestaSys.Repositorio\Unisul.PrestaSys.Repositorio.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Servicos\Notificacoes\" />
+  </ItemGroup>
+
 </Project>

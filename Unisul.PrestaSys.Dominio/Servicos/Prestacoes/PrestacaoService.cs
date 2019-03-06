@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore.Query;
 using Unisul.PrestaSys.Entidades.Prestacoes;
 using Unisul.PrestaSys.Comum;
+using Unisul.PrestaSys.Dominio.Helpers;
 using Unisul.PrestaSys.Repositorio.Prestacoes;
 
 namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
@@ -18,17 +19,22 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
         IQueryable<Prestacao> GetAllParaAprovacao(int aprovadorId, PrestacaoStatusEnum tipoAprovacao);
         Prestacao GetById(int id);
         int RejeitarPrestacao(int prestacaoId, string justificativa, PrestacaoStatusEnum tipoAprovacao);
-        int Update(Prestacao usuario);
+        int Update(Prestacao prestacao);
         IQueryable<PrestacaoTipo> GetAllPrestacaoTipos();
+        string GetAProvadorFinanceiroEmail(int id);
+        string GetAProvadorEmail(int id);
+        string GetEmitenteEmail(int id);
     }
 
     public class PrestacaoService : IPrestacaoService
     {
         private readonly IPrestacaoRepository _repository;
+        private readonly IEmailHelper _emailHelper;
 
-        public PrestacaoService(IPrestacaoRepository repository)
+        public PrestacaoService(IPrestacaoRepository repository, IEmailHelper emailHelper)
         {
             _repository = repository;
+            _emailHelper = emailHelper;
         }
 
         public int AprovarPrestacao(int prestacaoId, string justificativa, PrestacaoStatusEnum tipoAprovacao)
@@ -58,11 +64,15 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
                     throw new ArgumentOutOfRangeException(nameof(tipoAprovacao), tipoAprovacao, null);
             }
 
+            var emailTo = GetEmailTo(prestacao, (PrestacaoStatusEnum)prestacao.StatusId);
+            _emailHelper.EnviarEmail(prestacao, (PrestacaoStatusEnum) prestacao.StatusId, emailTo);
             return _repository.Update(prestacao);
         }
 
         public int Create(Prestacao prestacao)
         {
+            var emailTo = GetEmailTo(prestacao, PrestacaoStatusEnum.EmAprovacaoFinanceira);
+            _emailHelper.EnviarEmail(prestacao, PrestacaoStatusEnum.EmAprovacaoFinanceira, emailTo);
             return _repository.Create(prestacao);
         }
 
@@ -133,17 +143,50 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
                     throw new ArgumentOutOfRangeException(nameof(tipoAprovacao), tipoAprovacao, null);
             }
 
+            var emailTo = GetEmailTo(prestacao, (PrestacaoStatusEnum)prestacao.StatusId);
+            _emailHelper.EnviarEmail(prestacao, (PrestacaoStatusEnum)prestacao.StatusId, emailTo);
             return _repository.Update(prestacao);
         }
 
-        public int Update(Prestacao usuario)
+        public int Update(Prestacao prestacao)
         {
-            return _repository.Update(usuario);
+            return _repository.Update(prestacao);
         }
 
         public IQueryable<PrestacaoTipo> GetAllPrestacaoTipos()
         {
             return _repository.GetAllPrestacaoTipos();
+        }
+
+        public string GetAProvadorFinanceiroEmail(int id)
+        {
+            return _repository.GetById(id).AprovadorFinanceiro.Email;
+        }
+
+        public string GetAProvadorEmail(int id)
+        {
+            return _repository.GetById(id).Aprovador.Email;
+        }
+
+        public string GetEmitenteEmail(int id)
+        {
+            return _repository.GetById(id).Emitente.Email;
+        }
+
+        private string GetEmailTo(Prestacao prestacao, PrestacaoStatusEnum statusAtual)
+        {
+            switch (statusAtual)
+            {
+                case PrestacaoStatusEnum.EmAprovacaoOperacional:
+                    return GetAProvadorEmail(prestacao.Id);
+                case PrestacaoStatusEnum.EmAprovacaoFinanceira:
+                    return GetAProvadorFinanceiroEmail(prestacao.Id);
+                case PrestacaoStatusEnum.Rejeitada:
+                case PrestacaoStatusEnum.Finalizada:
+                    return GetEmitenteEmail(prestacao.Id);
+            }
+
+            return string.Empty;
         }
     }
 }

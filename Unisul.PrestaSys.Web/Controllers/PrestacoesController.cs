@@ -103,7 +103,7 @@ namespace Unisul.PrestaSys.Web.Controllers
             {
                 var prestacao = _mapper.Map<Prestacao>(prestacaoViewModel);
                 prestacao.ImagemComprovante = GetImageBytes(prestacaoViewModel.ImagemComprovante);
-                _prestacaoService.Update(prestacao);
+                _prestacaoService.Create(prestacao);
                 return RedirectToAction(nameof(Index));
             }
 
