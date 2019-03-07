@@ -113,7 +113,7 @@ namespace Unisul.PrestaSys.Repositorio
                 entity.HasOne(d => d.Emitente)
                     .WithMany(p => p.PrestacaoEmitente)
                     .HasForeignKey(d => d.EmitenteId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Usuario_PrestacaoEmitenteId");
 
                 entity.HasOne(d => d.Status)

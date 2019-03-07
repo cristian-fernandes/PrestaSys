@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using Unisul.PrestaSys.Entidades.Prestacoes;
 using Unisul.PrestaSys.Entidades.Usuarios;
 
 namespace Unisul.PrestaSys.Repositorio.Usuarios
@@ -10,7 +12,7 @@ namespace Unisul.PrestaSys.Repositorio.Usuarios
         int Create(Usuario usuario);
         int Delete(int id);
         bool Exists(int id);
-        IIncludableQueryable<Usuario, Usuario> GetAll();
+        IIncludableQueryable<Usuario, ICollection<Prestacao>> GetAll();
         Usuario GetById(int id);
         int Update(Usuario usuario);
     }
@@ -42,11 +44,13 @@ namespace Unisul.PrestaSys.Repositorio.Usuarios
             return _context.Usuario.Any(e => e.Id == id);
         }
 
-        public IIncludableQueryable<Usuario, Usuario> GetAll()
+        public IIncludableQueryable<Usuario, ICollection<Prestacao>> GetAll()
         {
             return _context.Usuario
                 .Include(u => u.Gerente)
-                .Include(u => u.GerenteFinanceiro);
+                .Include(u => u.GerenteFinanceiro)
+                .Include(p => p.PrestacaoAprovador)
+                .Include(p => p.PrestacaoAprovadorFinanceiro);
         }
 
         public Usuario GetById(int id)
@@ -54,6 +58,8 @@ namespace Unisul.PrestaSys.Repositorio.Usuarios
             return _context.Usuario
                 .Include(u => u.Gerente)
                 .Include(u => u.GerenteFinanceiro)
+                .Include(p => p.PrestacaoAprovador)
+                .Include(p => p.PrestacaoAprovadorFinanceiro)
                 .FirstOrDefault(m => m.Id == id);
         }
 

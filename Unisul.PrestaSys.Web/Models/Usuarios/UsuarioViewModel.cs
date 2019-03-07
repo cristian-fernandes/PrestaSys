@@ -1,5 +1,8 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore.Internal;
+using Unisul.PrestaSys.Entidades.Prestacoes;
 using Unisul.PrestaSys.Entidades.Usuarios;
 using Unisul.PrestaSys.Web.Models.Base;
 
@@ -44,6 +47,14 @@ namespace Unisul.PrestaSys.Web.Models.Usuarios
 
         [Required(ErrorMessage = "Por favor, informe o sobrenome do usuário.")]
         public string Sobrenome { get; set; }
+
+        public ICollection<Prestacao> PrestacaoAprovador { get; set; }
+
+        public ICollection<Prestacao> PrestacaoAprovadorFinanceiro { get; set; }
+
+        public ICollection<Prestacao> PrestacaoEmitente { get; set; }
+
+        public bool ShouldDisableDeleteButton => PrestacaoAprovador != null && PrestacaoAprovador.Any() || PrestacaoAprovadorFinanceiro != null && PrestacaoAprovadorFinanceiro.Any();
 
         public SelectList GerenteSelectList { get; set; }
 

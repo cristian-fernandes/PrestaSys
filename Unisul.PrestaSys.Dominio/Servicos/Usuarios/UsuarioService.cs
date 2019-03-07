@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.Query;
+using Unisul.PrestaSys.Entidades.Prestacoes;
 using Unisul.PrestaSys.Entidades.Usuarios;
 using Unisul.PrestaSys.Repositorio.Usuarios;
 
@@ -10,7 +12,7 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Usuarios
         int Create(Usuario usuario);
         int Delete(int id);
         bool Exists(int id);
-        IIncludableQueryable<Usuario, Usuario> GetAll();
+        IIncludableQueryable<Usuario, ICollection<Prestacao>> GetAll();
         IQueryable<Usuario> GetAllGerentes();
         IQueryable<Usuario> GetAllGerentesFinanceiros();
         Usuario GetById(int id);
@@ -44,7 +46,7 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Usuarios
             return _repository.Exists(id);
         }
 
-        public IIncludableQueryable<Usuario, Usuario> GetAll()
+        public IIncludableQueryable<Usuario, ICollection<Prestacao>> GetAll()
         {
             return _repository.GetAll();
         }

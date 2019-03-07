@@ -6,7 +6,7 @@
 
 <h1>Lista de Usuários</h1>
 
-<hr />
+<hr/>
 
 <p>
     <a asp-action="Create" class="btn btn-primary">Criar Novo Usuário</a>
@@ -15,61 +15,70 @@
 
 <table class="table table-bordered table-striped table-hover">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.UsuariosList.First().Nome)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UsuariosList.First().Sobrenome)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UsuariosList.First().Email)
-            </th>
-            <th>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.UsuariosList.First().Nome)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UsuariosList.First().Sobrenome)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UsuariosList.First().Email)
+        </th>
+        <th>
 
             @Html.DisplayNameFor(model => model.UsuariosList.First().Gerente)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UsuariosList.First().GerenteFinanceiro)
-            </th>
-            <th></th>
-        </tr>
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UsuariosList.First().GerenteFinanceiro)
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
     @if (Model.UsuariosList.Any())
     {
-         foreach (var item in Model.UsuariosList)
-         {
-             <tr>
-                 <td>
-                     @Html.DisplayFor(modelItem => item.Nome)
-                 </td>
-                 <td>
-                     @Html.DisplayFor(modelItem => item.Sobrenome)
-                 </td>
-                 <td>
-                     @Html.DisplayFor(modelItem => item.Email)
-                 </td>
-                 <td>
+        foreach (var item in Model.UsuariosList)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nome)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Sobrenome)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
 
-                     @Html.DisplayFor(modelItem => item.Gerente.Nome) @Html.DisplayFor(modelItem => item.Gerente.Sobrenome)
-                 </td>
-                 <td>
-                     @Html.DisplayFor(modelItem => item.GerenteFinanceiro.Nome) @Html.DisplayFor(modelItem => item.GerenteFinanceiro.Sobrenome)
-                 </td>
-                 <td style="text-align: center">
-                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary">Editar</a> |
-                     <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary">Detalhes</a> |
-                     <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">Excluir</a>
-                 </td>
-             </tr>
-         }
+                    @Html.DisplayFor(modelItem => item.Gerente.Nome) @Html.DisplayFor(modelItem => item.Gerente.Sobrenome)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GerenteFinanceiro.Nome) @Html.DisplayFor(modelItem => item.GerenteFinanceiro.Sobrenome)
+                </td>
+                <td style="text-align: center">
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary">Editar</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary">Detalhes</a> |
+                    @if (!item.ShouldDisableDeleteButton)
+                    {
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger")>Excluir</a>
+                    }
+                    else
+                    {
+                        <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Usuário não pode ser deletado porque tem prestações para aprovar.">
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger disabled")>Excluir</a>
+                        </span>
+                    }
+                </td>
+            </tr>
+        }
     }
     else
     {
-             <tr>
-                 <td colspan="6">Não foram encontrados registros.</td>
-             </tr>
+        <tr>
+            <td colspan="6">Não foram encontrados registros.</td>
+        </tr>
     }
     </tbody>
 </table>
