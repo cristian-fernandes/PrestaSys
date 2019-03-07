@@ -5,14 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Unisul.PrestaSys.Comum\Unisul.PrestaSys.Comum.csproj" />
-    <ProjectReference Include="..\Unisul.PrestaSys.Repositorio\Unisul.PrestaSys.Repositorio.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Microsoft.AspNetCore.Hosting.Abstractions">
-      <HintPath>..\..\..\..\Users\cristian_f\.nuget\packages\microsoft.aspnetcore.hosting.abstractions\2.2.0\lib\netstandard2.0\Microsoft.AspNetCore.Hosting.Abstractions.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\Unisul.PrestaSys.Comum\Unisul.PrestaSys.Comum.csproj" />
+    <ProjectReference Include="..\Unisul.PrestaSys.Repositorio\Unisul.PrestaSys.Repositorio.csproj" />
   </ItemGroup>
 
 </Project>
