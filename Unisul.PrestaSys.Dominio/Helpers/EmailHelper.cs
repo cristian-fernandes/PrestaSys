@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Net.Mail;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Options;
 using Unisul.PrestaSys.Comum;
 using Unisul.PrestaSys.Entidades.Notificacoes;
@@ -17,9 +18,12 @@ namespace Unisul.PrestaSys.Dominio.Helpers
     {
         private readonly EmailSettings _emailSettings;
 
-        public EmailHelper(IOptions<EmailSettings> emailSettings)
+        private readonly IHostingEnvironment _environment;
+
+        public EmailHelper(IOptions<EmailSettings> emailSettings, IHostingEnvironment environment)
         {
             _emailSettings = emailSettings.Value;
+            _environment = environment;
         }
 
         public bool EnviarEmail(Prestacao prestacao, PrestacaoStatusEnum statusAtual, string emailTo)
@@ -34,7 +38,6 @@ namespace Unisul.PrestaSys.Dominio.Helpers
                 mail.To.Add(new MailAddress(emailTo));
                 mail.To.Clear();
                 mail.To.Add(new MailAddress("cristian.fernandes@eldorado.org.br"));
-                mail.CC.Add(new MailAddress(_emailSettings.CcEmail));
                 mail.Subject = "PrestaSys - Prestação de Contas - " + prestacao.Titulo;
                 mail.Body = GetEmailBody(prestacao, statusAtual);
                 mail.IsBodyHtml = true;
@@ -44,8 +47,11 @@ namespace Unisul.PrestaSys.Dominio.Helpers
                 {
                     smtp.Credentials =
                         new NetworkCredential(_emailSettings.UsernameEmail, _emailSettings.UsernamePassword);
+
                     smtp.EnableSsl = true;
-                    smtp.Send(mail);
+
+                    if (!_environment.IsDevelopment())
+                        smtp.Send(mail);
 
                     return true;
                 }
@@ -89,10 +95,10 @@ namespace Unisul.PrestaSys.Dominio.Helpers
 
         private static string GetMessageBodyText()
         {
-            return @"<h2>PrestaSys - Presta&ccedil;&atilde;o de Contas</h2>
-                    <p> Presta&ccedil;&atilde;o: {{TITULO}} </p>
-                    <p> Status: {{STATUS}} </p>
-                    <p> {{FRASE_FINAL}} </p>";
+            return @"<h1>PrestaSys - Presta&ccedil;&atilde;o de Contas</h1>
+                    <p> <b> Presta&ccedil;&atilde;o: </b> {{TITULO}} </p>
+                    <p> <b> Status: </b> {{STATUS}} </p>
+                    <p> <i> {{FRASE_FINAL}} </i> </p>";
         }
     }
 }

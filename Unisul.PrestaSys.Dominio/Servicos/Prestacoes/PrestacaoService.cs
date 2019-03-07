@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Query;
 using Unisul.PrestaSys.Entidades.Prestacoes;
 using Unisul.PrestaSys.Comum;
 using Unisul.PrestaSys.Dominio.Helpers;
+using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
 using Unisul.PrestaSys.Repositorio.Prestacoes;
 
 namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
@@ -21,20 +22,19 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
         int RejeitarPrestacao(int prestacaoId, string justificativa, PrestacaoStatusEnum tipoAprovacao);
         int Update(Prestacao prestacao);
         IQueryable<PrestacaoTipo> GetAllPrestacaoTipos();
-        string GetAProvadorFinanceiroEmail(int id);
-        string GetAProvadorEmail(int id);
-        string GetEmitenteEmail(int id);
     }
 
     public class PrestacaoService : IPrestacaoService
     {
         private readonly IPrestacaoRepository _repository;
         private readonly IEmailHelper _emailHelper;
+        private readonly IUsuarioService _usuarioService;
 
-        public PrestacaoService(IPrestacaoRepository repository, IEmailHelper emailHelper)
+        public PrestacaoService(IPrestacaoRepository repository, IEmailHelper emailHelper, IUsuarioService usuarioService)
         {
             _repository = repository;
             _emailHelper = emailHelper;
+            _usuarioService = usuarioService;
         }
 
         public int AprovarPrestacao(int prestacaoId, string justificativa, PrestacaoStatusEnum tipoAprovacao)
@@ -71,8 +71,8 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
 
         public int Create(Prestacao prestacao)
         {
-            var emailTo = GetEmailTo(prestacao, PrestacaoStatusEnum.EmAprovacaoFinanceira);
-            _emailHelper.EnviarEmail(prestacao, PrestacaoStatusEnum.EmAprovacaoFinanceira, emailTo);
+            var emailTo = GetEmailTo(prestacao, PrestacaoStatusEnum.EmAprovacaoOperacional);
+            _emailHelper.EnviarEmail(prestacao, PrestacaoStatusEnum.EmAprovacaoOperacional, emailTo);
             return _repository.Create(prestacao);
         }
 
@@ -158,32 +158,17 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
             return _repository.GetAllPrestacaoTipos();
         }
 
-        public string GetAProvadorFinanceiroEmail(int id)
-        {
-            return _repository.GetById(id).AprovadorFinanceiro.Email;
-        }
-
-        public string GetAProvadorEmail(int id)
-        {
-            return _repository.GetById(id).Aprovador.Email;
-        }
-
-        public string GetEmitenteEmail(int id)
-        {
-            return _repository.GetById(id).Emitente.Email;
-        }
-
         private string GetEmailTo(Prestacao prestacao, PrestacaoStatusEnum statusAtual)
         {
             switch (statusAtual)
             {
                 case PrestacaoStatusEnum.EmAprovacaoOperacional:
-                    return GetAProvadorEmail(prestacao.Id);
+                    return _usuarioService.GetUsuarioEmailById(prestacao.AprovadorId);
                 case PrestacaoStatusEnum.EmAprovacaoFinanceira:
-                    return GetAProvadorFinanceiroEmail(prestacao.Id);
+                    return _usuarioService.GetUsuarioEmailById(prestacao.AprovadorFinanceiroId);
                 case PrestacaoStatusEnum.Rejeitada:
                 case PrestacaoStatusEnum.Finalizada:
-                    return GetEmitenteEmail(prestacao.Id);
+                    return _usuarioService.GetUsuarioEmailById(prestacao.EmitenteId);
             }
 
             return string.Empty;

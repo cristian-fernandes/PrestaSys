@@ -17,6 +17,7 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Usuarios
         Usuario GetUsuarioByEmail(string email);
         Usuario GetUsuarioByEmailAndSenha(string email, string senha);
         int Update(Usuario usuario);
+        string GetUsuarioEmailById(int id);
     }
 
     public class UsuarioService : IUsuarioService
@@ -62,6 +63,11 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Usuarios
         public Usuario GetById(int id)
         {
             return _repository.GetById(id);
+        }
+
+        public string GetUsuarioEmailById(int id)
+        {
+            return _repository.GetById(id).Email;
         }
 
         public Usuario GetUsuarioByEmail(string email)

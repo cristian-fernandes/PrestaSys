@@ -70,7 +70,14 @@
             @Html.DisplayNameFor(model => model.ImagemComprovante):
         </dt>
         <dd class="col-sm-8">
-            <a class="btn btn-primary" data-target="#modalIMG" data-toggle="modal" href="#">Visualizar Imagem</a>
+            @if (Model.ImagemComprovante != null)
+            {
+                <a class="btn btn-primary" data-target="#modalIMG" data-toggle="modal" href="#">Visualizar Imagem</a>
+            }
+            else
+            {
+                <i>Imagem não Enviada</i>
+            }
         </dd>
     </dl>
     <form asp-action="Delete">

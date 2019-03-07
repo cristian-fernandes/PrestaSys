@@ -96,7 +96,7 @@ namespace Unisul.PrestaSys.Repositorio
                     .IsRequired()
                     .HasMaxLength(50);
 
-                entity.Property(e => e.Valor).HasColumnType("decimal(18, 0)");
+                entity.Property(e => e.Valor).HasColumnType("decimal(18, 2)");
 
                 entity.HasOne(d => d.AprovadorFinanceiro)
                     .WithMany(p => p.PrestacaoAprovadorFinanceiro)
