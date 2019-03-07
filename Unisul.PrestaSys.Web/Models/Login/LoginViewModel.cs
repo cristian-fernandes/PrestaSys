@@ -5,11 +5,11 @@ namespace Unisul.PrestaSys.Web.Models.Login
 {
     public class LoginViewModel : BaseViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "Por favor, informe o e-mail para logar.")]
         [Display(Name = "E-mail")]
         public string Email { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Por favor, informe a senha para logar.")]
         [DataType(DataType.Password)]
         [Display(Name = "Senha")]
         public string Senha { get; set; }
