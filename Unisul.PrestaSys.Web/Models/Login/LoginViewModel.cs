@@ -6,6 +6,7 @@ namespace Unisul.PrestaSys.Web.Models.Login
     public class LoginViewModel : BaseViewModel
     {
         [Required(ErrorMessage = "Por favor, informe o e-mail para logar.")]
+        [RegularExpression(".+\\@.+\\..+", ErrorMessage = "Por favor, informe um e-mail válido para login.")]
         [Display(Name = "E-mail")]
         public string Email { get; set; }
 

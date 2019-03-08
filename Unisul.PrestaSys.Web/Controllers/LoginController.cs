@@ -40,11 +40,11 @@ namespace Unisul.PrestaSys.Web.Controllers
                     if (usuario != null)
                     {
                         LogarUsuario(usuario, false);
-
+                        
                         return RedirectToAction("Index", "Prestacoes");
                     }
 
-                    ModelState.AddModelError("IncorrectUser", "Usuário ou Senha inválidos.");
+                    ModelState.AddModelError(string.Empty, "Usuário ou Senha inválidos, por favor tente novamente.");
                 }
             }
             catch (Exception ex)
