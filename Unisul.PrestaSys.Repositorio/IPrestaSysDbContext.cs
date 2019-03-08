@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Unisul.PrestaSys.Entidades.Prestacoes;
@@ -14,7 +16,6 @@ namespace Unisul.PrestaSys.Repositorio
         DbSet<PrestacaoStatus> PrestacaoStatus { get; set; }
         DbSet<PrestacaoTipo> PrestacaoTipo { get; set; }
         DbSet<Usuario> Usuario { get; set; }
-
         EntityEntry Add(object entity);
         bool Equals(object obj);
         int GetHashCode();
@@ -26,5 +27,6 @@ namespace Unisul.PrestaSys.Repositorio
         Task<int> SaveChangesAsync();
         string ToString();
         EntityEntry Update(object entity);
+        void BulkUpdate<T>(IList<T> entities, BulkConfig bulkConfig = null, Action<decimal> progress = null) where T : class;
     }
 }
