@@ -25,7 +25,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-light border-bottom box-shadow mb-3" style="background-color: #e3f2fd;">
             <div class="container">
-                @if (Model?.UsuarioLogado.Nome != null)
+                @if (Model?.UsuarioLogado?.Nome != null)
                 {
                     <a class="navbar-brand text-dark" asp-area="" asp-controller="Prestacoes" asp-action="Index">
                         <img src="~/images/p_logo.png" alt="Home" height="42" width="42">restaSys
@@ -87,7 +87,7 @@
                                             <div class="row">
                                                 <div class="col-lg-12">
                                                     <p class="text-left"><strong>@Model?.UsuarioLogado?.Nome @Model?.UsuarioLogado?.Sobrenome</strong></p>
-                                                    <p class="text-left small">@Model.UsuarioLogado.Email</p>
+                                                    <p class="text-left small">@Model.UsuarioLogado?.Email</p>
                                                 </div>
                                             </div>
                                         </div>
