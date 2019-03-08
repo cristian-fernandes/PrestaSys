@@ -18,7 +18,7 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Usuarios
         Usuario GetById(int id);
         Usuario GetUsuarioByEmail(string email);
         Usuario GetUsuarioByEmailAndSenha(string email, string senha);
-        int Update(Usuario usuario);
+        void Update(Usuario usuario);
         string GetUsuarioEmailById(int id);
     }
 
@@ -86,9 +86,9 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Usuarios
             return listaUsuarios.Count > 0 ? listaUsuarios.First() : null;
         }
 
-        public int Update(Usuario usuario)
+        public void Update(Usuario usuario)
         {
-            return _repository.Update(usuario);
+            _repository.Update(usuario);
         }
     }
 }

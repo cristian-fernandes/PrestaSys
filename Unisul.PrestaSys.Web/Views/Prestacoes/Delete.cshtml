@@ -82,7 +82,7 @@
     </dl>
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Excluír Prestação" class="btn btn-danger" /> |
+        <input type="submit" value="Excluir Prestação" class="btn btn-danger" /> |
         <a asp-action="Index">Voltar para a Lista</a>
     </form>
 </div>
@@ -90,10 +90,10 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-body mb-0 p-0">
-                <img id="imgComprovante" src="@Model.ImagemComprovanteSrc" style="width: 80%;height: 80%" alt="Comprovante">
+                <img id="imgComprovante" src="@Model.ImagemComprovanteSrc" alt="Comprovante">
             </div>
             <div class="modal-footer">
-                <div><a href="javascript:Download();" target="_blank">Download</a></div>
+                <div><a href="javascript:Download();">Download</a></div>
                 <button class="btn btn-outline-primary btn-rounded btn-md ml-4 text-center" data-dismiss="modal" type="button">Fechar</button>
             </div>
         </div>

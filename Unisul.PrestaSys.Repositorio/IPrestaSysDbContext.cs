@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,7 @@ using Unisul.PrestaSys.Entidades.Usuarios;
 
 namespace Unisul.PrestaSys.Repositorio
 {
-    public interface IPrestaSysDbContext
+    public interface IPrestaSysDbContext : IDisposable
     {
         DbSet<Prestacao> Prestacao { get; set; }
         DbSet<PrestacaoStatus> PrestacaoStatus { get; set; }

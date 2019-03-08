@@ -26,9 +26,20 @@ function Download() {
         var blob = bb.getBlob('application/octet-stream');
     }
 
+    var fileName = "Comprovante.jpg";
+
     var url = window.URL.createObjectURL(blob);
-    a.href = url;
-    a.download = "Comprovante.jpg";
-    a.click();
-    window.URL.revokeObjectURL(url);
+
+    if ("msToBlob" in navigator) {
+        navigator.msSaveBlob(blob, fileName);
+    } else {
+        var a = document.createElement("a");
+        a.setAttribute("href", url);
+        a.setAttribute("target", "_blank");
+        a.setAttribute("download", fileName);
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
 }
