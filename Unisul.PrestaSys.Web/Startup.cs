@@ -34,7 +34,7 @@ namespace Unisul.PrestaSys.Web
         {
             var cultureInfo = new CultureInfo("pt-BR")
             {
-                NumberFormat = {CurrencySymbol = "R$"}
+                NumberFormat = { CurrencySymbol = "R$" }
             };
 
             Thread.CurrentThread.CurrentCulture = cultureInfo;
@@ -48,16 +48,14 @@ namespace Unisul.PrestaSys.Web
             app.UseRequestLocalization(new RequestLocalizationOptions
             {
                 DefaultRequestCulture = new RequestCulture("pt-BR"),
-                // Formatting numbers, dates, etc.
                 SupportedCultures = supportedCultures,
-                // UI strings that we have localized.
                 SupportedUICultures = supportedCultures
             });
 
-            //if (env.IsDevelopment())
-            app.UseDeveloperExceptionPage();
-            //else
-            //    app.UseExceptionHandler("/Home/Error");
+            if (env.IsDevelopment())
+                app.UseDeveloperExceptionPage();
+            else
+                app.UseExceptionHandler("/Home/Error");
 
             app.UseStaticFiles();
             app.UseCookiePolicy();
