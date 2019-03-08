@@ -40,7 +40,13 @@ namespace Unisul.PrestaSys.Web.Controllers
             if (prestacao == null)
                 return NotFound();
 
-            return View(_mapper.Map<PrestacaoViewModel>(prestacao));
+            var prestacaoViewModel = _mapper.Map<PrestacaoViewModel>(prestacao);
+
+            if (prestacao.ImagemComprovante != null)
+                prestacaoViewModel.ImagemComprovanteSrc =
+                    "data:image;base64," + Convert.ToBase64String(prestacao.ImagemComprovante);
+
+            return View(prestacaoViewModel);
         }
 
         // POST: Prestacoes/Approve/5
@@ -63,7 +69,13 @@ namespace Unisul.PrestaSys.Web.Controllers
             if (prestacao == null)
                 return NotFound();
 
-            return View(_mapper.Map<PrestacaoViewModel>(prestacao));
+            var prestacaoViewModel = _mapper.Map<PrestacaoViewModel>(prestacao);
+
+            if (prestacao.ImagemComprovante != null)
+                prestacaoViewModel.ImagemComprovanteSrc =
+                    "data:image;base64," + Convert.ToBase64String(prestacao.ImagemComprovante);
+
+            return View(prestacaoViewModel);
         }
 
         // POST: Prestacoes/Delete/5
@@ -298,7 +310,13 @@ namespace Unisul.PrestaSys.Web.Controllers
             if (prestacao == null)
                 return NotFound();
 
-            return View(_mapper.Map<PrestacaoViewModel>(prestacao));
+            var prestacaoViewModel = _mapper.Map<PrestacaoViewModel>(prestacao);
+
+            if (prestacao.ImagemComprovante != null)
+                prestacaoViewModel.ImagemComprovanteSrc =
+                    "data:image;base64," + Convert.ToBase64String(prestacao.ImagemComprovante);
+
+            return View(prestacaoViewModel);
         }
 
         // POST: Prestacoes/Reject/5
@@ -321,7 +339,13 @@ namespace Unisul.PrestaSys.Web.Controllers
             if (prestacao == null)
                 return NotFound();
 
-            return View(_mapper.Map<PrestacaoViewModel>(prestacao));
+            var prestacaoViewModel = _mapper.Map<PrestacaoViewModel>(prestacao);
+
+            if (prestacao.ImagemComprovante != null)
+                prestacaoViewModel.ImagemComprovanteSrc =
+                    "data:image;base64," + Convert.ToBase64String(prestacao.ImagemComprovante);
+
+            return View(prestacaoViewModel);
         }
 
         // POST: Prestacoes/Delete/5
