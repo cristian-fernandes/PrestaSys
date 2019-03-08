@@ -1,36 +1,26 @@
-// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
 function Download() {
 
+    var blob;
+    var fileName = "Comprovante.jpg";
     var img = document.getElementById("imgComprovante");
-
-    var a = document.createElement("a");
-    document.body.appendChild(a);
-    a.style = "display: none";
-
-    var image_data = atob(img.src.split(',')[1]);
-
-    var arraybuffer = new ArrayBuffer(image_data.length);
+    var imageData = atob(img.src.split(",")[1]);
+    var arraybuffer = new ArrayBuffer(imageData.length);
     var view = new Uint8Array(arraybuffer);
-    for (var i = 0; i < image_data.length; i++) {
-        view[i] = image_data.charCodeAt(i) & 0xff;
+    for (var i = 0; i < imageData.length; i++) {
+        view[i] = imageData.charCodeAt(i) & 0xff;
     }
-    try {
 
-        var blob = new Blob([arraybuffer], { type: 'application/octet-stream' });
+    try {
+        blob = new Blob([arraybuffer], { type: "application/octet-stream" });
     } catch (e) {
         var bb = new (window.WebKitBlobBuilder || window.MozBlobBuilder);
         bb.append(arraybuffer);
-        var blob = bb.getBlob('application/octet-stream');
+        blob = bb.getBlob("application/octet-stream");
     }
-
-    var fileName = "Comprovante.jpg";
 
     var url = window.URL.createObjectURL(blob);
 
-    if ("msToBlob" in navigator) {
+    if (window.navigator.msSaveOrOpenBlob) {
         navigator.msSaveBlob(blob, fileName);
     } else {
         var a = document.createElement("a");
