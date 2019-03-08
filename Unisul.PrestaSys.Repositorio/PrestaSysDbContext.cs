@@ -11,10 +11,6 @@ namespace Unisul.PrestaSys.Repositorio
     {
         private readonly DbContextOptions<PrestaSysDbContext> _options;
 
-        public PrestaSysDbContext()
-        {
-        }
-
         public PrestaSysDbContext(DbContextOptions<PrestaSysDbContext> options)
             : base(options)
         {
