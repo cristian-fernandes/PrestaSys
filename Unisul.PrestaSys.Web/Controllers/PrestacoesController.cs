@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using AutoMapper;
+using jsreport.AspNetCore;
+using jsreport.Types;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -44,6 +46,28 @@ namespace Unisul.PrestaSys.Web.Controllers
             if (prestacao.ImagemComprovante != null)
                 prestacaoViewModel.ImagemComprovanteSrc =
                     "data:image;base64," + Convert.ToBase64String(prestacao.ImagemComprovante);
+
+            return View(prestacaoViewModel);
+        }
+
+        [MiddlewareFilter(typeof(JsReportPipeline))]
+        public IActionResult Print(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var prestacao = _prestacaoService.GetById(id.Value);
+
+            if (prestacao == null)
+                return NotFound();
+
+            var prestacaoViewModel = _mapper.Map<PrestacaoViewModel>(prestacao);
+
+            if (prestacao.ImagemComprovante != null)
+                prestacaoViewModel.ImagemComprovanteSrc =
+                    "data:image;base64," + Convert.ToBase64String(prestacao.ImagemComprovante);
+
+            HttpContext.JsReportFeature().Recipe(Recipe.ChromePdf);
 
             return View(prestacaoViewModel);
         }

@@ -180,3 +180,11 @@ body.scrollable {
     display: flex;
     justify-content: flex-start;
 }
+
+.body-printview {
+    font-family: "Verdana";
+    /* default is 1rem or 16px */
+    font-size: 25px;
+    font-weight: 300;
+    line-height: 1.5;
+}

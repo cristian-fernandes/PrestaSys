@@ -1,0 +1,90 @@
+@model Unisul.PrestaSys.Web.Models.Prestacoes.PrestacaoViewModel
+@{
+    Layout = null;
+}
+
+<html>
+
+<head>
+    <title>
+        Impressão de Prestação de Contas
+    </title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css"/>
+    <link rel="stylesheet" href="~/css/site.css"/>
+</head>
+<body class="body-printview">
+<p>
+
+</p>
+<br/>
+<h1>PrestaSys - Prestação: @Model.Titulo</h1>
+
+<hr/>
+
+<div>
+    <dl class="row">
+        <dt class="col-md-4">
+            @Html.DisplayNameFor(model => model.Tipo):
+        </dt>
+        <dd class="col-md-8">
+            @Html.DisplayFor(model => model.Tipo.Tipo)
+        </dd>
+        <dt class="col-md-4">
+            @Html.DisplayNameFor(model => model.Status):
+        </dt>
+        <dd class="col-md-8">
+            @Html.DisplayFor(model => model.Status.Status)
+        </dd>
+        <dt class="col-md-4">
+            @Html.DisplayNameFor(model => model.Data):
+        </dt>
+        <dd class="col-md-8">
+            @Html.DisplayFor(model => model.Data)
+        </dd>
+        <dt class="col-md-4">
+            @Html.DisplayNameFor(model => model.Justificativa):
+        </dt>
+        <dd class="col-md-8">
+            @Html.DisplayFor(model => model.Justificativa)
+        </dd>
+        <dt class="col-md-4">
+            @Html.DisplayNameFor(model => model.Emitente):
+        </dt>
+        <dd class="col-md-8">
+            @Html.DisplayFor(modelItem => modelItem.Emitente.Nome) @Html.DisplayFor(modelItem => modelItem.Emitente.Sobrenome)
+        </dd>
+        <dt class="col-md-4">
+            @Html.DisplayNameFor(model => model.Aprovador):
+        </dt>
+        <dd class="col-md-8">
+            @Html.DisplayFor(modelItem => modelItem.Aprovador.Nome) @Html.DisplayFor(modelItem => modelItem.Aprovador.Sobrenome)
+        </dd>
+        <dt class="col-md-4">
+            @Html.DisplayNameFor(model => model.AprovadorFinanceiro):
+        </dt>
+        <dd class="col-md-8">
+            @Html.DisplayFor(modelItem => modelItem.AprovadorFinanceiro.Nome) @Html.DisplayFor(modelItem => modelItem.AprovadorFinanceiro.Sobrenome)
+        </dd>
+        <dt class="col-md-4">
+            @Html.DisplayNameFor(model => model.Valor):
+        </dt>
+        <dd class="col-md-8">
+            @Html.DisplayFor(model => model.Valor)
+        </dd>
+        <dt class="col-md-4">
+            @Html.DisplayNameFor(model => model.ImagemComprovante):
+        </dt>
+        <dd class="col-md-8">
+            @if (Model.ImagemComprovanteSrc != null)
+            {
+                <img id="imgComprovante" src="@Model.ImagemComprovanteSrc">
+            }
+            else
+            {
+                <i>Imagem não Enviada</i>
+            }
+        </dd>
+    </dl>
+</div>
+</body>
+</html>

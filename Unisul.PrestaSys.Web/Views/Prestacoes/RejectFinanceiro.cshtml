@@ -87,6 +87,7 @@
         <span asp-validation-for="JustificativaAprovacaoFinanceira" class="text-danger"></span>
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Rejeitar Prestação" class="btn btn-danger" /> |
+        <a asp-action="Print" asp-route-id="@Model.Id">Imprimir</a> |
         <a asp-action="PrestacoesParaAprovarFinanceiro">Voltar para a Lista</a>
     </form>
 </div>
