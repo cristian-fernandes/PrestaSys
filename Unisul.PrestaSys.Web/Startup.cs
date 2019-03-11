@@ -55,7 +55,7 @@ namespace Unisul.PrestaSys.Web
                 SupportedUICultures = supportedCultures
             });
 
-            if (env.IsDevelopment())
+            if (!env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
             else
                 app.UseExceptionHandler("/Home/Error");
