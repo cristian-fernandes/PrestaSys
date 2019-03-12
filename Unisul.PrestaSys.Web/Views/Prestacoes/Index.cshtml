@@ -6,13 +6,13 @@
 
 <h1>Lista de Prestações de Contas</h1>
 
-<hr />
+<hr/>
 <p>
     <a asp-action="Create" class="btn btn-primary">Criar Nova Prestaçao de Contas</a>
 </p>
-
-<table class="table table-bordered table-striped table-hover">
-    <thead>
+<div class="table-responsive">
+    <table class="table table-bordered table-striped table-hover">
+        <thead>
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.PrestacoesList.First().Titulo)
@@ -31,42 +31,43 @@
             </th>
             <th></th>
         </tr>
-    </thead>
-    <tbody>
-    @if (Model.PrestacoesList.Any())
-    {
-        foreach (var item in Model.PrestacoesList)
+        </thead>
+        <tbody>
+        @if (Model.PrestacoesList.Any())
+        {
+            foreach (var item in Model.PrestacoesList)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Titulo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Tipo.Tipo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Status.Status)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Data)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Valor)
+                    </td>
+                    <td style="text-align: center">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary">Editar</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary">Detalhes</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">Excluir</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
         {
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Titulo)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Tipo.Tipo)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Status.Status)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Data)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Valor)
-                </td>
-                <td style="text-align: center">
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary">Editar</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary">Detalhes</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">Excluir</a>
-                </td>
+                <td colspan="6">Não foram encontrados registros.</td>
             </tr>
         }
-    }
-    else
-    {
-        <tr>
-            <td colspan="6">Não foram encontrados registros.</td>
-        </tr>
-    }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
 <paging class-paging-control="pagination float-right" total-records="@Model.TotalRecords" page-no="@Model.PageNumber" page-size="8"></paging>
