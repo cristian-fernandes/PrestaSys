@@ -2,18 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
-using jsreport.AspNetCore;
+using jsreport.Client;
 using jsreport.Types;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Unisul.PrestaSys.Comum;
 using Unisul.PrestaSys.Dominio.Servicos.Prestacoes;
 using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
+using Unisul.PrestaSys.Entidades.Notificacoes;
 using Unisul.PrestaSys.Entidades.Prestacoes;
 using Unisul.PrestaSys.Web.Models.Prestacoes;
+using Unisul.PrestaSys.Web.Services;
 
 namespace Unisul.PrestaSys.Web.Controllers
 {
@@ -22,13 +26,18 @@ namespace Unisul.PrestaSys.Web.Controllers
         private readonly IMapper _mapper;
         private readonly IPrestacaoService _prestacaoService;
         private readonly IUsuarioService _usuarioService;
+        private readonly IViewRenderService _viewRenderService;
+        private readonly EmailSettings _emailSettings;
 
-        public PrestacoesController(IUsuarioService usuarioService, IPrestacaoService prestacaoService, IMapper mapper)
+
+        public PrestacoesController(IUsuarioService usuarioService, IPrestacaoService prestacaoService, IMapper mapper, IOptions<EmailSettings> emailSettings, IViewRenderService viewRenderService)
             : base(usuarioService)
         {
             _usuarioService = usuarioService;
             _prestacaoService = prestacaoService;
             _mapper = mapper;
+            _emailSettings = emailSettings.Value;
+            _viewRenderService = viewRenderService;
         }
 
         public IActionResult Approve(int? id)
@@ -50,8 +59,7 @@ namespace Unisul.PrestaSys.Web.Controllers
             return View(prestacaoViewModel);
         }
 
-        [MiddlewareFilter(typeof(JsReportPipeline))]
-        public IActionResult Print(int? id)
+        public async Task<IActionResult> Print(int? id)
         {
             if (id == null)
                 return NotFound();
@@ -67,9 +75,23 @@ namespace Unisul.PrestaSys.Web.Controllers
                 prestacaoViewModel.ImagemComprovanteSrc =
                     "data:image;base64," + Convert.ToBase64String(prestacao.ImagemComprovante);
 
-            HttpContext.JsReportFeature().Recipe(Recipe.ChromePdf);
+            var jsReportingService = new ReportingService("https://prestasys.jsreportonline.net",
+                _emailSettings.CcEmail, _emailSettings.UsernamePassword);
 
-            return View(prestacaoViewModel);
+            var htmlToRender = await _viewRenderService.RenderToStringAsync("~/Views/Prestacoes/Print.cshtml",
+                prestacaoViewModel);
+
+            var report = await jsReportingService.RenderAsync(new RenderRequest
+            {
+                Template = new Template
+                {
+                    Recipe = Recipe.ChromePdf,
+                    Engine = Engine.Handlebars,
+                    Content = htmlToRender
+                }
+            });
+
+            return new FileStreamResult(report.Content, "application/pdf");
         }
 
         // POST: Prestacoes/Approve/5

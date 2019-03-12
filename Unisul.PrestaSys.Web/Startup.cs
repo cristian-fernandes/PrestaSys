@@ -2,9 +2,6 @@ using System;
 using System.Globalization;
 using System.Threading;
 using AutoMapper;
-using jsreport.AspNetCore;
-using jsreport.Binary;
-using jsreport.Local;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -21,6 +18,7 @@ using Unisul.PrestaSys.Entidades.Notificacoes;
 using Unisul.PrestaSys.Repositorio;
 using Unisul.PrestaSys.Repositorio.Prestacoes;
 using Unisul.PrestaSys.Repositorio.Usuarios;
+using Unisul.PrestaSys.Web.Services;
 
 namespace Unisul.PrestaSys.Web
 {
@@ -55,7 +53,7 @@ namespace Unisul.PrestaSys.Web
                 SupportedUICultures = supportedCultures
             });
 
-            if (!env.IsDevelopment())
+            if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
             else
                 app.UseExceptionHandler("/Home/Error");
@@ -112,11 +110,7 @@ namespace Unisul.PrestaSys.Web
 
             services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
             services.AddTransient<IEmailHelper, EmailHelper>();
-
-            services.AddJsReport(new LocalReporting()
-                .UseBinary(JsReportBinary.GetBinary())
-                .AsUtility()
-                .Create());
+            services.AddTransient<IViewRenderService, ViewRenderService>();
         }
     }
 }
