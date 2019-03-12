@@ -36,8 +36,6 @@ namespace Unisul.PrestaSys.Dominio.Helpers
                 };
 
                 mail.To.Add(new MailAddress(emailTo));
-                mail.To.Clear();
-                mail.To.Add(new MailAddress("cristian.fernandes@eldorado.org.br"));
                 mail.Subject = "PrestaSys - Prestação de Contas - " + prestacao.Titulo;
                 mail.Body = GetEmailBody(prestacao, statusAtual);
                 mail.IsBodyHtml = true;
