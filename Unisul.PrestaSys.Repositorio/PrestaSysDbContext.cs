@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Unisul.PrestaSys.Comum;
 using Unisul.PrestaSys.Entidades.Prestacoes;
 using Unisul.PrestaSys.Entidades.Usuarios;
 
@@ -76,9 +77,23 @@ namespace Unisul.PrestaSys.Repositorio
 
         public new EntityEntry Update(object entity)
         {
-            return base.Update(entity);
-        }
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
 
+            try
+            {
+                return base.Update(entity);
+            }
+            catch (InvalidOperationException)
+            {
+                var originalEntity = Find(entity.GetType(), ((IEntity)entity).Id);
+                Entry(originalEntity).CurrentValues.SetValues(entity);
+                return base.Update(originalEntity);
+            }
+        }
+   
         public virtual DbSet<Usuario> Usuario { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

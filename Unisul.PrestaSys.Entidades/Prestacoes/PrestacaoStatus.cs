@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using Unisul.PrestaSys.Comum;
 
 namespace Unisul.PrestaSys.Entidades.Prestacoes
 {
-    public sealed class PrestacaoStatus
+    public sealed class PrestacaoStatus : IEntity
     {
         public PrestacaoStatus()
         {

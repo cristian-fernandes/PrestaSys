@@ -1,9 +1,10 @@
 using System;
+using Unisul.PrestaSys.Comum;
 using Unisul.PrestaSys.Entidades.Usuarios;
 
 namespace Unisul.PrestaSys.Entidades.Prestacoes
 {
-    public class Prestacao
+    public class Prestacao : IEntity
     {
         public virtual Usuario Aprovador { get; set; }
 

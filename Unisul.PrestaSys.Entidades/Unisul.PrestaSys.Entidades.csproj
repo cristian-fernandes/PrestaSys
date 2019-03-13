@@ -4,4 +4,8 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Unisul.PrestaSys.Comum\Unisul.PrestaSys.Comum.csproj" />
+  </ItemGroup>
+
 </Project>

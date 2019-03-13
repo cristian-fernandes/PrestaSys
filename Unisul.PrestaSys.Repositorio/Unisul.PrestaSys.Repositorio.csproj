@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Unisul.PrestaSys.Comum\Unisul.PrestaSys.Comum.csproj" />
     <ProjectReference Include="..\Unisul.PrestaSys.Entidades\Unisul.PrestaSys.Entidades.csproj" />
   </ItemGroup>
 

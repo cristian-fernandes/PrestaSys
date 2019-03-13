@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Unisul.PrestaSys.Comum;
 using Unisul.PrestaSys.Entidades.Prestacoes;
 
 namespace Unisul.PrestaSys.Entidades.Usuarios
 {
-    public sealed class Usuario
+    public sealed class Usuario : IEntity
     {
         public Usuario()
         {
