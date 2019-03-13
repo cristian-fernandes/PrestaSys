@@ -422,7 +422,7 @@ namespace Unisul.PrestaSys.Web.Controllers
                 return new byte[0];
 
             if (image.Length <= 0)
-                return null;
+                return new byte[0];
 
             byte[] imageByte;
 

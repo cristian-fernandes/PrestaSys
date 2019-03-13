@@ -11,7 +11,7 @@ using Unisul.PrestaSys.Entidades.Usuarios;
 
 namespace Unisul.PrestaSys.Repositorio
 {
-    public sealed class PrestaSysDbContext : DbContext, IPrestaSysDbContext
+    public class PrestaSysDbContext : DbContext, IPrestaSysDbContext
     {
         public PrestaSysDbContext(DbContextOptions<PrestaSysDbContext> options)
             : base(options)

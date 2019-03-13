@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
@@ -31,42 +30,27 @@ namespace Unisul.PrestaSys.Web.Controllers
 
         public IActionResult Login(string email, string senha)
         {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    var usuario = _usuarioService.GetUsuarioByEmailAndSenha(email, senha);
+            if (!ModelState.IsValid) return View("Index");
+            var usuario = _usuarioService.GetUsuarioByEmailAndSenha(email, senha);
 
-                    if (usuario != null)
-                    {
-                        LogarUsuario(usuario, false);
-                        
-                        return RedirectToAction("Index", "Prestacoes");
-                    }
-
-                    ModelState.AddModelError(string.Empty, "Usuário ou Senha inválidos, por favor tente novamente.");
-                }
-            }
-            catch (Exception ex)
+            if (usuario != null)
             {
-                Console.Write(ex);
+                LogarUsuario(usuario, false);
+
+                return RedirectToAction("Index", "Prestacoes");
             }
+
+            ModelState.AddModelError(string.Empty, "Usuário ou Senha inválidos, por favor tente novamente.");
+
 
             return View("Index");
         }
 
         public IActionResult Logoff()
         {
-            try
-            {
-                var authenticationManager = Request.HttpContext;
+            var authenticationManager = Request.HttpContext;
 
-                authenticationManager.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            authenticationManager.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
             return View("Index");
         }
@@ -78,23 +62,17 @@ namespace Unisul.PrestaSys.Web.Controllers
 
         private void LogarUsuario(Usuario loginUsuario, bool isPersistent)
         {
-            var claims = new List<Claim>();
-
-            try
+            var claims = new List<Claim>
             {
-                claims.Add(new Claim(ClaimTypes.Email, loginUsuario.Email));
-                claims.Add(new Claim(ClaimTypes.Name, loginUsuario.Nome));
-                var claimIdenties = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                var claimPrincipal = new ClaimsPrincipal(claimIdenties);
-                var authenticationManager = Request.HttpContext;
+                new Claim(ClaimTypes.Email, loginUsuario.Email), new Claim(ClaimTypes.Name, loginUsuario.Nome)
+            };
 
-                authenticationManager.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                    claimPrincipal, new AuthenticationProperties {IsPersistent = isPersistent});
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            var claimIdenties = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var claimPrincipal = new ClaimsPrincipal(claimIdenties);
+            var authenticationManager = Request.HttpContext;
+
+            authenticationManager.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                claimPrincipal, new AuthenticationProperties {IsPersistent = isPersistent});
         }
     }
 }
