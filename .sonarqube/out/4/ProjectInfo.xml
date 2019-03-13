@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ProjectInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.sonarsource.com/msbuild/integration/2015/1">
+  <ProjectName>Unisul.PrestaSys.Web</ProjectName>
+  <ProjectLanguage>C#</ProjectLanguage>
+  <ProjectType>Product</ProjectType>
+  <ProjectGuid>a4e0264d-9787-4fc7-a8f4-b602b1b3f776</ProjectGuid>
+  <FullPath>C:\projects\personal\prestasys\Unisul.PrestaSys.Web\Unisul.PrestaSys.Web.csproj</FullPath>
+  <IsExcluded>false</IsExcluded>
+  <AnalysisResults>
+    <AnalysisResult Id="FilesToAnalyze" Location="C:\projects\personal\prestasys\.sonarqube\out\4\FilesToAnalyze.txt" />
+  </AnalysisResults>
+  <AnalysisSettings>
+    <Property Name="sonar.cs.roslyn.reportFilePath">C:\projects\personal\prestasys\Unisul.PrestaSys.Web\bin\Debug\netcoreapp2.2\Unisul.PrestaSys.Web.dll.RoslynCA.json|C:\projects\personal\prestasys\Unisul.PrestaSys.Web\bin\Debug\netcoreapp2.2\Unisul.PrestaSys.Web.Views.dll.RoslynCA.json</Property>
+    <Property Name="sonar.cs.analyzer.projectOutPath">C:\projects\personal\prestasys\.sonarqube\out\4</Property>
+  </AnalysisSettings>
+  <Configuration>Debug</Configuration>
+  <Platform>AnyCPU</Platform>
+  <TargetFramework>netcoreapp2.2</TargetFramework>
+</ProjectInfo>

@@ -1,0 +1,7 @@
+organization=cristian-fernandes-github
+projectKey=cristian-fernandes_PrestaSys
+serverUrl=https://sonarcloud.io
+serverVersion=7.7.0.22610
+dashboardUrl=https://sonarcloud.io/dashboard?id=cristian-fernandes_PrestaSys
+ceTaskId=AWl4hr3BQrR3DqR5uMrO
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AWl4hr3BQrR3DqR5uMrO
