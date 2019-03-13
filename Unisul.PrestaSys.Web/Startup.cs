@@ -15,6 +15,7 @@ using Unisul.PrestaSys.Dominio.Helpers;
 using Unisul.PrestaSys.Dominio.Servicos.Prestacoes;
 using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
 using Unisul.PrestaSys.Entidades.Notificacoes;
+using Unisul.PrestaSys.Entidades.PdfGeneration;
 using Unisul.PrestaSys.Repositorio;
 using Unisul.PrestaSys.Repositorio.Prestacoes;
 using Unisul.PrestaSys.Repositorio.Usuarios;
@@ -99,6 +100,10 @@ namespace Unisul.PrestaSys.Web
                 options.Conventions.AllowAnonymousToPage("/Login");
             });
 
+
+            services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
+            services.Configure<JsReportSettings>(Configuration.GetSection("JsReportSettings"));
+
             services.AddDbContext<PrestaSysDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("PrestacaoDb")));
 
@@ -108,9 +113,8 @@ namespace Unisul.PrestaSys.Web
             services.AddTransient<IUsuarioService, UsuarioService>();
             services.AddTransient<IPrestacaoService, PrestacaoService>();
 
-            services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
-            services.AddTransient<IEmailHelper, EmailHelper>();
             services.AddTransient<IViewRenderService, ViewRenderService>();
+            services.AddTransient<IEmailHelper, EmailHelper>();
         }
     }
 }

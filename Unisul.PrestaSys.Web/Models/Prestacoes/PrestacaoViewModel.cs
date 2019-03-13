@@ -10,16 +10,21 @@ namespace Unisul.PrestaSys.Web.Models.Prestacoes
 {
     public class PrestacaoViewModel : BaseViewModel
     {
-        [Required]
-        public int AprovadorFinanceiroId { get; set; }
+        public Usuario Aprovador { get; set; }
 
-        [Required]
-        public int AprovadorId { get; set; }
+        [Display(Name = "Aprovador Financeiro")]
+        public Usuario AprovadorFinanceiro { get; set; }
+
+        [Required] public int AprovadorFinanceiroId { get; set; }
+
+        [Required] public int AprovadorId { get; set; }
 
         [DataType(DataType.Date)]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         [Required(ErrorMessage = "Por favor, informe a data da prestação.")]
         public DateTime Data { get; set; }
+
+        public Usuario Emitente { get; set; }
 
         [Display(Name = "Emitente")]
         [Required]
@@ -41,17 +46,15 @@ namespace Unisul.PrestaSys.Web.Models.Prestacoes
         [Display(Name = "Justificativa para Aprovação/Rejeição do Financeiro")]
         public string JustificativaAprovacaoFinanceira { get; set; }
 
-        [Required]
-        [Display(Name = "Status")]
-        public int StatusId { get; set; }
-
-        [Required]
-        [Display(Name = "Tipo")]
-        public int TipoId { get; set; }
-
         public PrestacaoStatus Status { get; set; }
 
+        [Required] [Display(Name = "Status")] public int StatusId { get; set; }
+
         public PrestacaoTipo Tipo { get; set; }
+
+        [Required] [Display(Name = "Tipo")] public int TipoId { get; set; }
+
+        public SelectList TipoPrestacaoSelectList { get; set; }
 
         [Required(ErrorMessage = "Por favor, informe o título da prestação.")]
         [Display(Name = "Título da Prestação")]
@@ -60,14 +63,5 @@ namespace Unisul.PrestaSys.Web.Models.Prestacoes
         [Required(ErrorMessage = "Por favor, informe o valor da prestação.")]
         [DataType(DataType.Currency)]
         public decimal Valor { get; set; }
-
-        public Usuario Aprovador { get; set; }
-
-        [Display(Name = "Aprovador Financeiro")]
-        public Usuario AprovadorFinanceiro { get; set; }
-
-        public Usuario Emitente { get; set; }
-
-        public SelectList TipoPrestacaoSelectList { get; set; }
     }
 }

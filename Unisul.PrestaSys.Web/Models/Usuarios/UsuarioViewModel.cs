@@ -23,30 +23,24 @@ namespace Unisul.PrestaSys.Web.Models.Usuarios
         [Display(Name = "É Gerente Financeiro?")]
         public bool FlagGerenteFinanceiro { get; set; }
 
-        [Display(Name = "Gerente")]
-        public Usuario Gerente { get; set; }
+        [Display(Name = "Gerente")] public Usuario Gerente { get; set; }
 
-        [Display(Name = "Gerente Financeiro")]
-        public Usuario GerenteFinanceiro { get; set; }
+        [Display(Name = "Gerente Financeiro")] public Usuario GerenteFinanceiro { get; set; }
 
         [Required]
         [Display(Name = "Gerente Financeiro")]
         public int? GerenteFinanceiroId { get; set; }
 
-        [Required]
-        [Display(Name = "Gerente")]
-        public int? GerenteId { get; set; }
+        public SelectList GerenteFinanceiroSelectList { get; set; }
+
+        [Required] [Display(Name = "Gerente")] public int? GerenteId { get; set; }
+
+        public SelectList GerenteSelectList { get; set; }
 
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Por favor, informe o nome do usuário.")]
         public string Nome { get; set; }
-
-        [Required(ErrorMessage = "Por favor, informe a senha do usuário.")]
-        public string Senha { get; set; }
-
-        [Required(ErrorMessage = "Por favor, informe o sobrenome do usuário.")]
-        public string Sobrenome { get; set; }
 
         public ICollection<Prestacao> PrestacaoAprovador { get; set; }
 
@@ -54,10 +48,14 @@ namespace Unisul.PrestaSys.Web.Models.Usuarios
 
         public ICollection<Prestacao> PrestacaoEmitente { get; set; }
 
-        public bool ShouldDisableDeleteButton => PrestacaoAprovador != null && PrestacaoAprovador.Any() || PrestacaoAprovadorFinanceiro != null && PrestacaoAprovadorFinanceiro.Any();
+        [Required(ErrorMessage = "Por favor, informe a senha do usuário.")]
+        public string Senha { get; set; }
 
-        public SelectList GerenteSelectList { get; set; }
+        public bool ShouldDisableDeleteButton => PrestacaoAprovador != null && PrestacaoAprovador.Any() ||
+                                                 PrestacaoAprovadorFinanceiro != null &&
+                                                 PrestacaoAprovadorFinanceiro.Any();
 
-        public SelectList GerenteFinanceiroSelectList { get; set; }
+        [Required(ErrorMessage = "Por favor, informe o sobrenome do usuário.")]
+        public string Sobrenome { get; set; }
     }
 }

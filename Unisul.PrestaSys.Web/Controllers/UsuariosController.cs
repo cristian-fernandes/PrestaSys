@@ -41,7 +41,6 @@ namespace Unisul.PrestaSys.Web.Controllers
         public IActionResult Create(UsuarioViewModel usuarioViewModel)
         {
             if (ModelState.IsValid)
-            {
                 try
                 {
                     _usuarioService.Create(_mapper.Map<Usuario>(usuarioViewModel));
@@ -49,12 +48,11 @@ namespace Unisul.PrestaSys.Web.Controllers
                 }
                 catch (DbUpdateException ex)
                 {
-                    if (ex.InnerException.Message.Contains("Cannot insert duplicate key row in object 'dbo.Usuario' with unique index 'U_UsuarioEmail'."))
-                    {
-                        ModelState.AddModelError(string.Empty, "Não é possível inserir um usuário com um e-mail já existente na nossa base de dados.");
-                    }
+                    if (ex.InnerException.Message.Contains(
+                        "Cannot insert duplicate key row in object 'dbo.Usuario' with unique index 'U_UsuarioEmail'."))
+                        ModelState.AddModelError(string.Empty,
+                            "Não é possível inserir um usuário com um e-mail já existente na nossa base de dados.");
                 }
-            }
 
             usuarioViewModel.GerenteSelectList = GetAllGerentesSelectList();
             usuarioViewModel.GerenteFinanceiroSelectList = GetAllGerentesFinanceirosSelectList();
@@ -128,7 +126,6 @@ namespace Unisul.PrestaSys.Web.Controllers
                 return NotFound();
 
             if (ModelState.IsValid)
-            {
                 try
                 {
                     _usuarioService.Update(_mapper.Map<Usuario>(usuarioViewModel));
@@ -142,14 +139,16 @@ namespace Unisul.PrestaSys.Web.Controllers
                             return NotFound();
                         case DbUpdateConcurrencyException _:
                             throw;
-                        case DbUpdateException _ when ex.InnerException.Message.Contains("Cannot insert duplicate key row in object 'dbo.Usuario' with unique index 'U_UsuarioEmail'."):
-                            ModelState.AddModelError(string.Empty, "Não é possível inserir um usuário com um e-mail já existente na nossa base de dados.");
+                        case DbUpdateException _ when ex.InnerException.Message.Contains(
+                                "Cannot insert duplicate key row in object 'dbo.Usuario' with unique index 'U_UsuarioEmail'.")
+                            :
+                            ModelState.AddModelError(string.Empty,
+                                "Não é possível inserir um usuário com um e-mail já existente na nossa base de dados.");
                             break;
                         default:
                             return RedirectToAction(nameof(Index));
                     }
                 }
-            }
 
             usuarioViewModel.GerenteSelectList = GetAllGerentesSelectList();
             usuarioViewModel.GerenteFinanceiroSelectList = GetAllGerentesFinanceirosSelectList();
