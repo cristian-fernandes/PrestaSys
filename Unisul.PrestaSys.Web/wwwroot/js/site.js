@@ -33,3 +33,27 @@ function Download() {
         document.body.removeChild(a);
     }
 }
+
+$('#Data').datepicker({
+    uiLibrary: 'bootstrap4',
+    format: 'dd/mm/yyyy',
+    locale: 'pt-br'
+});
+
+$('input[type="date"]').attr('type', 'text');
+
+$(function () {
+    $('#Valor').maskMoney({
+        prefix: 'R$ ',
+        allowNegative: false,
+        thousands: '.',
+        decimal: ',',
+        affixesStay: false
+    });
+});
+
+$('a[href="' + this.location.pathname + '"]').parents('li,ul').addClass('active');
+
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip();
+});
