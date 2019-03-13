@@ -97,7 +97,7 @@ namespace Unisul.PrestaSys.Web.Controllers
         {
             _prestacaoService.AprovarPrestacao(id, justificativaAprovacaoFinanceira,
                 PrestacaoStatusEnum.EmAprovacaoFinanceira);
-            return RedirectToAction(nameof(PrestacoesParaAprovar));
+            return RedirectToAction(nameof(PrestacoesParaAprovarFinanceiro));
         }
 
         // GET: Prestacoes/Create
@@ -212,7 +212,7 @@ namespace Unisul.PrestaSys.Web.Controllers
             prestacaoViewModel.AprovadorId = usuarioLogado.GerenteId;
             prestacaoViewModel.AprovadorFinanceiroId = usuarioLogado.GerenteFinanceiroId;
             prestacaoViewModel.EmitenteId = usuarioLogado.Id;
-            prestacaoViewModel.StatusId = (int) PrestacaoStatusEnum.EmAprovacaoOperacional;
+            prestacaoViewModel.StatusId = prestacao.StatusId;
             prestacaoViewModel.TipoPrestacaoSelectList = GetAllPrestacoesSelectList(prestacaoViewModel.TipoId);
 
             return View(prestacaoViewModel);
@@ -223,8 +223,13 @@ namespace Unisul.PrestaSys.Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, PrestacaoViewModel prestacaoViewModel)
         {
+            var usuarioLogado = GetLoggedUser();
+
             if (id != prestacaoViewModel.Id)
                 return NotFound();
+
+            if (prestacaoViewModel.EmitenteId != usuarioLogado.Id)
+                return Forbid();
 
             if (ModelState.IsValid)
             {
@@ -242,9 +247,7 @@ namespace Unisul.PrestaSys.Web.Controllers
                 }
 
                 return RedirectToAction(nameof(Index));
-            }
-
-            var usuarioLogado = GetLoggedUser();
+            };
 
             prestacaoViewModel.AprovadorId = usuarioLogado.GerenteId;
             prestacaoViewModel.AprovadorFinanceiroId = usuarioLogado.GerenteFinanceiroId;
@@ -402,7 +405,7 @@ namespace Unisul.PrestaSys.Web.Controllers
         {
             _prestacaoService.RejeitarPrestacao(id, justificativaAprovacaoFinanceira,
                 PrestacaoStatusEnum.EmAprovacaoFinanceira);
-            return RedirectToAction(nameof(PrestacoesParaAprovar));
+            return RedirectToAction(nameof(PrestacoesParaAprovarFinanceiro));
         }
 
         private SelectList GetAllPrestacoesSelectList()

@@ -8,7 +8,7 @@
 
 <h3>Tem certeza que deseja excluir esta Prestação de Contas?</h3>
 
-<hr />
+<hr/>
 
 <div>
     <dl class="row">
@@ -81,8 +81,17 @@
         </dd>
     </dl>
     <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Excluir Prestação" class="btn btn-danger" /> |
+        <input type="hidden" asp-for="Id"/>
+        @if (!Model.ShouldLockPrestacao)
+        {
+            <span><input type="submit" value="Excluir Prestação" class="btn btn-danger"/> |</span>
+        }
+        else
+        {
+            <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Prestação finalizada, não é possível excluí-la.">
+                <input type="submit" value="Excluir Prestação" class="btn btn-danger disabled" disabled /> |
+            </span>
+        }
         <a asp-action="Print" asp-route-id="@Model.Id">Imprimir</a> |
         <a asp-action="Index">Voltar para a Lista</a>
     </form>
@@ -94,8 +103,10 @@
                 <img id="imgComprovante" src="@Model.ImagemComprovanteSrc" alt="Comprovante">
             </div>
             <div class="modal-footer">
-                <div><a href="javascript:Download();">Download</a></div>
-                <button class="btn btn-outline-primary btn-rounded btn-md ml-4 text-center" data-dismiss="modal" type="button">Fechar</button>
+                <div>
+                    <a href="javascript:Download();">Download</a>
+                </div>
+                <button class="btn btn-outline-primary ml-4 text-center" data-dismiss="modal" type="button">Fechar</button>
             </div>
         </div>
     </div>

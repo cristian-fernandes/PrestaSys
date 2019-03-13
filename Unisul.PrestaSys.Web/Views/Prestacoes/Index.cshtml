@@ -8,7 +8,7 @@
 
 <hr/>
 <p>
-    <a asp-action="Create" class="btn btn-primary">Criar Nova Prestaçao de Contas</a>
+    <a asp-action="Create" class="btn btn-primary">Criar Nova Prestação de Contas</a>
 </p>
 <div class="table-responsive">
     <table class="table table-bordered table-striped table-hover">
@@ -54,9 +54,22 @@
                         @Html.DisplayFor(modelItem => item.Valor)
                     </td>
                     <td style="text-align: center">
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary">Editar</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary">Detalhes</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">Excluir</a>
+                        @if (!item.ShouldLockPrestacao)
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary">Editar</a><span>|</span>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary">Detalhes</a><span>|</span>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">Excluir</a>
+                        }
+                        else
+                        {
+                            <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Prestação finalizada, não é possível alterá-la.">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary disabled">Editar</a><span>|</span>
+                            </span>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary">Detalhes</a><span>|</span>
+                            <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Prestação finalizada, não é possível excluí-la.">
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger disabled">Excluir</a>
+                            </span>
+                        }
                     </td>
                 </tr>
             }

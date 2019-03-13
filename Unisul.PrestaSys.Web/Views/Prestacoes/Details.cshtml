@@ -79,7 +79,16 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Editar</a> |
+    @if (!Model.ShouldLockPrestacao)
+    {       
+            <a asp-action="Edit" asp-route-id="@Model.Id">Editar</a><span> |</span>
+    }
+    else
+    {
+        <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Prestação finalizada, não é possível alterá-la.">
+            Editar<span> |</span>
+        </span>
+    }
     <a asp-action="Print" asp-route-id="@Model.Id">Imprimir</a> |
     <a asp-action="Index">Voltar para a Lista</a>
 </div>

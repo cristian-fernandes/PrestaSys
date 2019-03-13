@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Unisul.PrestaSys.Comum;
 using Unisul.PrestaSys.Entidades.Prestacoes;
 using Unisul.PrestaSys.Entidades.Usuarios;
 using Unisul.PrestaSys.Web.Models.Base;
@@ -63,5 +64,7 @@ namespace Unisul.PrestaSys.Web.Models.Prestacoes
         [Required(ErrorMessage = "Por favor, informe o valor da prestação.")]
         [DataType(DataType.Currency)]
         public decimal Valor { get; set; }
+
+        public bool ShouldLockPrestacao => Status?.Id == (int) PrestacaoStatusEnum.Finalizada;
     }
 }
