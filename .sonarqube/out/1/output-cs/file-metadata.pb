@@ -1,9 +1,0 @@
-Y
-WC:\projects\personal\prestasys\Unisul.PrestaSys.Entidades\Notificacoes\EmailSettings.cs]
-[C:\projects\personal\prestasys\Unisul.PrestaSys.Entidades\PdfGeneration\JsReportSettings.csS
-QC:\projects\personal\prestasys\Unisul.PrestaSys.Entidades\Prestacoes\Prestacao.csY
-WC:\projects\personal\prestasys\Unisul.PrestaSys.Entidades\Prestacoes\PrestacaoStatus.csW
-UC:\projects\personal\prestasys\Unisul.PrestaSys.Entidades\Prestacoes\PrestacaoTipo.csO
-MC:\projects\personal\prestasys\Unisul.PrestaSys.Entidades\Usuarios\Usuario.csY
-UC:\Users\cristian_f\AppData\Local\Temp\.NETCoreApp,Version=v2.2.AssemblyAttributes.cs€
-|C:\projects\personal\prestasys\Unisul.PrestaSys.Entidades\obj\Debug\netcoreapp2.2\Unisul.PrestaSys.Entidades.AssemblyInfo.cs
