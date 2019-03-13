@@ -26,7 +26,6 @@ namespace Unisul.PrestaSys.Web.Controllers
         private readonly JsReportSettings _jsReportSettings;
         private readonly IMapper _mapper;
         private readonly IPrestacaoService _prestacaoService;
-        private readonly IUsuarioService _usuarioService;
         private readonly IViewRenderService _viewRenderService;
 
 
@@ -34,7 +33,6 @@ namespace Unisul.PrestaSys.Web.Controllers
             IOptions<JsReportSettings> jsReportSettings, IViewRenderService viewRenderService)
             : base(usuarioService)
         {
-            _usuarioService = usuarioService;
             _prestacaoService = prestacaoService;
             _mapper = mapper;
             _jsReportSettings = jsReportSettings.Value;
@@ -66,7 +64,7 @@ namespace Unisul.PrestaSys.Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult ApproveConfirmed(int id, string justificativaAprovacao)
         {
-            _prestacaoService.AprovarPrestacao(id, justificativaAprovacao, PrestacaoStatusEnum.EmAprovacaoOperacional);
+            _prestacaoService.AprovarPrestacao(id, justificativaAprovacao, PrestacaoStatuses.EmAprovacaoOperacional);
             return RedirectToAction(nameof(PrestacoesParaAprovar));
         }
 
@@ -96,7 +94,7 @@ namespace Unisul.PrestaSys.Web.Controllers
         public IActionResult ApproveFinanceiroConfirmed(int id, string justificativaAprovacaoFinanceira)
         {
             _prestacaoService.AprovarPrestacao(id, justificativaAprovacaoFinanceira,
-                PrestacaoStatusEnum.EmAprovacaoFinanceira);
+                PrestacaoStatuses.EmAprovacaoFinanceira);
             return RedirectToAction(nameof(PrestacoesParaAprovarFinanceiro));
         }
 
@@ -110,7 +108,7 @@ namespace Unisul.PrestaSys.Web.Controllers
                 AprovadorId = usuarioLogado.GerenteId,
                 AprovadorFinanceiroId = usuarioLogado.GerenteFinanceiroId,
                 EmitenteId = usuarioLogado.Id,
-                StatusId = (int) PrestacaoStatusEnum.EmAprovacaoOperacional,
+                StatusId = (int) PrestacaoStatuses.EmAprovacaoOperacional,
                 TipoPrestacaoSelectList = GetAllPrestacoesSelectList()
             };
 
@@ -135,7 +133,7 @@ namespace Unisul.PrestaSys.Web.Controllers
             prestacaoViewModel.AprovadorId = usuarioLogado.GerenteId;
             prestacaoViewModel.AprovadorFinanceiroId = usuarioLogado.GerenteFinanceiroId;
             prestacaoViewModel.EmitenteId = usuarioLogado.Id;
-            prestacaoViewModel.StatusId = (int) PrestacaoStatusEnum.EmAprovacaoOperacional;
+            prestacaoViewModel.StatusId = (int) PrestacaoStatuses.EmAprovacaoOperacional;
             prestacaoViewModel.TipoPrestacaoSelectList = GetAllPrestacoesSelectList(prestacaoViewModel.TipoId);
 
             return View(prestacaoViewModel);
@@ -247,12 +245,12 @@ namespace Unisul.PrestaSys.Web.Controllers
                 }
 
                 return RedirectToAction(nameof(Index));
-            };
+            }
 
             prestacaoViewModel.AprovadorId = usuarioLogado.GerenteId;
             prestacaoViewModel.AprovadorFinanceiroId = usuarioLogado.GerenteFinanceiroId;
             prestacaoViewModel.EmitenteId = usuarioLogado.Id;
-            prestacaoViewModel.StatusId = (int) PrestacaoStatusEnum.EmAprovacaoOperacional;
+            prestacaoViewModel.StatusId = (int) PrestacaoStatuses.EmAprovacaoOperacional;
             prestacaoViewModel.TipoPrestacaoSelectList = GetAllPrestacoesSelectList(prestacaoViewModel.TipoId);
 
             return View(prestacaoViewModel);
@@ -280,7 +278,7 @@ namespace Unisul.PrestaSys.Web.Controllers
         public IActionResult PrestacoesParaAprovar(int page = 1)
         {
             var todasPrestacoes =
-                _prestacaoService.GetAllParaAprovacao(GetLoggedUser().Id, PrestacaoStatusEnum.EmAprovacaoOperacional);
+                _prestacaoService.GetAllParaAprovacao(GetLoggedUser().Id, PrestacaoStatuses.EmAprovacaoOperacional);
 
             var prestacoesLista = todasPrestacoes.OrderByDescending(pr => pr.Data)
                 .Skip((page - 1) * Constants.PageSize).Take(Constants.PageSize);
@@ -299,7 +297,7 @@ namespace Unisul.PrestaSys.Web.Controllers
         public IActionResult PrestacoesParaAprovarFinanceiro(int page = 1)
         {
             var todasPrestacoes =
-                _prestacaoService.GetAllParaAprovacao(GetLoggedUser().Id, PrestacaoStatusEnum.EmAprovacaoFinanceira);
+                _prestacaoService.GetAllParaAprovacao(GetLoggedUser().Id, PrestacaoStatuses.EmAprovacaoFinanceira);
 
             var prestacoesLista = todasPrestacoes.OrderByDescending(pr => pr.Data)
                 .Skip((page - 1) * Constants.PageSize).Take(Constants.PageSize);
@@ -374,7 +372,7 @@ namespace Unisul.PrestaSys.Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult RejectConfirmed(int id, string justificativaAprovacao)
         {
-            _prestacaoService.RejeitarPrestacao(id, justificativaAprovacao, PrestacaoStatusEnum.EmAprovacaoOperacional);
+            _prestacaoService.RejeitarPrestacao(id, justificativaAprovacao, PrestacaoStatuses.EmAprovacaoOperacional);
             return RedirectToAction(nameof(PrestacoesParaAprovar));
         }
 
@@ -404,7 +402,7 @@ namespace Unisul.PrestaSys.Web.Controllers
         public IActionResult RejectFinanceiroConfirmed(int id, string justificativaAprovacaoFinanceira)
         {
             _prestacaoService.RejeitarPrestacao(id, justificativaAprovacaoFinanceira,
-                PrestacaoStatusEnum.EmAprovacaoFinanceira);
+                PrestacaoStatuses.EmAprovacaoFinanceira);
             return RedirectToAction(nameof(PrestacoesParaAprovarFinanceiro));
         }
 
@@ -421,7 +419,7 @@ namespace Unisul.PrestaSys.Web.Controllers
         private static byte[] GetImageBytes(IFormFile image)
         {
             if (image == null)
-                return null;
+                return new byte[0];
 
             if (image.Length <= 0)
                 return null;

@@ -18,7 +18,7 @@ namespace Unisul.PrestaSys.Web.Controllers
             _service = service;
         }
 
-        public override void OnActionExecuted(ActionExecutedContext filterContext)
+        public override void OnActionExecuted(ActionExecutedContext context)
         {
             if (User.Identity.IsAuthenticated && ViewData.Model is BaseViewModel model)
             {
@@ -34,20 +34,20 @@ namespace Unisul.PrestaSys.Web.Controllers
                 };
             }
 
-            base.OnActionExecuted(filterContext);
+            base.OnActionExecuted(context);
         }
 
-        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        public override void OnActionExecuting(ActionExecutingContext context)
         {
             try
             {
                 if (User.Identity.IsAuthenticated)
                     return;
 
-                if (filterContext.RouteData.Values["Controller"].ToString() == "Login")
+                if (context.RouteData.Values["Controller"].ToString() == "Login")
                     return;
 
-                filterContext.Result = new RedirectResult(Url.Action("Index", "Login"));
+                context.Result = new RedirectResult(Url.Action("Index", "Login"));
             }
             catch (Exception ex)
             {

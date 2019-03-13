@@ -7,11 +7,9 @@ namespace Unisul.PrestaSys.Web.Controllers
 {
     public class HomeController : BaseController
     {
-        private readonly IUsuarioService _usuarioService;
 
         public HomeController(IUsuarioService usuarioService) : base(usuarioService)
         {
-            _usuarioService = usuarioService;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

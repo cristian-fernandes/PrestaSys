@@ -1,6 +1,6 @@
 namespace Unisul.PrestaSys.Comum
 {
-    public enum PrestacaoStatusEnum
+    public enum PrestacaoStatuses
     {
         EmAprovacaoOperacional = 1,
         EmAprovacaoFinanceira = 2,

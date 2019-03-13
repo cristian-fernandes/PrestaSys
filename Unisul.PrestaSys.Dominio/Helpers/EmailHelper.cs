@@ -11,7 +11,7 @@ namespace Unisul.PrestaSys.Dominio.Helpers
 {
     public interface IEmailHelper
     {
-        bool EnviarEmail(Prestacao prestacao, PrestacaoStatusEnum statusAtual, string emailTo);
+        bool EnviarEmail(Prestacao prestacao, PrestacaoStatuses statusAtual, string emailTo);
     }
 
     public class EmailHelper : IEmailHelper
@@ -20,13 +20,18 @@ namespace Unisul.PrestaSys.Dominio.Helpers
 
         private readonly IHostingEnvironment _environment;
 
+        private const string Template = @"<h1>PrestaSys - Presta&ccedil;&atilde;o de Contas</h1>
+                    <p> <b> Presta&ccedil;&atilde;o: </b> {{TITULO}} </p>
+                    <p> <b> Status: </b> {{STATUS}} </p>
+                    <p> <i> {{FRASE_FINAL}} </i> </p>";
+
         public EmailHelper(IOptions<EmailSettings> emailSettings, IHostingEnvironment environment)
         {
             _emailSettings = emailSettings.Value;
             _environment = environment;
         }
 
-        public bool EnviarEmail(Prestacao prestacao, PrestacaoStatusEnum statusAtual, string emailTo)
+        public bool EnviarEmail(Prestacao prestacao, PrestacaoStatuses statusAtual, string emailTo)
         {
             try
             {
@@ -60,43 +65,35 @@ namespace Unisul.PrestaSys.Dominio.Helpers
             }
         }
 
-        private static string GetEmailBody(Prestacao prestacao, PrestacaoStatusEnum statusAtual)
+        private static string GetEmailBody(Prestacao prestacao, PrestacaoStatuses statusAtual)
         {
-            var text = GetMessageBodyText();
+            var text = Template;
             text = text.Replace("{{TITULO}}", prestacao.Titulo);
 
             switch (statusAtual)
             {
-                case PrestacaoStatusEnum.EmAprovacaoOperacional:
+                case PrestacaoStatuses.EmAprovacaoOperacional:
                     text = text.Replace("{{STATUS}}", "Aguardando Aprova&ccedil;&atilde;o Operacional");
                     text = text.Replace("{{FRASE_FINAL}}",
                         "Favor verificar a sua lista de presta&ccedil;&otilde;es pendentes de aprova&ccedil;&atilde;o.");
                     break;
-                case PrestacaoStatusEnum.EmAprovacaoFinanceira:
+                case PrestacaoStatuses.EmAprovacaoFinanceira:
                     text = text.Replace("{{STATUS}}", "Aguardando Aprova&ccedil;&atilde;o Financeira");
                     text = text.Replace("{{FRASE_FINAL}}",
                         "Favor verificar a sua lista de presta&ccedil;&otilde;es pendentes de aprova&ccedil;&atilde;o financeira.");
                     break;
-                case PrestacaoStatusEnum.Rejeitada:
+                case PrestacaoStatuses.Rejeitada:
                     text = text.Replace("{{STATUS}}", "Rejeitada");
                     text = text.Replace("{{FRASE_FINAL}}",
                         "Favor verificar a sua lista de presta&ccedil;&otilde;es criadas.");
                     break;
-                case PrestacaoStatusEnum.Finalizada:
+                case PrestacaoStatuses.Finalizada:
                     text = text.Replace("{{STATUS}}", "Finalizada");
                     text = text.Replace("{{FRASE_FINAL}}", "Agradecemos o uso do PrestaSys");
                     break;
             }
 
             return text;
-        }
-
-        private static string GetMessageBodyText()
-        {
-            return @"<h1>PrestaSys - Presta&ccedil;&atilde;o de Contas</h1>
-                    <p> <b> Presta&ccedil;&atilde;o: </b> {{TITULO}} </p>
-                    <p> <b> Status: </b> {{STATUS}} </p>
-                    <p> <i> {{FRASE_FINAL}} </i> </p>";
         }
     }
 }

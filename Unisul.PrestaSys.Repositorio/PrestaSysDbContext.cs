@@ -11,14 +11,11 @@ using Unisul.PrestaSys.Entidades.Usuarios;
 
 namespace Unisul.PrestaSys.Repositorio
 {
-    public class PrestaSysDbContext : DbContext, IPrestaSysDbContext
+    public sealed class PrestaSysDbContext : DbContext, IPrestaSysDbContext
     {
-        private readonly DbContextOptions<PrestaSysDbContext> _options;
-
         public PrestaSysDbContext(DbContextOptions<PrestaSysDbContext> options)
             : base(options)
         {
-            _options = options;
         }
 
         public new EntityEntry Add(object entity)

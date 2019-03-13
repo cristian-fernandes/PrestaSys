@@ -52,7 +52,7 @@ $(function () {
     });
 });
 
-$('a[href="' + this.location.pathname + '"]').parents('li,ul').addClass('active');
+$('a[href="' + location.pathname + '"]').parents('li,ul').addClass('active');
 
 $(function () {
     $('[data-toggle="tooltip"]').tooltip();

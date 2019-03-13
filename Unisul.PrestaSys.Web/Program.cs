@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 
 namespace Unisul.PrestaSys.Web
 {
-    public class Program
+    public static class Program
     {
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {

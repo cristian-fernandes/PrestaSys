@@ -2,7 +2,7 @@
 @{
     Layout = null;
 }
-
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -78,11 +78,11 @@
         <dd class="col-md-8">
             @if (Model.ImagemComprovanteSrc != null)
             {
-                <img id="imgComprovante" src="@Model.ImagemComprovanteSrc">
+                <img  alt="Comprovante" id="imgComprovante" src="@Model.ImagemComprovanteSrc">
             }
             else
             {
-                <i>Imagem não Enviada</i>
+                <em>Imagem não Enviada</em>
             }
         </dd>
     </dl>

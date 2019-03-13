@@ -9,8 +9,6 @@ a.navbar-brand {
     right: 0px;
 }
 
-html { font-size: 14px; }
-
 @media (min-width: 768px) {
     html { font-size: 16px; }
 }
@@ -29,6 +27,7 @@ button.accept-policy {
 html {
     min-height: 100%;
     position: relative;
+    font-size: 14px;
 }
 
 body { margin-bottom: 60px; }
@@ -182,7 +181,7 @@ body.scrollable {
 }
 
 .body-printview {
-    font-family: "Verdana";
+    font-family: "Verdana, Sans-serif";
     /* default is 1rem or 16px */
     font-size: 25px;
     font-weight: 300;

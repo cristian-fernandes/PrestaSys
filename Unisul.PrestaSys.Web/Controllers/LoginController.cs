@@ -65,7 +65,7 @@ namespace Unisul.PrestaSys.Web.Controllers
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw;
             }
 
             return View("Index");
@@ -93,7 +93,7 @@ namespace Unisul.PrestaSys.Web.Controllers
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw;
             }
         }
     }
