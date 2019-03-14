@@ -81,7 +81,10 @@ namespace Unisul.PrestaSys.Web.Controllers
                 AprovadorFinanceiroId = usuarioLogado.GerenteFinanceiroId,
                 EmitenteId = usuarioLogado.Id,
                 StatusId = (int) PrestacaoStatuses.EmAprovacaoOperacional,
-                TipoPrestacaoSelectList = GetAllPrestacoesSelectList()
+                TipoPrestacaoSelectList = GetAllPrestacoesSelectList(),
+                Action = "Create",
+                ButtonText = "Criar Nova Prestação",
+                Data = null
             };
 
             return View(prestacaoViewModel);
@@ -156,6 +159,8 @@ namespace Unisul.PrestaSys.Web.Controllers
             prestacaoViewModel.EmitenteId = usuarioLogado.Id;
             prestacaoViewModel.StatusId = prestacao.StatusId;
             prestacaoViewModel.TipoPrestacaoSelectList = GetAllPrestacoesSelectList(prestacaoViewModel.TipoId);
+            prestacaoViewModel.Action = "Edit";
+            prestacaoViewModel.ButtonText = "Salvar";
 
             return View(prestacaoViewModel);
         }

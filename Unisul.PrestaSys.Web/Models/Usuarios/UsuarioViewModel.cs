@@ -57,5 +57,9 @@ namespace Unisul.PrestaSys.Web.Models.Usuarios
 
         [Required(ErrorMessage = "Por favor, informe o sobrenome do usuário.")]
         public string Sobrenome { get; set; }
+
+        public string ButtonText { get; set; }
+
+        public string Action { get; set; }
     }
 }

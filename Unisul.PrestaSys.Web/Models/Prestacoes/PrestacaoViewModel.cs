@@ -23,7 +23,7 @@ namespace Unisul.PrestaSys.Web.Models.Prestacoes
         [DataType(DataType.Date)]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         [Required(ErrorMessage = "Por favor, informe a data da prestação.")]
-        public DateTime Data { get; set; }
+        public DateTime? Data { get; set; }
 
         public Usuario Emitente { get; set; }
 
@@ -66,5 +66,9 @@ namespace Unisul.PrestaSys.Web.Models.Prestacoes
         public decimal Valor { get; set; }
 
         public bool ShouldLockPrestacao => Status?.Id == (int) PrestacaoStatuses.Finalizada;
+
+        public string ButtonText { get; set; }
+
+        public string Action { get; set; }
     }
 }

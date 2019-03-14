@@ -29,7 +29,9 @@ namespace Unisul.PrestaSys.Web.Controllers
             var usuarioViewModel = new UsuarioViewModel
             {
                 GerenteSelectList = GetAllGerentesSelectList(),
-                GerenteFinanceiroSelectList = GetAllGerentesFinanceirosSelectList()
+                GerenteFinanceiroSelectList = GetAllGerentesFinanceirosSelectList(),
+                Action = "Create",
+                ButtonText = "Criar Usuário"
             };
 
             return View(usuarioViewModel);
@@ -97,6 +99,8 @@ namespace Unisul.PrestaSys.Web.Controllers
 
             usuarioViewModel.GerenteSelectList = GetAllGerentesSelectList();
             usuarioViewModel.GerenteFinanceiroSelectList = GetAllGerentesFinanceirosSelectList();
+            usuarioViewModel.Action = "Edit";
+            usuarioViewModel.ButtonText = "Salvar";
 
             return View(usuarioViewModel);
         }
