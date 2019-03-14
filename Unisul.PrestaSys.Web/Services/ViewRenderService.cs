@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Routing;
 
@@ -33,18 +34,24 @@ namespace Unisul.PrestaSys.Web.Services
             _serviceProvider = serviceProvider;
         }
 
-        public async Task<string> RenderToStringAsync(string viewName, object model)
+        public Task<string> RenderToStringAsync(string viewName, object model)
         {
             var httpContext = new DefaultHttpContext {RequestServices = _serviceProvider};
             var actionContext = new ActionContext(httpContext, new RouteData(), new ActionDescriptor());
 
+            var viewResult = _razorViewEngine.GetView(null, viewName, false);
+
+            if (viewResult.View == null)
+                throw new ArgumentNullException($"{viewName} não corresponde a nenhuma view existente");
+
+            return RenderToStringAsync(actionContext, viewResult, model);
+        }
+
+        private async Task<string> RenderToStringAsync(ActionContext actionContext, ViewEngineResult viewResult,
+            object model)
+        {
             using (var sw = new StringWriter())
             {
-                var viewResult = _razorViewEngine.GetView(null, viewName, false);
-
-                if (viewResult.View == null)
-                    throw new ArgumentNullException($"{viewName} não corresponde a nenhuma view existente");
-
                 var viewDictionary =
                     new ViewDataDictionary(
                             new EmptyModelMetadataProvider(),

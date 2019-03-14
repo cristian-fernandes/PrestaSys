@@ -275,7 +275,8 @@ namespace Unisul.PrestaSys.Web.Controllers
             var jsReportingService = new ReportingService(_jsReportSettings.Uri,
                 _jsReportSettings.UsernameEmail, _jsReportSettings.UsernamePassword);
 
-            var htmlToRender = await _viewRenderService.RenderToStringAsync("Print", prestacaoViewModel);
+            var htmlToRender = await _viewRenderService.RenderToStringAsync("~/Views/Prestacoes/Print.cshtml",
+                prestacaoViewModel);
 
             var report = await jsReportingService.RenderAsync(new RenderRequest
             {
