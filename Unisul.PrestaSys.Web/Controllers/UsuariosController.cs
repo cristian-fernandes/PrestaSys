@@ -63,15 +63,7 @@ namespace Unisul.PrestaSys.Web.Controllers
         // GET: Usuarios/Delete/5
         public IActionResult Delete(int? id)
         {
-            if (id == null)
-                return NotFound();
-
-            var usuario = _usuarioService.GetById(id.Value);
-
-            if (usuario == null)
-                return NotFound();
-
-            return View(_mapper.Map<UsuarioViewModel>(usuario));
+            return GetUsuarioModelById(id, "Delete");
         }
 
         // POST: Usuarios/Delete/5
@@ -87,15 +79,7 @@ namespace Unisul.PrestaSys.Web.Controllers
         // GET: Usuarios/Details/5
         public IActionResult Details(int? id)
         {
-            if (id == null)
-                return NotFound();
-
-            var usuario = _usuarioService.GetById(id.Value);
-
-            if (usuario == null)
-                return NotFound();
-
-            return View(_mapper.Map<UsuarioViewModel>(usuario));
+            return GetUsuarioModelById(id, "Details");
         }
 
         // GET: Usuarios/Edit/5
@@ -196,6 +180,19 @@ namespace Unisul.PrestaSys.Web.Controllers
             });
 
             return new SelectList(gerentes, "Id", "NomeCompleto");
+        }
+
+        private IActionResult GetUsuarioModelById(int? id, string view)
+        {
+            if (id == null)
+                return NotFound();
+
+            var usuario = _usuarioService.GetById(id.Value);
+
+            if (usuario == null)
+                return NotFound();
+
+            return View(view, _mapper.Map<UsuarioViewModel>(usuario));
         }
     }
 }

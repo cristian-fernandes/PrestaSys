@@ -41,21 +41,7 @@ namespace Unisul.PrestaSys.Web.Controllers
 
         public IActionResult Approve(int? id)
         {
-            if (id == null)
-                return NotFound();
-
-            var prestacao = _prestacaoService.GetById(id.Value);
-
-            if (prestacao == null)
-                return NotFound();
-
-            var prestacaoViewModel = _mapper.Map<PrestacaoViewModel>(prestacao);
-
-            if (prestacao.ImagemComprovante != null)
-                prestacaoViewModel.ImagemComprovanteSrc =
-                    "data:image;base64," + Convert.ToBase64String(prestacao.ImagemComprovante);
-
-            return View(prestacaoViewModel);
+            return GetPrestacaoViewModelById(id, "Details");
         }
 
         // POST: Prestacoes/Approve/5
@@ -70,21 +56,7 @@ namespace Unisul.PrestaSys.Web.Controllers
 
         public IActionResult ApproveFinanceiro(int? id)
         {
-            if (id == null)
-                return NotFound();
-
-            var prestacao = _prestacaoService.GetById(id.Value);
-
-            if (prestacao == null)
-                return NotFound();
-
-            var prestacaoViewModel = _mapper.Map<PrestacaoViewModel>(prestacao);
-
-            if (prestacao.ImagemComprovante != null)
-                prestacaoViewModel.ImagemComprovanteSrc =
-                    "data:image;base64," + Convert.ToBase64String(prestacao.ImagemComprovante);
-
-            return View(prestacaoViewModel);
+            return GetPrestacaoViewModelById(id, "ApproveFinanceiro");
         }
 
         // POST: Prestacoes/Delete/5
@@ -142,21 +114,7 @@ namespace Unisul.PrestaSys.Web.Controllers
         // GET: Prestacoes/Delete/5
         public IActionResult Delete(int? id)
         {
-            if (id == null)
-                return NotFound();
-
-            var prestacao = _prestacaoService.GetById(id.Value);
-
-            if (prestacao == null)
-                return NotFound();
-
-            var prestacaoViewModel = _mapper.Map<PrestacaoViewModel>(prestacao);
-
-            if (prestacao.ImagemComprovante != null)
-                prestacaoViewModel.ImagemComprovanteSrc =
-                    "data:image;base64," + Convert.ToBase64String(prestacao.ImagemComprovante);
-
-            return View(prestacaoViewModel);
+            return GetPrestacaoViewModelById(id, "Delete");
         }
 
         // POST: Prestacoes/Delete/5
@@ -172,21 +130,7 @@ namespace Unisul.PrestaSys.Web.Controllers
         // GET: Prestacoes/Details/5
         public IActionResult Details(int? id)
         {
-            if (id == null)
-                return NotFound();
-
-            var prestacao = _prestacaoService.GetById(id.Value);
-
-            if (prestacao == null)
-                return NotFound();
-
-            var prestacaoViewModel = _mapper.Map<PrestacaoViewModel>(prestacao);
-
-            if (prestacao.ImagemComprovante != null)
-                prestacaoViewModel.ImagemComprovanteSrc =
-                    "data:image;base64," + Convert.ToBase64String(prestacao.ImagemComprovante);
-
-            return View(prestacaoViewModel);
+            return GetPrestacaoViewModelById(id, "Details");
         }
 
         // GET: Prestacoes/Edit/5
@@ -331,8 +275,7 @@ namespace Unisul.PrestaSys.Web.Controllers
             var jsReportingService = new ReportingService(_jsReportSettings.Uri,
                 _jsReportSettings.UsernameEmail, _jsReportSettings.UsernamePassword);
 
-            var htmlToRender = await _viewRenderService.RenderToStringAsync("~/Views/Prestacoes/Print.cshtml",
-                prestacaoViewModel);
+            var htmlToRender = await _viewRenderService.RenderToStringAsync("Print", prestacaoViewModel);
 
             var report = await jsReportingService.RenderAsync(new RenderRequest
             {
@@ -349,21 +292,7 @@ namespace Unisul.PrestaSys.Web.Controllers
 
         public IActionResult Reject(int? id)
         {
-            if (id == null)
-                return NotFound();
-
-            var prestacao = _prestacaoService.GetById(id.Value);
-
-            if (prestacao == null)
-                return NotFound();
-
-            var prestacaoViewModel = _mapper.Map<PrestacaoViewModel>(prestacao);
-
-            if (prestacao.ImagemComprovante != null)
-                prestacaoViewModel.ImagemComprovanteSrc =
-                    "data:image;base64," + Convert.ToBase64String(prestacao.ImagemComprovante);
-
-            return View(prestacaoViewModel);
+            return GetPrestacaoViewModelById(id, "Reject");
         }
 
         // POST: Prestacoes/Reject/5
@@ -378,21 +307,7 @@ namespace Unisul.PrestaSys.Web.Controllers
 
         public IActionResult RejectFinanceiro(int? id)
         {
-            if (id == null)
-                return NotFound();
-
-            var prestacao = _prestacaoService.GetById(id.Value);
-
-            if (prestacao == null)
-                return NotFound();
-
-            var prestacaoViewModel = _mapper.Map<PrestacaoViewModel>(prestacao);
-
-            if (prestacao.ImagemComprovante != null)
-                prestacaoViewModel.ImagemComprovanteSrc =
-                    "data:image;base64," + Convert.ToBase64String(prestacao.ImagemComprovante);
-
-            return View(prestacaoViewModel);
+            return GetPrestacaoViewModelById(id, "RejectFinanceiro");
         }
 
         // POST: Prestacoes/Delete/5
@@ -434,6 +349,25 @@ namespace Unisul.PrestaSys.Web.Controllers
             }
 
             return imageByte;
+        }
+
+        private IActionResult GetPrestacaoViewModelById(int? id, string view)
+        {
+            if (id == null)
+                return NotFound();
+
+            var prestacao = _prestacaoService.GetById(id.Value);
+
+            if (prestacao == null)
+                return NotFound();
+
+            var prestacaoViewModel = _mapper.Map<PrestacaoViewModel>(prestacao);
+
+            if (prestacao.ImagemComprovante != null)
+                prestacaoViewModel.ImagemComprovanteSrc =
+                    "data:image;base64," + Convert.ToBase64String(prestacao.ImagemComprovante);
+
+            return View(view, prestacaoViewModel);
         }
     }
 }
