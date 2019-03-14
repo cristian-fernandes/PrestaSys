@@ -10,5 +10,7 @@ namespace Unisul.PrestaSys.Web.Models.Prestacoes
         public int TotalRecords { get; set; }
 
         public int PageNumber { get; set; }
+
+        public string TipoListagem { get; set; }
     }
 }

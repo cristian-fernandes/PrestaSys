@@ -221,7 +221,8 @@ namespace Unisul.PrestaSys.Web.Controllers
             {
                 PageNumber = page,
                 TotalRecords = todasPrestacoes.Count(),
-                PrestacoesList = _mapper.Map<List<Prestacao>, List<PrestacaoViewModel>>(prestacoesLista.ToList())
+                PrestacoesList = _mapper.Map<List<Prestacao>, List<PrestacaoViewModel>>(prestacoesLista.ToList()),
+                TipoListagem = "Index"
             };
 
             return View(prestacoesListViewModel);
@@ -240,7 +241,8 @@ namespace Unisul.PrestaSys.Web.Controllers
             {
                 PageNumber = page,
                 TotalRecords = todasPrestacoes.Count(),
-                PrestacoesList = _mapper.Map<List<Prestacao>, List<PrestacaoViewModel>>(prestacoesLista.ToList())
+                PrestacoesList = _mapper.Map<List<Prestacao>, List<PrestacaoViewModel>>(prestacoesLista.ToList()),
+                TipoListagem = "Aprovar"
             };
 
             return View(prestacoesListViewModel);
@@ -259,7 +261,8 @@ namespace Unisul.PrestaSys.Web.Controllers
             {
                 PageNumber = page,
                 TotalRecords = todasPrestacoes.Count(),
-                PrestacoesList = _mapper.Map<List<Prestacao>, List<PrestacaoViewModel>>(prestacoesLista.ToList())
+                PrestacoesList = _mapper.Map<List<Prestacao>, List<PrestacaoViewModel>>(prestacoesLista.ToList()),
+                TipoListagem = "Financeiro"
             };
 
             return View(prestacoesListViewModel);
