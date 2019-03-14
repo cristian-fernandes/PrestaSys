@@ -100,7 +100,6 @@ namespace Unisul.PrestaSys.Web
                 options.Conventions.AllowAnonymousToPage("/Login");
             });
 
-
             services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
             services.Configure<JsReportSettings>(Configuration.GetSection("JsReportSettings"));
 
