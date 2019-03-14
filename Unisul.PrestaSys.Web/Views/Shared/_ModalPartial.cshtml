@@ -1,0 +1,15 @@
+@model Unisul.PrestaSys.Web.Models.Prestacoes.PrestacaoViewModel
+
+<div aria-hidden="true" aria-labelledby="myModalLabel" class="modal fade" id="modalIMG" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-body mb-0 p-0">
+                <img id="imgComprovante" src="@Model.ImagemComprovanteSrc" alt="Comprovante">
+            </div>
+            <div class="modal-footer">
+                <div><a href="javascript:Download();">Download</a></div>
+                <button class="btn btn-outline-primary btn-rounded btn-md ml-4 text-center" data-dismiss="modal" type="button">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>

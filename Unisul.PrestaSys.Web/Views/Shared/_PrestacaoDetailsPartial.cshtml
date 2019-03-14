@@ -1,0 +1,71 @@
+@model Unisul.PrestaSys.Web.Models.Prestacoes.PrestacaoViewModel
+
+<dl class="row">
+    <dt class="col-sm-4">
+        @Html.DisplayNameFor(model => model.Titulo):
+    </dt>
+    <dd class="col-sm-8">
+        @Html.DisplayFor(model => model.Titulo)
+    </dd>
+    <dt class="col-sm-4">
+        @Html.DisplayNameFor(model => model.Tipo):
+    </dt>
+    <dd class="col-sm-8">
+        @Html.DisplayFor(model => model.Tipo.Tipo)
+    </dd>
+    <dt class="col-sm-4">
+        @Html.DisplayNameFor(model => model.Status):
+    </dt>
+    <dd class="col-sm-8">
+        @Html.DisplayFor(model => model.Status.Status)
+    </dd>
+    <dt class="col-sm-4">
+        @Html.DisplayNameFor(model => model.Data):
+    </dt>
+    <dd class="col-sm-8">
+        @Html.DisplayFor(model => model.Data)
+    </dd>
+    <dt class="col-sm-4">
+        @Html.DisplayNameFor(model => model.Justificativa):
+    </dt>
+    <dd class="col-sm-8">
+        @Html.DisplayFor(model => model.Justificativa)
+    </dd>
+    <dt class="col-sm-4">
+        @Html.DisplayNameFor(model => model.Emitente):
+    </dt>
+    <dd class="col-sm-8">
+        @Html.DisplayFor(modelItem => modelItem.Emitente.Nome) @Html.DisplayFor(modelItem => modelItem.Emitente.Sobrenome)
+    </dd>
+    <dt class="col-sm-4">
+        @Html.DisplayNameFor(model => model.Aprovador):
+    </dt>
+    <dd class="col-sm-8">
+        @Html.DisplayFor(modelItem => modelItem.Aprovador.Nome) @Html.DisplayFor(modelItem => modelItem.Aprovador.Sobrenome)
+    </dd>
+    <dt class="col-sm-4">
+        @Html.DisplayNameFor(model => model.AprovadorFinanceiro):
+    </dt>
+    <dd class="col-sm-8">
+        @Html.DisplayFor(modelItem => modelItem.AprovadorFinanceiro.Nome) @Html.DisplayFor(modelItem => modelItem.AprovadorFinanceiro.Sobrenome)
+    </dd>
+    <dt class="col-sm-4">
+        @Html.DisplayNameFor(model => model.Valor):
+    </dt>
+    <dd class="col-sm-8">
+        @Html.DisplayFor(model => model.Valor)
+    </dd>
+    <dt class="col-sm-4">
+        @Html.DisplayNameFor(model => model.ImagemComprovante):
+    </dt>
+    <dd class="col-sm-8">
+        @if (Model.ImagemComprovanteSrc != null)
+        {
+            <a class="btn btn-primary" data-target="#modalIMG" data-toggle="modal" href="#">Visualizar Imagem</a>
+        }
+        else
+        {
+            <em>Imagem não Enviada</em>
+        }
+    </dd>
+</dl>

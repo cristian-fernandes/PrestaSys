@@ -41,7 +41,7 @@ namespace Unisul.PrestaSys.Web.Controllers
 
         public IActionResult Approve(int? id)
         {
-            return GetPrestacaoViewModelById(id, "Details");
+            return GetPrestacaoViewModelById(id, "Approve");
         }
 
         // POST: Prestacoes/Approve/5
@@ -179,6 +179,10 @@ namespace Unisul.PrestaSys.Web.Controllers
                 {
                     var prestacao = _mapper.Map<Prestacao>(prestacaoViewModel);
                     prestacao.ImagemComprovante = GetImageBytes(prestacaoViewModel.ImagemComprovante);
+                    if (prestacao.StatusId == (int)PrestacaoStatuses.Rejeitada)
+                    {
+                        prestacao.StatusId = (int) PrestacaoStatuses.EmAprovacaoOperacional;
+                    }
                     _prestacaoService.Update(prestacao);
                 }
                 catch (DbUpdateConcurrencyException)
