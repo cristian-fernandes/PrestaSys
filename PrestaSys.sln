@@ -11,7 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Unisul.PrestaSys.Dominio", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Unisul.PrestaSys.Entidades", "Unisul.PrestaSys.Entidades\Unisul.PrestaSys.Entidades.csproj", "{037FD57E-4993-438D-ACB8-D4BE5143FBFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unisul.PrestaSys.Comum", "Unisul.PrestaSys.Comum\Unisul.PrestaSys.Comum.csproj", "{9C34C13B-E741-4DD7-8CB2-EC0CF9375B43}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Unisul.PrestaSys.Comum", "Unisul.PrestaSys.Comum\Unisul.PrestaSys.Comum.csproj", "{9C34C13B-E741-4DD7-8CB2-EC0CF9375B43}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{CAD50806-03B9-490C-8DF3-E747BC6A3764}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unisul.PrestaSys.Tests", "Unisul.PrestaSys.Tests\Unisul.PrestaSys.Tests.csproj", "{F195C421-915C-4B5F-BACE-57C60E3E0703}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,9 +43,16 @@ Global
 		{9C34C13B-E741-4DD7-8CB2-EC0CF9375B43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C34C13B-E741-4DD7-8CB2-EC0CF9375B43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C34C13B-E741-4DD7-8CB2-EC0CF9375B43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F195C421-915C-4B5F-BACE-57C60E3E0703}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F195C421-915C-4B5F-BACE-57C60E3E0703}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F195C421-915C-4B5F-BACE-57C60E3E0703}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F195C421-915C-4B5F-BACE-57C60E3E0703}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F195C421-915C-4B5F-BACE-57C60E3E0703} = {CAD50806-03B9-490C-8DF3-E747BC6A3764}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {85BCE3B2-4D9B-4C0C-BA93-DA41FC10B1DA}
