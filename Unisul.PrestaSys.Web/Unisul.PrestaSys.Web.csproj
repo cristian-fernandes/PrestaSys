@@ -4,6 +4,8 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <UserSecretsId>d739a9cb-2ae2-404f-be2c-4962dc129912</UserSecretsId>
+      <!-- SonarQube needs this -->
+      <ProjectGuid>{A4E0264D-9787-4FC7-A8F4-B602B1B3F776}</ProjectGuid>
   </PropertyGroup>
 
 
