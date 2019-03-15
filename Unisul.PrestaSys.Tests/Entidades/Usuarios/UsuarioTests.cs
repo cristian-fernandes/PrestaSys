@@ -1,7 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Unisul.PrestaSys.Entidades.Usuarios;
 
-namespace Unisul.PrestaSys.Tests.Entidades
+namespace Unisul.PrestaSys.Tests.Entidades.Usuarios
 {
     [TestClass]
     public class UsuarioTests
@@ -9,14 +9,14 @@ namespace Unisul.PrestaSys.Tests.Entidades
         private const string Email = "test@test.com";
         private const bool FlagGerente = true;
         private const bool FlagGerenteFinanceiro = true;
-        private static readonly Usuario Gerente = new Usuario();
-        private static readonly Usuario GerenteFinanceiro= new Usuario();
         private const int GerenteFinanceiroId = 1;
         private const int GerenteId = 1;
         private const int Id = 1;
         private const string Nome = "Cristian";
         private const string Senha = "abacate";
         private const string Sobrenome = "Fernandes";
+        private static readonly Usuario Gerente = new Usuario();
+        private static readonly Usuario GerenteFinanceiro = new Usuario();
 
         [TestMethod]
         public void UsuarioPropertiesShouldBePopulatedOnCtor()
@@ -50,8 +50,8 @@ namespace Unisul.PrestaSys.Tests.Entidades
             Assert.AreEqual(usuario.Email, Email);
             Assert.AreEqual(usuario.FlagGerente, FlagGerente);
             Assert.AreEqual(usuario.FlagGerenteFinanceiro, FlagGerenteFinanceiro);
-            Assert.AreSame(usuario.Gerente, Gerente);
-            Assert.AreSame(usuario.GerenteFinanceiro, GerenteFinanceiro);
+            Assert.AreEqual(usuario.Gerente, Gerente);
+            Assert.AreEqual(usuario.GerenteFinanceiro, GerenteFinanceiro);
             Assert.AreEqual(usuario.GerenteFinanceiroId, GerenteFinanceiroId);
             Assert.AreEqual(usuario.GerenteId, GerenteId);
             Assert.AreEqual(usuario.Id, Id);
