@@ -8,15 +8,15 @@ namespace Unisul.PrestaSys.Tests.Entidades.Prestacoes
     [TestClass]
     public class PrestacaoTests
     {
-        private const int AprovadorFinanceiroId = 1;
+        private const int AprovadorFinanceiroId = 3;
         private const int AprovadorId = 1;
-        private const int EmitenteId = 1;
-        private const int Id = 1;
+        private const int EmitenteId = 2;
+        private const int Id = 4;
         private const string Justificativa = "Cristian";
         private const string JustificativaAprovacao = "abacate";
         private const string JustificativaAprovacaoFinanceira = "Fernandes";
-        private const int StatusId = 1;
-        private const int TipoId = 1;
+        private const int StatusId = 5;
+        private const int TipoId = 6;
         private const string Titulo = "Titulo";
         private const decimal Valor = 0M;
         private static readonly Usuario Aprovador = new Usuario();
@@ -30,26 +30,27 @@ namespace Unisul.PrestaSys.Tests.Entidades.Prestacoes
         [TestMethod]
         public void PrestacaoPropertiesShouldBeSetAndRetrievedCorrectly()
         {
-            var prestacao = new Prestacao();
-
-            prestacao.Aprovador = Aprovador;
-            prestacao.AprovadorFinanceiro = AprovadorFinanceiro;
-            prestacao.AprovadorFinanceiroId = AprovadorFinanceiroId;
-            prestacao.AprovadorId = AprovadorId;
-            prestacao.Data = _data;
-            prestacao.Emitente = Emitente;
-            prestacao.EmitenteId = EmitenteId;
-            prestacao.Id = Id;
-            prestacao.ImagemComprovante = ImagemComprovante;
-            prestacao.Justificativa = Justificativa;
-            prestacao.JustificativaAprovacao = JustificativaAprovacao;
-            prestacao.JustificativaAprovacaoFinanceira = JustificativaAprovacaoFinanceira;
-            prestacao.Status = Status;
-            prestacao.StatusId = StatusId;
-            prestacao.Tipo = Tipo;
-            prestacao.TipoId = TipoId;
-            prestacao.Titulo = Titulo;
-            prestacao.Valor = Valor;
+            var prestacao = new Prestacao
+            {
+                Aprovador = Aprovador,
+                AprovadorFinanceiro = AprovadorFinanceiro,
+                AprovadorFinanceiroId = AprovadorFinanceiroId,
+                AprovadorId = AprovadorId,
+                Data = _data,
+                Emitente = Emitente,
+                EmitenteId = EmitenteId,
+                Id = Id,
+                ImagemComprovante = ImagemComprovante,
+                Justificativa = Justificativa,
+                JustificativaAprovacao = JustificativaAprovacao,
+                JustificativaAprovacaoFinanceira = JustificativaAprovacaoFinanceira,
+                Status = Status,
+                StatusId = StatusId,
+                Tipo = Tipo,
+                TipoId = TipoId,
+                Titulo = Titulo,
+                Valor = Valor
+            };
 
             Assert.AreEqual(prestacao.Aprovador, Aprovador);
             Assert.AreEqual(prestacao.AprovadorFinanceiro, AprovadorFinanceiro);

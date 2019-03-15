@@ -20,10 +20,7 @@ namespace Unisul.PrestaSys.Tests.Entidades.Prestacoes
         [TestMethod]
         public void PrestacaoTipoPropertiesShouldBeSetAndRetrievedCorrectly()
         {
-            var prestacaoTipo = new PrestacaoTipo();
-
-            prestacaoTipo.Tipo = Tipo;
-            prestacaoTipo.Id = Id;
+            var prestacaoTipo = new PrestacaoTipo {Tipo = Tipo, Id = Id};
 
             Assert.AreEqual(prestacaoTipo.Tipo, Tipo);
         }

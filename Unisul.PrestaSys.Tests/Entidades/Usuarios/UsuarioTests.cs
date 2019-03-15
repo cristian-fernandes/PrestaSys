@@ -33,19 +33,20 @@ namespace Unisul.PrestaSys.Tests.Entidades.Usuarios
         [TestMethod]
         public void UsuarioPropertiesShouldBeSetAndRetrievedCorrectly()
         {
-            var usuario = new Usuario();
-
-            usuario.Email = Email;
-            usuario.FlagGerente = FlagGerente;
-            usuario.FlagGerenteFinanceiro = FlagGerenteFinanceiro;
-            usuario.Gerente = Gerente;
-            usuario.GerenteFinanceiro = GerenteFinanceiro;
-            usuario.GerenteFinanceiroId = GerenteFinanceiroId;
-            usuario.GerenteId = GerenteId;
-            usuario.Id = Id;
-            usuario.Nome = Nome;
-            usuario.Senha = Senha;
-            usuario.Sobrenome = Sobrenome;
+            var usuario = new Usuario
+            {
+                Email = Email,
+                FlagGerente = FlagGerente,
+                FlagGerenteFinanceiro = FlagGerenteFinanceiro,
+                Gerente = Gerente,
+                GerenteFinanceiro = GerenteFinanceiro,
+                GerenteFinanceiroId = GerenteFinanceiroId,
+                GerenteId = GerenteId,
+                Id = Id,
+                Nome = Nome,
+                Senha = Senha,
+                Sobrenome = Sobrenome
+            };
 
             Assert.AreEqual(usuario.Email, Email);
             Assert.AreEqual(usuario.FlagGerente, FlagGerente);

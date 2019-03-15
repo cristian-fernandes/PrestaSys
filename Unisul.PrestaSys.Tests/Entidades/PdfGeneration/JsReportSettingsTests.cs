@@ -13,12 +13,10 @@ namespace Unisul.PrestaSys.Tests.Entidades.PdfGeneration
         [TestMethod]
         public void JsReportSettingsPropertiesShouldBeSetAndRetrievedCorrectly()
         {
-            var settings = new JsReportSettings();
-
-            settings.Uri = Uri;
-            settings.UsernameEmail = UsernameEmail;
-            settings.UsernamePassword = UsernamePassword;
-
+            var settings = new JsReportSettings
+            {
+                Uri = Uri, UsernameEmail = UsernameEmail, UsernamePassword = UsernamePassword
+            };
 
             Assert.AreEqual(settings.Uri, Uri);
             Assert.AreEqual(settings.UsernameEmail, UsernameEmail);

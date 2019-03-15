@@ -20,10 +20,7 @@ namespace Unisul.PrestaSys.Tests.Entidades.Prestacoes
         [TestMethod]
         public void PrestacaoStatusPropertiesShouldBeSetAndRetrievedCorrectly()
         {
-            var prestacaoStatus = new PrestacaoStatus();
-
-            prestacaoStatus.Status = Status;
-            prestacaoStatus.Id = Id;
+            var prestacaoStatus = new PrestacaoStatus {Status = Status, Id = Id};
 
             Assert.AreEqual(prestacaoStatus.Status, Status);
         }
