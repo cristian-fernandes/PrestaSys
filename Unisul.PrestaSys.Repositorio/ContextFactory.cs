@@ -15,7 +15,7 @@ namespace Unisul.PrestaSys.Repositorio
         public PrestaSysDbContext CreateDbContext(string[] args)
         {
             var builderConfiguration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory() + "/../Unisul.PrestaSys.Web")
+                .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.Development.json");
             var configuration = builderConfiguration.Build();
             var connectionString = configuration.GetConnectionString("PrestacaoDb");
