@@ -1,4 +1,4 @@
-# PrestaSys - Prestação de Contas
+# PrestaSys - Prestação de Contas ![GitHub release](https://img.shields.io/github/release/cristian-fernandes/PrestaSys.svg)
 Repositório criado para a UA de Prática em Programação para a Web - 2019/1
 
 **Turma:** UA - 373 - PRÁTICA EM PROGRAMAÇÃO PARA WEB - 2019A
