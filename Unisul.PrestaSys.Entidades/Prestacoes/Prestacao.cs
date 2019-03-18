@@ -1,10 +1,10 @@
 using System;
-using Unisul.PrestaSys.Comum;
+using System.ComponentModel.DataAnnotations;
 using Unisul.PrestaSys.Entidades.Usuarios;
 
 namespace Unisul.PrestaSys.Entidades.Prestacoes
 {
-    public class Prestacao : IEntity
+    public class Prestacao
     {
         public virtual Usuario Aprovador { get; set; }
 
@@ -20,6 +20,7 @@ namespace Unisul.PrestaSys.Entidades.Prestacoes
 
         public int EmitenteId { get; set; }
 
+        [Key]
         public int Id { get; set; }
 
         public byte[] ImagemComprovante { get; set; }

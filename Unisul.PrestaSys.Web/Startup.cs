@@ -106,7 +106,6 @@ namespace Unisul.PrestaSys.Web
             services.AddDbContext<PrestaSysDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("PrestacaoDb")));
 
-            services.AddScoped<IPrestaSysDbContext>(provider => provider.GetService<PrestaSysDbContext>());
             services.AddTransient<IPrestacaoRepository, PrestacaoRepository>();
             services.AddTransient<IUsuarioRepository, UsuarioRepository>();
             services.AddTransient<IUsuarioService, UsuarioService>();

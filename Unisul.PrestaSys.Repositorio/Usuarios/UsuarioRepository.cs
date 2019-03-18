@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Unisul.PrestaSys.Entidades.Prestacoes;
@@ -19,9 +20,9 @@ namespace Unisul.PrestaSys.Repositorio.Usuarios
 
     public class UsuarioRepository : IUsuarioRepository
     {
-        private readonly IPrestaSysDbContext _context;
+        private readonly PrestaSysDbContext _context;
 
-        public UsuarioRepository(IPrestaSysDbContext context)
+        public UsuarioRepository(PrestaSysDbContext context)
         {
             _context = context;
         }
@@ -65,18 +66,26 @@ namespace Unisul.PrestaSys.Repositorio.Usuarios
 
         public void Update(Usuario usuario)
         {
-            var prestacoes = _context.Prestacao.Where(p => p.EmitenteId == usuario.Id);
-
-            foreach (var prestacao in prestacoes)
+            var transaction = _context.Database.BeginTransaction();
+            try
             {
-                prestacao.AprovadorId = usuario.GerenteId;
-                prestacao.AprovadorFinanceiroId = usuario.GerenteFinanceiroId;
+                var prestacoes = _context.Prestacao.Where(p => p.EmitenteId == usuario.Id);
+
+                foreach (var prestacao in prestacoes)
+                {
+                    prestacao.AprovadorId = usuario.GerenteId;
+                    prestacao.AprovadorFinanceiroId = usuario.GerenteFinanceiroId;
+                }
+
+                _context.BulkUpdate(prestacoes.ToList());
+
+                _context.Update(usuario);
+                transaction.Commit();
             }
-
-            _context.BulkUpdate(prestacoes.ToList());
-
-            _context.Update(usuario);
-            _context.SaveChanges();
+            catch
+            {
+                transaction.Rollback();
+            }
         }
     }
 }

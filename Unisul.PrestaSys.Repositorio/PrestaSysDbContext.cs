@@ -1,8 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Unisul.PrestaSys.Comum;
@@ -11,86 +7,16 @@ using Unisul.PrestaSys.Entidades.Usuarios;
 
 namespace Unisul.PrestaSys.Repositorio
 {
-    public class PrestaSysDbContext : DbContext, IPrestaSysDbContext
+    public class PrestaSysDbContext : DbContext
     {
         public PrestaSysDbContext(DbContextOptions<PrestaSysDbContext> options)
             : base(options)
         {
         }
 
-        public new EntityEntry Add(object entity)
-        {
-            return base.Add(entity);
-        }
-
-        public new bool Equals(object obj)
-        {
-            return base.Equals(obj);
-        }
-
-        public new int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
         public virtual DbSet<Prestacao> Prestacao { get; set; }
         public virtual DbSet<PrestacaoStatus> PrestacaoStatus { get; set; }
         public virtual DbSet<PrestacaoTipo> PrestacaoTipo { get; set; }
-
-        public new EntityEntry Remove<TEntity>(TEntity entity) where TEntity : class
-        {
-            return base.Remove(entity);
-        }
-
-        public new int SaveChanges()
-        {
-            return base.SaveChanges();
-        }
-
-        public new int SaveChanges(bool acceptAllChangesOnSuccess)
-        {
-            return base.SaveChanges(acceptAllChangesOnSuccess);
-        }
-
-        public new Task<int> SaveChangesAsync(CancellationToken cancellationToken)
-        {
-            return base.SaveChangesAsync(cancellationToken);
-        }
-
-        public new Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken)
-        {
-            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-        }
-
-        public Task<int> SaveChangesAsync()
-        {
-            return base.SaveChangesAsync();
-        }
-
-        public new string ToString()
-        {
-            return base.ToString();
-        }
-
-        public new EntityEntry Update(object entity)
-        {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
-            try
-            {
-                return base.Update(entity);
-            }
-            catch (InvalidOperationException)
-            {
-                var originalEntity = Find(entity.GetType(), ((IEntity)entity).Id);
-                Entry(originalEntity).CurrentValues.SetValues(entity);
-                return base.Update(originalEntity);
-            }
-        }
-   
         public virtual DbSet<Usuario> Usuario { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -246,11 +172,6 @@ namespace Unisul.PrestaSys.Repositorio
                     FlagGerenteFinanceiro = true,
                     FlagGerente = true
                 });
-        }
-
-        public void BulkUpdate<T>(IList<T> entities, BulkConfig bulkConfig = null, Action<decimal> progress = null) where T : class
-        {
-            this.BulkInsertOrUpdate(entities, bulkConfig, progress);
         }
     }
 }

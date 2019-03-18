@@ -1,6 +1,8 @@
+using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using Unisul.PrestaSys.Comum;
 using Unisul.PrestaSys.Entidades.Prestacoes;
 
 namespace Unisul.PrestaSys.Repositorio.Prestacoes
@@ -18,9 +20,9 @@ namespace Unisul.PrestaSys.Repositorio.Prestacoes
 
     public class PrestacaoRepository : IPrestacaoRepository
     {
-        private readonly IPrestaSysDbContext _context;
+        private readonly PrestaSysDbContext _context;
 
-        public PrestacaoRepository(IPrestaSysDbContext context)
+        public PrestacaoRepository(PrestaSysDbContext context)
         {
             _context = context;
         }
@@ -65,7 +67,22 @@ namespace Unisul.PrestaSys.Repositorio.Prestacoes
 
         public int Update(Prestacao prestacao)
         {
-            _context.Update(prestacao);
+            if (prestacao == null)
+            {
+                throw new ArgumentNullException(nameof(prestacao));
+            }
+
+            try
+            {
+                _context.Update(prestacao);
+            }
+            catch (InvalidOperationException)
+            {
+                var originalEntity = _context.Find(prestacao.GetType(), prestacao.Id);
+                _context.Entry(originalEntity).CurrentValues.SetValues(prestacao);
+                _context.Update(originalEntity);
+            }
+
             return _context.SaveChanges();
         }
 
