@@ -1,3 +1,5 @@
+using System;
+
 using System.Linq;
 using EntityFrameworkCoreMock;
 using FluentAssertions;
@@ -15,7 +17,8 @@ namespace Unisul.PrestaSys.Tests.Repositorio.Prestacoes
     [TestClass]
     public class PrestacaoRepositoryTests
     {
-        private DbContextOptions<PrestaSysDbContext> DummyOptions { get; } = new DbContextOptionsBuilder<PrestaSysDbContext>().Options;
+        private DbContextOptions<PrestaSysDbContext> DummyOptions { get; } =
+            new DbContextOptionsBuilder<PrestaSysDbContext>().Options;
 
         [TestMethod]
         public void ShouldCallCreatePrestacaoFromPrestaSysDbContext()
@@ -68,31 +71,6 @@ namespace Unisul.PrestaSys.Tests.Repositorio.Prestacoes
         }
 
         [TestMethod]
-        public void ShouldCallExistsPrestacaoFromPrestaSysDbContextAndTheResultShouldBeTrue()
-        {
-            // Arrange
-            const int prestacaoToBeFind = 7;
-
-            var prestacoes = new[]
-            {
-                new Prestacao {Titulo = "BBB", Id = 2},
-                new Prestacao {Titulo = "ZZZ", Id = 1},
-                new Prestacao {Titulo = "AAA", Id = 7}
-            };
-
-            var dbContextMock = new DbContextMock<PrestaSysDbContext>(DummyOptions);
-            var prestacaoDbSetMock = dbContextMock.CreateDbSetMock(x => x.Prestacao, prestacoes);
-
-            var prestacaoRepository = new PrestacaoRepository(dbContextMock.Object);
-
-            // Act
-            var result = prestacaoRepository.Exists(prestacaoToBeFind);
-
-            // Assert
-            result.Should().BeTrue();
-        }
-
-        [TestMethod]
         public void ShouldCallExistsPrestacaoFromPrestaSysDbContextAndTheResultShouldBeFalse()
         {
             // Arrange
@@ -115,6 +93,31 @@ namespace Unisul.PrestaSys.Tests.Repositorio.Prestacoes
 
             // Assert
             result.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void ShouldCallExistsPrestacaoFromPrestaSysDbContextAndTheResultShouldBeTrue()
+        {
+            // Arrange
+            const int prestacaoToBeFind = 7;
+
+            var prestacoes = new[]
+            {
+                new Prestacao {Titulo = "BBB", Id = 2},
+                new Prestacao {Titulo = "ZZZ", Id = 1},
+                new Prestacao {Titulo = "AAA", Id = 7}
+            };
+
+            var dbContextMock = new DbContextMock<PrestaSysDbContext>(DummyOptions);
+            var prestacaoDbSetMock = dbContextMock.CreateDbSetMock(x => x.Prestacao, prestacoes);
+
+            var prestacaoRepository = new PrestacaoRepository(dbContextMock.Object);
+
+            // Act
+            var result = prestacaoRepository.Exists(prestacaoToBeFind);
+
+            // Assert
+            result.Should().BeTrue();
         }
 
         [TestMethod]
@@ -141,6 +144,32 @@ namespace Unisul.PrestaSys.Tests.Repositorio.Prestacoes
             result.Should().OnlyHaveUniqueItems();
             result.Should().NotContainNulls();
             result.Should().BeEquivalentTo(prestacoes.ToList(), options => options.ComparingEnumsByValue());
+        }
+
+        [TestMethod]
+        public void ShouldCallGetAllPrestacaoTiposFromPrestaSysDbContext()
+        {
+            // Arrange
+            var prestacaoTipos = new[]
+            {
+                new PrestacaoTipo {Tipo = "BBB", Id = 2},
+                new PrestacaoTipo {Tipo = "ZZZ", Id = 1},
+                new PrestacaoTipo {Tipo = "AAA", Id = 8},
+                new PrestacaoTipo {Tipo = "AAA", Id = 15}
+            };
+
+            var dbContextMock = new DbContextMock<PrestaSysDbContext>(DummyOptions);
+            var prestacaoDbSetMock = dbContextMock.CreateDbSetMock(x => x.PrestacaoTipo, prestacaoTipos);
+
+            var prestacaoRepository = new PrestacaoRepository(dbContextMock.Object);
+
+            // Act
+            var result = prestacaoRepository.GetAllPrestacaoTipos();
+
+            // Assert
+            result.Should().OnlyHaveUniqueItems();
+            result.Should().NotContainNulls();
+            result.Should().BeEquivalentTo(prestacaoTipos.ToList(), options => options.ComparingEnumsByValue());
         }
 
         [TestMethod]
@@ -191,29 +220,16 @@ namespace Unisul.PrestaSys.Tests.Repositorio.Prestacoes
         }
 
         [TestMethod]
-        public void ShouldCallGetAllPrestacaoTiposFromPrestaSysDbContext()
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void CallingUpdatePrestacaoFromPrestaSysDbContextShouldThrowException()
         {
             // Arrange
-            var prestacaoTipos = new[]
-            {
-                new PrestacaoTipo {Tipo = "BBB", Id = 2},
-                new PrestacaoTipo {Tipo = "ZZZ", Id = 1},
-                new PrestacaoTipo {Tipo = "AAA", Id = 8},
-                new PrestacaoTipo {Tipo = "AAA", Id = 15}
-            };
-
             var dbContextMock = new DbContextMock<PrestaSysDbContext>(DummyOptions);
-            var prestacaoDbSetMock = dbContextMock.CreateDbSetMock(x => x.PrestacaoTipo, prestacaoTipos);
 
             var prestacaoRepository = new PrestacaoRepository(dbContextMock.Object);
 
             // Act
-            var result = prestacaoRepository.GetAllPrestacaoTipos();
-
-            // Assert
-            result.Should().OnlyHaveUniqueItems();
-            result.Should().NotContainNulls();
-            result.Should().BeEquivalentTo(prestacaoTipos.ToList(), options => options.ComparingEnumsByValue());
+            prestacaoRepository.Update(null);
         }
     }
 }
