@@ -15,7 +15,7 @@ namespace Unisul.PrestaSys.Repositorio.Usuarios
         bool Exists(int id);
         IIncludableQueryable<Usuario, ICollection<Prestacao>> GetAll();
         Usuario GetById(int id);
-        void Update(Usuario usuario);
+        int Update(Usuario usuario);
     }
 
     public class UsuarioRepository : IUsuarioRepository
@@ -64,28 +64,20 @@ namespace Unisul.PrestaSys.Repositorio.Usuarios
                 .FirstOrDefault(m => m.Id == id);
         }
 
-        public void Update(Usuario usuario)
+        public int Update(Usuario usuario)
         {
-            var transaction = _context.Database.BeginTransaction();
-            try
+            var prestacoes = _context.Prestacao.Where(p => p.EmitenteId == usuario.Id);
+
+            foreach (var prestacao in prestacoes)
             {
-                var prestacoes = _context.Prestacao.Where(p => p.EmitenteId == usuario.Id);
-
-                foreach (var prestacao in prestacoes)
-                {
-                    prestacao.AprovadorId = usuario.GerenteId;
-                    prestacao.AprovadorFinanceiroId = usuario.GerenteFinanceiroId;
-                }
-
-                _context.BulkUpdate(prestacoes.ToList());
-
-                _context.Update(usuario);
-                transaction.Commit();
+                prestacao.AprovadorId = usuario.GerenteId;
+                prestacao.AprovadorFinanceiroId = usuario.GerenteFinanceiroId;
             }
-            catch
-            {
-                transaction.Rollback();
-            }
+
+            _context.BulkUpdate(prestacoes.ToList());
+
+            _context.Update(usuario);
+            return _context.SaveChanges();
         }
     }
 }
