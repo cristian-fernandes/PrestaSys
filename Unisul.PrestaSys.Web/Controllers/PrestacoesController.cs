@@ -376,7 +376,7 @@ namespace Unisul.PrestaSys.Web.Controllers
 
             var prestacaoViewModel = _mapper.Map<PrestacaoViewModel>(prestacao);
 
-            if (prestacao.ImagemComprovante != null)
+            if (prestacao.ImagemComprovante != null && prestacao.ImagemComprovante.Length != 0)
                 prestacaoViewModel.ImagemComprovanteSrc =
                     "data:image;base64," + Convert.ToBase64String(prestacao.ImagemComprovante);
 
