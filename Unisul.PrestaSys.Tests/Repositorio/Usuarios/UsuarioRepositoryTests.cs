@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using EntityFrameworkCoreMock;
 using FluentAssertions;
@@ -7,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Unisul.PrestaSys.Entidades.Prestacoes;
 using Unisul.PrestaSys.Entidades.Usuarios;
 using Unisul.PrestaSys.Repositorio;
 using Unisul.PrestaSys.Repositorio.Usuarios;

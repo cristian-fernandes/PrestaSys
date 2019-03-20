@@ -7,22 +7,22 @@ namespace Unisul.PrestaSys.Tests.Repositorio
     public class ContextFactoryTests
     {
         [TestMethod]
-        public void ShouldCreateDbContextWithoutArgs()
+        public void ShouldCreateDbContextWithArgs()
         {
             var contextFactory = new ContextFactory();
 
-            var result = contextFactory.CreateDbContext();
+            var result = contextFactory.CreateDbContext(new string[0]);
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(PrestaSysDbContext));
         }
 
         [TestMethod]
-        public void ShouldCreateDbContextWithArgs()
+        public void ShouldCreateDbContextWithoutArgs()
         {
             var contextFactory = new ContextFactory();
 
-            var result = contextFactory.CreateDbContext(new string[0]);
+            var result = contextFactory.CreateDbContext();
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(PrestaSysDbContext));

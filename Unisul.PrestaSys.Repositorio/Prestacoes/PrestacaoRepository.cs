@@ -11,9 +11,9 @@ namespace Unisul.PrestaSys.Repositorio.Prestacoes
         int Delete(int id);
         bool Exists(int id);
         IQueryable<Prestacao> GetAll();
+        IQueryable<PrestacaoTipo> GetAllPrestacaoTipos();
         Prestacao GetById(int id);
         int Update(Prestacao prestacao);
-        IQueryable<PrestacaoTipo> GetAllPrestacaoTipos();
     }
 
     public class PrestacaoRepository : IPrestacaoRepository
@@ -52,6 +52,11 @@ namespace Unisul.PrestaSys.Repositorio.Prestacoes
                 .Include(pr => pr.Tipo);
         }
 
+        public IQueryable<PrestacaoTipo> GetAllPrestacaoTipos()
+        {
+            return _context.PrestacaoTipo;
+        }
+
         public Prestacao GetById(int id)
         {
             return _context.Prestacao
@@ -65,10 +70,7 @@ namespace Unisul.PrestaSys.Repositorio.Prestacoes
 
         public int Update(Prestacao prestacao)
         {
-            if (prestacao == null)
-            {
-                throw new ArgumentNullException(nameof(prestacao));
-            }
+            if (prestacao == null) throw new ArgumentNullException(nameof(prestacao));
 
             try
             {
@@ -82,11 +84,6 @@ namespace Unisul.PrestaSys.Repositorio.Prestacoes
             }
 
             return _context.SaveChanges();
-        }
-
-        public IQueryable<PrestacaoTipo> GetAllPrestacaoTipos()
-        {
-            return _context.PrestacaoTipo;
         }
     }
 }

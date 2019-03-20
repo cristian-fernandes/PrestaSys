@@ -39,7 +39,7 @@ namespace Unisul.PrestaSys.Tests.Dominio.Usuarios
             const int usuarioToBeGet = 7;
 
 
-            var usuarioRepository = Mock.Of<IUsuarioRepository>(m => m.Exists(usuarioToBeGet) == true);
+            var usuarioRepository = Mock.Of<IUsuarioRepository>(m => m.Exists(usuarioToBeGet));
 
             var usuarioService = new UsuarioService(usuarioRepository);
 
@@ -51,64 +51,15 @@ namespace Unisul.PrestaSys.Tests.Dominio.Usuarios
         }
 
         [TestMethod]
-        public void UsuarioGetAllShouldBeCalledCorrectly()
-        {
-            // Arrange
-
-            var usuarios = new List<Usuario>
-            {
-                new Usuario{ Sobrenome = "Fernandes", Nome = "Cris"},
-                new Usuario{ Sobrenome = "Teste", Nome = "Ale"}
-            };
-
-            var usuariosList = usuarios.AsQueryable();
-
-            var usuarioRepository = Mock.Of<IUsuarioRepository>(m => m.GetAll() == usuariosList);
-
-            var usuarioService = new UsuarioService(usuarioRepository);
-
-            // Act
-            var result = usuarioService.GetAll();
-
-            // Assert
-            result.Should().BeEquivalentTo(usuariosList);
-        }
-
-        [TestMethod]
-        public void UsuarioGetGerentesAllShouldBeCalledCorrectly()
-        {
-            // Arrange
-
-            var usuarios = new List<Usuario>
-            {
-                new Usuario{ Sobrenome = "Fernandes", Nome = "Cris", FlagGerente = true},
-                new Usuario{ Sobrenome = "Fernandessss", Nome = "Cristian", FlagGerente = false},
-                new Usuario{ Sobrenome = "Teste", Nome = "Ale", FlagGerente = false}
-            };
-
-            var usuariosList = usuarios.AsQueryable();
-
-            var usuarioRepository = Mock.Of<IUsuarioRepository>(m => m.GetAll() == usuariosList);
-
-            var usuarioService = new UsuarioService(usuarioRepository);
-
-            // Act
-            var result = usuarioService.GetAllGerentes();
-
-            // Assert
-            result.Should().BeEquivalentTo(usuariosList.Where(x => x.FlagGerente));
-        }
-
-        [TestMethod]
         public void UsuarioGetAllGerentesFinanceirosShouldBeCalledCorrectly()
         {
             // Arrange
 
             var usuarios = new List<Usuario>
             {
-                new Usuario{ Sobrenome = "Fernandes", Nome = "Cris", FlagGerenteFinanceiro = true},
-                new Usuario{ Sobrenome = "Fernandessss", Nome = "Cristian", FlagGerenteFinanceiro = false},
-                new Usuario{ Sobrenome = "Teste", Nome = "Ale", FlagGerenteFinanceiro = false}
+                new Usuario {Sobrenome = "Fernandes", Nome = "Cris", FlagGerenteFinanceiro = true},
+                new Usuario {Sobrenome = "Fernandessss", Nome = "Cristian", FlagGerenteFinanceiro = false},
+                new Usuario {Sobrenome = "Teste", Nome = "Ale", FlagGerenteFinanceiro = false}
             };
 
             var usuariosList = usuarios.AsQueryable();
@@ -122,6 +73,30 @@ namespace Unisul.PrestaSys.Tests.Dominio.Usuarios
 
             // Assert
             result.Should().BeEquivalentTo(usuariosList.Where(x => x.FlagGerenteFinanceiro));
+        }
+
+        [TestMethod]
+        public void UsuarioGetAllShouldBeCalledCorrectly()
+        {
+            // Arrange
+
+            var usuarios = new List<Usuario>
+            {
+                new Usuario {Sobrenome = "Fernandes", Nome = "Cris"},
+                new Usuario {Sobrenome = "Teste", Nome = "Ale"}
+            };
+
+            var usuariosList = usuarios.AsQueryable();
+
+            var usuarioRepository = Mock.Of<IUsuarioRepository>(m => m.GetAll() == usuariosList);
+
+            var usuarioService = new UsuarioService(usuarioRepository);
+
+            // Act
+            var result = usuarioService.GetAll();
+
+            // Assert
+            result.Should().BeEquivalentTo(usuariosList);
         }
 
         [TestMethod]
@@ -145,35 +120,15 @@ namespace Unisul.PrestaSys.Tests.Dominio.Usuarios
         }
 
         [TestMethod]
-        public void UsuarioGetUsuarioEmailByIdShouldBeCalledCorrectly()
+        public void UsuarioGetGerentesAllShouldBeCalledCorrectly()
         {
             // Arrange
-            const string email = "a@a.com";
-            var usuario = new Usuario{Email = email};
-            const int id = 7;
 
-
-            var usuarioRepository = Mock.Of<IUsuarioRepository>(m => m.GetById(id) == usuario);
-
-            var usuarioService = new UsuarioService(usuarioRepository);
-
-            // Act
-            var result = usuarioService.GetUsuarioEmailById(id);
-
-            // Assert
-            result.IsSameOrEqualTo(email);
-        }
-
-        [TestMethod]
-        public void UsuarioGetUsuarioByEmailShouldBeCalledCorrectly()
-        {
-            // Arrange
-            const string emailToBeGet = "a@a.com";
             var usuarios = new List<Usuario>
             {
-                new Usuario{ Sobrenome = "Fernandes", Nome = "Cris", Email = emailToBeGet},
-                new Usuario{ Sobrenome = "Fernandessss", Nome = "Cristian", Email = "c@a.com"},
-                new Usuario{ Sobrenome = "Teste", Nome = "Ale", Email = "c@a.com"}
+                new Usuario {Sobrenome = "Fernandes", Nome = "Cris", FlagGerente = true},
+                new Usuario {Sobrenome = "Fernandessss", Nome = "Cristian", FlagGerente = false},
+                new Usuario {Sobrenome = "Teste", Nome = "Ale", FlagGerente = false}
             };
 
             var usuariosList = usuarios.AsQueryable();
@@ -183,10 +138,10 @@ namespace Unisul.PrestaSys.Tests.Dominio.Usuarios
             var usuarioService = new UsuarioService(usuarioRepository);
 
             // Act
-            var result = usuarioService.GetUsuarioByEmail(emailToBeGet);
+            var result = usuarioService.GetAllGerentes();
 
             // Assert
-            result.IsSameOrEqualTo(usuariosList.Where(x => x.Email == emailToBeGet));
+            result.Should().BeEquivalentTo(usuariosList.Where(x => x.FlagGerente));
         }
 
         [TestMethod]
@@ -197,9 +152,9 @@ namespace Unisul.PrestaSys.Tests.Dominio.Usuarios
             const string senhaToBeGet = "abacate";
             var usuarios = new List<Usuario>
             {
-                new Usuario{ Sobrenome = "Fernandes", Nome = "Cris", Email = emailToBeGet, Senha = senhaToBeGet},
-                new Usuario{ Sobrenome = "Fernandessss", Nome = "Cristian", Email = "c@a.com", Senha = "asas"},
-                new Usuario{ Sobrenome = "Teste", Nome = "Ale", Email = "c@a.com", Senha = "dsdsfd"}
+                new Usuario {Sobrenome = "Fernandes", Nome = "Cris", Email = emailToBeGet, Senha = senhaToBeGet},
+                new Usuario {Sobrenome = "Fernandessss", Nome = "Cristian", Email = "c@a.com", Senha = "asas"},
+                new Usuario {Sobrenome = "Teste", Nome = "Ale", Email = "c@a.com", Senha = "dsdsfd"}
             };
 
             var usuariosList = usuarios.AsQueryable();
@@ -216,24 +171,48 @@ namespace Unisul.PrestaSys.Tests.Dominio.Usuarios
         }
 
         [TestMethod]
-        public void UsuarioIUpdateUsuarioShouldBeCalledCorrectly()
+        public void UsuarioGetUsuarioByEmailShouldBeCalledCorrectly()
         {
             // Arrange
-            const string email = "a@a.com";
-            var usuario = new Usuario { Email = email };
+            const string emailToBeGet = "a@a.com";
+            var usuarios = new List<Usuario>
+            {
+                new Usuario {Sobrenome = "Fernandes", Nome = "Cris", Email = emailToBeGet},
+                new Usuario {Sobrenome = "Fernandessss", Nome = "Cristian", Email = "c@a.com"},
+                new Usuario {Sobrenome = "Teste", Nome = "Ale", Email = "c@a.com"}
+            };
 
-            const int id = 7;
+            var usuariosList = usuarios.AsQueryable();
 
-
-            var usuarioRepository = Mock.Of<IUsuarioRepository>(m => m.Update(usuario) == id);
+            var usuarioRepository = Mock.Of<IUsuarioRepository>(m => m.GetAll() == usuariosList);
 
             var usuarioService = new UsuarioService(usuarioRepository);
 
             // Act
-            usuarioService.Update(usuario);
+            var result = usuarioService.GetUsuarioByEmail(emailToBeGet);
 
             // Assert
-            Mock.Get(usuarioRepository).Verify(m => m.Update(usuario), Times.Once);
+            result.IsSameOrEqualTo(usuariosList.Where(x => x.Email == emailToBeGet));
+        }
+
+        [TestMethod]
+        public void UsuarioGetUsuarioEmailByIdShouldBeCalledCorrectly()
+        {
+            // Arrange
+            const string email = "a@a.com";
+            var usuario = new Usuario {Email = email};
+            const int id = 7;
+
+
+            var usuarioRepository = Mock.Of<IUsuarioRepository>(m => m.GetById(id) == usuario);
+
+            var usuarioService = new UsuarioService(usuarioRepository);
+
+            // Act
+            var result = usuarioService.GetUsuarioEmailById(id);
+
+            // Assert
+            result.IsSameOrEqualTo(email);
         }
 
         [TestMethod]
@@ -254,6 +233,27 @@ namespace Unisul.PrestaSys.Tests.Dominio.Usuarios
             // Assert
             Mock.Get(usuarioRepository).Verify(m => m.Delete(id), Times.Once);
             result.IsSameOrEqualTo(expectedResult);
+        }
+
+        [TestMethod]
+        public void UsuarioIUpdateUsuarioShouldBeCalledCorrectly()
+        {
+            // Arrange
+            const string email = "a@a.com";
+            var usuario = new Usuario {Email = email};
+
+            const int id = 7;
+
+
+            var usuarioRepository = Mock.Of<IUsuarioRepository>(m => m.Update(usuario) == id);
+
+            var usuarioService = new UsuarioService(usuarioRepository);
+
+            // Act
+            usuarioService.Update(usuario);
+
+            // Assert
+            Mock.Get(usuarioRepository).Verify(m => m.Update(usuario), Times.Once);
         }
     }
 }

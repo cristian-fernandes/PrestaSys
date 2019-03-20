@@ -4,76 +4,76 @@ namespace Unisul.PrestaSys.Repositorio.Migrations
 {
     public partial class PrestacaoDB_FixForPrestacaoStatus : Migration
     {
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DeleteData(
-                table: "PrestacaoStatus",
-                keyColumn: "Id",
-                keyValue: 5);
-
-            migrationBuilder.UpdateData(
-                table: "PrestacaoStatus",
-                keyColumn: "Id",
-                keyValue: 1,
-                column: "Status",
-                value: "Em Aprovação Operacional");
-
-            migrationBuilder.UpdateData(
-                table: "PrestacaoStatus",
-                keyColumn: "Id",
-                keyValue: 2,
-                column: "Status",
-                value: "Em Aprovação Financeira");
-
-            migrationBuilder.UpdateData(
-                table: "PrestacaoStatus",
-                keyColumn: "Id",
-                keyValue: 3,
-                column: "Status",
-                value: "Finalizada");
-
-            migrationBuilder.UpdateData(
-                table: "PrestacaoStatus",
-                keyColumn: "Id",
-                keyValue: 4,
-                column: "Status",
-                value: "Rejeitada");
-        }
-
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.UpdateData(
-                table: "PrestacaoStatus",
-                keyColumn: "Id",
-                keyValue: 1,
-                column: "Status",
-                value: "Iniciada");
+                "PrestacaoStatus",
+                "Id",
+                1,
+                "Status",
+                "Iniciada");
 
             migrationBuilder.UpdateData(
-                table: "PrestacaoStatus",
-                keyColumn: "Id",
-                keyValue: 2,
-                column: "Status",
-                value: "Em Aprovação Operacional");
+                "PrestacaoStatus",
+                "Id",
+                2,
+                "Status",
+                "Em Aprovação Operacional");
 
             migrationBuilder.UpdateData(
-                table: "PrestacaoStatus",
-                keyColumn: "Id",
-                keyValue: 3,
-                column: "Status",
-                value: "Em Aprovação Financeira");
+                "PrestacaoStatus",
+                "Id",
+                3,
+                "Status",
+                "Em Aprovação Financeira");
 
             migrationBuilder.UpdateData(
-                table: "PrestacaoStatus",
-                keyColumn: "Id",
-                keyValue: 4,
-                column: "Status",
-                value: "Finalizada");
+                "PrestacaoStatus",
+                "Id",
+                4,
+                "Status",
+                "Finalizada");
 
             migrationBuilder.InsertData(
-                table: "PrestacaoStatus",
-                columns: new[] { "Id", "Status" },
-                values: new object[] { 5, "Rejeitada" });
+                "PrestacaoStatus",
+                new[] {"Id", "Status"},
+                new object[] {5, "Rejeitada"});
+        }
+
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DeleteData(
+                "PrestacaoStatus",
+                "Id",
+                5);
+
+            migrationBuilder.UpdateData(
+                "PrestacaoStatus",
+                "Id",
+                1,
+                "Status",
+                "Em Aprovação Operacional");
+
+            migrationBuilder.UpdateData(
+                "PrestacaoStatus",
+                "Id",
+                2,
+                "Status",
+                "Em Aprovação Financeira");
+
+            migrationBuilder.UpdateData(
+                "PrestacaoStatus",
+                "Id",
+                3,
+                "Status",
+                "Finalizada");
+
+            migrationBuilder.UpdateData(
+                "PrestacaoStatus",
+                "Id",
+                4,
+                "Status",
+                "Rejeitada");
         }
     }
 }

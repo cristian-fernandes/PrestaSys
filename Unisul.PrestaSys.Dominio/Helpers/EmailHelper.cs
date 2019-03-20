@@ -16,14 +16,14 @@ namespace Unisul.PrestaSys.Dominio.Helpers
 
     public class EmailHelper : IEmailHelper
     {
-        private readonly EmailSettings _emailSettings;
-
-        private readonly IHostingEnvironment _environment;
-
         private const string Template = @"<h1>PrestaSys - Presta&ccedil;&atilde;o de Contas</h1>
                     <p> <b> Presta&ccedil;&atilde;o: </b> {{TITULO}} </p>
                     <p> <b> Status: </b> {{STATUS}} </p>
                     <p> <i> {{FRASE_FINAL}} </i> </p>";
+
+        private readonly EmailSettings _emailSettings;
+
+        private readonly IHostingEnvironment _environment;
 
         public EmailHelper(IOptions<EmailSettings> emailSettings, IHostingEnvironment environment)
         {

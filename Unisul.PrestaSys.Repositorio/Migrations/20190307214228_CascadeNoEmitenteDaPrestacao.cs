@@ -4,34 +4,34 @@ namespace Unisul.PrestaSys.Repositorio.Migrations
 {
     public partial class CascadeNoEmitenteDaPrestacao : Migration
     {
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Usuario_PrestacaoEmitenteId",
-                table: "Prestacao");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Usuario_PrestacaoEmitenteId",
-                table: "Prestacao",
-                column: "EmitenteId",
-                principalTable: "Usuario",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-        }
-
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Usuario_PrestacaoEmitenteId",
-                table: "Prestacao");
+                "FK_Usuario_PrestacaoEmitenteId",
+                "Prestacao");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Usuario_PrestacaoEmitenteId",
-                table: "Prestacao",
-                column: "EmitenteId",
-                principalTable: "Usuario",
+                "FK_Usuario_PrestacaoEmitenteId",
+                "Prestacao",
+                "EmitenteId",
+                "Usuario",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
+        }
+
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropForeignKey(
+                "FK_Usuario_PrestacaoEmitenteId",
+                "Prestacao");
+
+            migrationBuilder.AddForeignKey(
+                "FK_Usuario_PrestacaoEmitenteId",
+                "Prestacao",
+                "EmitenteId",
+                "Usuario",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
         }
     }
 }

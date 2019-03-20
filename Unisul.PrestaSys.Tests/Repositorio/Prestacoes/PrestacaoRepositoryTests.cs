@@ -20,6 +20,19 @@ namespace Unisul.PrestaSys.Tests.Repositorio.Prestacoes
             new DbContextOptionsBuilder<PrestaSysDbContext>().Options;
 
         [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void CallingUpdatePrestacaoFromPrestaSysDbContextShouldThrowException()
+        {
+            // Arrange
+            var dbContextMock = new DbContextMock<PrestaSysDbContext>(DummyOptions);
+
+            var prestacaoRepository = new PrestacaoRepository(dbContextMock.Object);
+
+            // Act
+            prestacaoRepository.Update(null);
+        }
+
+        [TestMethod]
         public void ShouldCallCreatePrestacaoFromPrestaSysDbContext()
         {
             // Arrange
@@ -216,19 +229,6 @@ namespace Unisul.PrestaSys.Tests.Repositorio.Prestacoes
             dbContextMock.Verify(m => m.Update(prestacaoEntity), Times.Once());
             dbContextMock.Verify(m => m.SaveChanges(), Times.Once());
             result.Should().Be(expectedResult);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void CallingUpdatePrestacaoFromPrestaSysDbContextShouldThrowException()
-        {
-            // Arrange
-            var dbContextMock = new DbContextMock<PrestaSysDbContext>(DummyOptions);
-
-            var prestacaoRepository = new PrestacaoRepository(dbContextMock.Object);
-
-            // Act
-            prestacaoRepository.Update(null);
         }
     }
 }

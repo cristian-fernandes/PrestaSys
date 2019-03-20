@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
-using Unisul.PrestaSys.Entidades.Prestacoes;
 using Unisul.PrestaSys.Comum;
 using Unisul.PrestaSys.Dominio.Helpers;
 using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
+using Unisul.PrestaSys.Entidades.Prestacoes;
 using Unisul.PrestaSys.Repositorio.Prestacoes;
 
 namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
@@ -17,19 +17,20 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
         IQueryable<Prestacao> GetAll();
         IQueryable<Prestacao> GetAllByEmitenteId(int emitenteId);
         IQueryable<Prestacao> GetAllParaAprovacao(int aprovadorId, PrestacaoStatuses tipoAprovacao);
+        IQueryable<PrestacaoTipo> GetAllPrestacaoTipos();
         Prestacao GetById(int id);
         int RejeitarPrestacao(int prestacaoId, string justificativa, PrestacaoStatuses tipoAprovacao);
         int Update(Prestacao prestacao);
-        IQueryable<PrestacaoTipo> GetAllPrestacaoTipos();
     }
 
     public class PrestacaoService : IPrestacaoService
     {
-        private readonly IPrestacaoRepository _repository;
         private readonly IEmailHelper _emailHelper;
+        private readonly IPrestacaoRepository _repository;
         private readonly IUsuarioService _usuarioService;
 
-        public PrestacaoService(IPrestacaoRepository repository, IEmailHelper emailHelper, IUsuarioService usuarioService)
+        public PrestacaoService(IPrestacaoRepository repository, IEmailHelper emailHelper,
+            IUsuarioService usuarioService)
         {
             _repository = repository;
             _emailHelper = emailHelper;
@@ -59,7 +60,7 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
                     throw new ArgumentOutOfRangeException(nameof(tipoAprovacao), tipoAprovacao, null);
             }
 
-            var emailTo = GetEmailTo(prestacao, (PrestacaoStatuses)prestacao.StatusId);
+            var emailTo = GetEmailTo(prestacao, (PrestacaoStatuses) prestacao.StatusId);
             _emailHelper.EnviarEmail(prestacao, (PrestacaoStatuses) prestacao.StatusId, emailTo);
             return _repository.Update(prestacao);
         }
@@ -106,6 +107,11 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
             throw new NotSupportedException();
         }
 
+        public IQueryable<PrestacaoTipo> GetAllPrestacaoTipos()
+        {
+            return _repository.GetAllPrestacaoTipos();
+        }
+
         public Prestacao GetById(int id)
         {
             return _repository.GetById(id);
@@ -134,19 +140,14 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
                     throw new ArgumentOutOfRangeException(nameof(tipoAprovacao), tipoAprovacao, null);
             }
 
-            var emailTo = GetEmailTo(prestacao, (PrestacaoStatuses)prestacao.StatusId);
-            _emailHelper.EnviarEmail(prestacao, (PrestacaoStatuses)prestacao.StatusId, emailTo);
+            var emailTo = GetEmailTo(prestacao, (PrestacaoStatuses) prestacao.StatusId);
+            _emailHelper.EnviarEmail(prestacao, (PrestacaoStatuses) prestacao.StatusId, emailTo);
             return _repository.Update(prestacao);
         }
 
         public int Update(Prestacao prestacao)
         {
             return _repository.Update(prestacao);
-        }
-
-        public IQueryable<PrestacaoTipo> GetAllPrestacaoTipos()
-        {
-            return _repository.GetAllPrestacaoTipos();
         }
 
         private string GetEmailTo(Prestacao prestacao, PrestacaoStatuses statusAtual)

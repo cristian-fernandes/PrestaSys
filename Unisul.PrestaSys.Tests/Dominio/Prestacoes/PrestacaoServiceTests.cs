@@ -25,7 +25,8 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
 
             var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.Create(prestacao) == prestacaoToBeGet);
 
-            var prestacaoService = new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
+            var prestacaoService =
+                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
 
             // Act
             var result = prestacaoService.Create(prestacao);
@@ -41,9 +42,10 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
             const int prestacaoToBeGet = 7;
 
 
-            var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.Exists(prestacaoToBeGet) == true);
+            var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.Exists(prestacaoToBeGet));
 
-            var prestacaoService = new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
+            var prestacaoService =
+                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
 
             // Act
             var result = prestacaoService.Exists(prestacaoToBeGet);
@@ -59,15 +61,16 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
 
             var prestacoes = new List<Prestacao>
             {
-                new Prestacao{ Titulo = "Fernandes", Justificativa = "Cris"},
-                new Prestacao{ Titulo = "Teste", Justificativa = "Ale"}
+                new Prestacao {Titulo = "Fernandes", Justificativa = "Cris"},
+                new Prestacao {Titulo = "Teste", Justificativa = "Ale"}
             };
 
             var prestacoesList = prestacoes.AsQueryable();
 
             var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.GetAll() == prestacoesList);
 
-            var prestacaoService = new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
+            var prestacaoService =
+                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
 
             // Act
             var result = prestacaoService.GetAll();
@@ -75,7 +78,7 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
             // Assert
             result.Should().BeEquivalentTo(prestacoesList);
         }
-   
+
         [TestMethod]
         public void PrestacaoGetByIdShouldBeCalledCorrectly()
         {
@@ -87,34 +90,14 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
 
             var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.GetById(id) == prestacao);
 
-            var prestacaoService = new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
+            var prestacaoService =
+                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
 
             // Act
             var result = prestacaoService.GetById(id);
 
             // Assert
             result.IsSameOrEqualTo(prestacao);
-        }
-
-        [TestMethod]
-        public void PrestacaoIUpdatePrestacaoShouldBeCalledCorrectly()
-        {
-            // Arrange
-            const string titulo = "dasdsad";
-            var prestacao = new Prestacao { Titulo = titulo };
-
-            const int id = 7;
-
-
-            var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.Update(prestacao) == id);
-
-            var prestacaoService = new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
-
-            // Act
-            prestacaoService.Update(prestacao);
-
-            // Assert
-            Mock.Get(prestacaoRepository).Verify(m => m.Update(prestacao), Times.Once);
         }
 
         [TestMethod]
@@ -127,7 +110,8 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
 
             var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.Delete(id) == expectedResult);
 
-            var prestacaoService = new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
+            var prestacaoService =
+                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
 
             // Act
             var result = prestacaoService.Delete(id);
@@ -135,6 +119,28 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
             // Assert
             Mock.Get(prestacaoRepository).Verify(m => m.Delete(id), Times.Once);
             result.IsSameOrEqualTo(expectedResult);
+        }
+
+        [TestMethod]
+        public void PrestacaoIUpdatePrestacaoShouldBeCalledCorrectly()
+        {
+            // Arrange
+            const string titulo = "dasdsad";
+            var prestacao = new Prestacao {Titulo = titulo};
+
+            const int id = 7;
+
+
+            var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.Update(prestacao) == id);
+
+            var prestacaoService =
+                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
+
+            // Act
+            prestacaoService.Update(prestacao);
+
+            // Assert
+            Mock.Get(prestacaoRepository).Verify(m => m.Update(prestacao), Times.Once);
         }
     }
 }

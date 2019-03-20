@@ -7,11 +7,6 @@ namespace Unisul.PrestaSys.Repositorio
 {
     public class ContextFactory : IDesignTimeDbContextFactory<PrestaSysDbContext>
     {
-        public PrestaSysDbContext CreateDbContext()
-        {
-            return CreateDbContext(null);
-        }
-
         public PrestaSysDbContext CreateDbContext(string[] args)
         {
             var builderConfiguration = new ConfigurationBuilder()
@@ -24,6 +19,11 @@ namespace Unisul.PrestaSys.Repositorio
             builder.UseSqlServer(connectionString);
 
             return new PrestaSysDbContext(builder.Options);
+        }
+
+        public PrestaSysDbContext CreateDbContext()
+        {
+            return CreateDbContext(null);
         }
     }
 }
