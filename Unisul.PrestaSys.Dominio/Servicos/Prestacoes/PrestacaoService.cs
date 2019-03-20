@@ -38,26 +38,22 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
 
         public int AprovarPrestacao(int prestacaoId, string justificativa, PrestacaoStatuses tipoAprovacao)
         {
-            Prestacao prestacao;
+            var prestacao = _repository.GetById(prestacaoId);
 
             switch (tipoAprovacao)
             {
                 case PrestacaoStatuses.EmAprovacaoOperacional:
-                    prestacao = _repository.GetById(prestacaoId);
                     prestacao.StatusId = (int) PrestacaoStatuses.EmAprovacaoFinanceira;
                     prestacao.JustificativaAprovacao = justificativa;
                     break;
 
                 case PrestacaoStatuses.EmAprovacaoFinanceira:
-                    prestacao = _repository.GetById(prestacaoId);
                     prestacao.StatusId = (int) PrestacaoStatuses.Finalizada;
                     prestacao.JustificativaAprovacaoFinanceira = justificativa;
                     break;
                 case PrestacaoStatuses.Finalizada:
-                    prestacao = _repository.GetById(prestacaoId);
                     break;
                 case PrestacaoStatuses.Rejeitada:
-                    prestacao = _repository.GetById(prestacaoId);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(tipoAprovacao), tipoAprovacao, null);
@@ -117,26 +113,22 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
 
         public int RejeitarPrestacao(int prestacaoId, string justificativa, PrestacaoStatuses tipoAprovacao)
         {
-            Prestacao prestacao;
+            var prestacao = _repository.GetById(prestacaoId);
 
             switch (tipoAprovacao)
             {
                 case PrestacaoStatuses.EmAprovacaoOperacional:
-                    prestacao = _repository.GetById(prestacaoId);
                     prestacao.StatusId = (int) PrestacaoStatuses.Rejeitada;
                     prestacao.JustificativaAprovacao = justificativa;
                     break;
 
                 case PrestacaoStatuses.EmAprovacaoFinanceira:
-                    prestacao = _repository.GetById(prestacaoId);
                     prestacao.StatusId = (int) PrestacaoStatuses.Rejeitada;
                     prestacao.JustificativaAprovacaoFinanceira = justificativa;
                     break;
                 case PrestacaoStatuses.Finalizada:
-                    prestacao = _repository.GetById(prestacaoId);
                     break;
                 case PrestacaoStatuses.Rejeitada:
-                    prestacao = _repository.GetById(prestacaoId);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(tipoAprovacao), tipoAprovacao, null);
