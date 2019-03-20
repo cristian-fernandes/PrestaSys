@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using Microsoft.EntityFrameworkCore.Query;
 using Unisul.PrestaSys.Entidades.Prestacoes;
 using Unisul.PrestaSys.Comum;
 using Unisul.PrestaSys.Dominio.Helpers;
@@ -15,7 +14,7 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
         int Create(Prestacao prestacao);
         int Delete(int id);
         bool Exists(int id);
-        IIncludableQueryable<Prestacao, PrestacaoTipo> GetAll();
+        IQueryable<Prestacao> GetAll();
         IQueryable<Prestacao> GetAllByEmitenteId(int emitenteId);
         IQueryable<Prestacao> GetAllParaAprovacao(int aprovadorId, PrestacaoStatuses tipoAprovacao);
         Prestacao GetById(int id);
@@ -86,7 +85,7 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
             return _repository.Exists(id);
         }
 
-        public IIncludableQueryable<Prestacao, PrestacaoTipo> GetAll()
+        public IQueryable<Prestacao> GetAll()
         {
             return _repository.GetAll();
         }

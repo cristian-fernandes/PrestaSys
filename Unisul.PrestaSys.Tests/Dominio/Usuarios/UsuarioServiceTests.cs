@@ -235,5 +235,25 @@ namespace Unisul.PrestaSys.Tests.Dominio.Usuarios
             // Assert
             Mock.Get(usuarioRepository).Verify(m => m.Update(usuario), Times.Once);
         }
+
+        [TestMethod]
+        public void UsuarioIDeleteUsuarioShouldBeCalledCorrectly()
+        {
+            // Arrange
+            const int id = 7;
+            const int expectedResult = 1;
+
+
+            var usuarioRepository = Mock.Of<IUsuarioRepository>(m => m.Delete(id) == expectedResult);
+
+            var usuarioService = new UsuarioService(usuarioRepository);
+
+            // Act
+            var result = usuarioService.Delete(id);
+
+            // Assert
+            Mock.Get(usuarioRepository).Verify(m => m.Delete(id), Times.Once);
+            result.IsSameOrEqualTo(expectedResult);
+        }
     }
 }
