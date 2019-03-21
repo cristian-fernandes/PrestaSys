@@ -4,6 +4,7 @@ using FluentAssertions;
 using FluentAssertions.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Unisul.PrestaSys.Comum;
 using Unisul.PrestaSys.Dominio.Helpers;
 using Unisul.PrestaSys.Dominio.Servicos.Prestacoes;
 using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
@@ -141,6 +142,213 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
 
             // Assert
             Mock.Get(prestacaoRepository).Verify(m => m.Update(prestacao), Times.Once);
+        }
+
+        [TestMethod]
+        public void PrestacaoIAprovarPrestacaoShouldBeCalledCorrectlyWhenInAprovacaoOperacional()
+        {
+            // Arrange
+            const string titulo = "Titulo";
+            const string email = "test@test.com";
+            const int id = 1;
+            const PrestacaoStatuses tipoAprovacao = PrestacaoStatuses.EmAprovacaoOperacional;
+            const string justificativa = "Teste Justificativa";
+
+            var prestacao = new Prestacao
+            {
+                Id = id,
+                Titulo = titulo,
+                EmitenteId = 1,
+                AprovadorId = 2,
+                AprovadorFinanceiroId = 3,
+                StatusId = (int)PrestacaoStatuses.EmAprovacaoOperacional
+            };
+
+
+            var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.GetById(id) == prestacao);
+            var usuarioService = Mock.Of<IUsuarioService>(m => m.GetUsuarioEmailById(prestacao.AprovadorFinanceiroId) == email);
+            var emailHelper = Mock.Of<IEmailHelper>(m => m.EnviarEmail(prestacao, (PrestacaoStatuses)prestacao.StatusId, email));
+
+            var prestacaoService =
+                new PrestacaoService(prestacaoRepository, emailHelper, usuarioService);
+
+            // Act
+            prestacaoService.AprovarPrestacao(prestacao.Id, justificativa, tipoAprovacao);
+
+            // Assert
+
+            Mock.Get(prestacaoRepository).Verify(m => m.Update(prestacao), Times.Once);
+            Mock.Get(usuarioService).Verify(m => m.GetUsuarioEmailById(prestacao.AprovadorFinanceiroId), Times.Once);
+            Mock.Get(emailHelper).Verify(m => m.EnviarEmail(prestacao, (PrestacaoStatuses)prestacao.StatusId, email), Times.Once);
+            prestacao.StatusId.Should().Be((int) PrestacaoStatuses.EmAprovacaoFinanceira);
+        }
+
+        [TestMethod]
+        public void PrestacaoIAprovarPrestacaoShouldBeCalledCorrectlyWhenInAprovacaoFinanceira()
+        {
+            // Arrange
+            const string titulo = "Titulo";
+            const string email = "test@test.com";
+            const int id = 1;
+            const PrestacaoStatuses tipoAprovacao = PrestacaoStatuses.EmAprovacaoFinanceira;
+            const string justificativa = "Teste Justificativa";
+
+            var prestacao = new Prestacao
+            {
+                Id = id,
+                Titulo = titulo,
+                EmitenteId = 1,
+                AprovadorId = 2,
+                AprovadorFinanceiroId = 3,
+                StatusId = (int)PrestacaoStatuses.EmAprovacaoFinanceira
+            };
+
+
+            var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.GetById(id) == prestacao);
+            var usuarioService = Mock.Of<IUsuarioService>(m => m.GetUsuarioEmailById(prestacao.EmitenteId) == email);
+            var emailHelper = Mock.Of<IEmailHelper>(m => m.EnviarEmail(prestacao, (PrestacaoStatuses)prestacao.StatusId, email));
+
+            var prestacaoService =
+                new PrestacaoService(prestacaoRepository, emailHelper, usuarioService);
+
+            // Act
+            prestacaoService.AprovarPrestacao(prestacao.Id, justificativa, tipoAprovacao);
+
+            // Assert
+
+            Mock.Get(prestacaoRepository).Verify(m => m.Update(prestacao), Times.Once);
+            Mock.Get(usuarioService).Verify(m => m.GetUsuarioEmailById(prestacao.EmitenteId), Times.Once);
+            Mock.Get(emailHelper).Verify(m => m.EnviarEmail(prestacao, (PrestacaoStatuses)prestacao.StatusId, email), Times.Once);
+            prestacao.StatusId.Should().Be((int)PrestacaoStatuses.Finalizada);
+        }
+
+        [TestMethod]
+        public void UsuarioGetAllByEmitenteIdShouldBeCalledCorrectly()
+        {
+            // Arrange
+            const int id = 1;
+            var prestacoes = new List<Prestacao>
+            {
+                new Prestacao {Titulo = "Teste", EmitenteId = 1},
+                new Prestacao {Titulo = "Teste2", EmitenteId = 1},
+                new Prestacao {Titulo = "Teste3", EmitenteId = 2},
+            };
+
+            var prestacoesList = prestacoes.AsQueryable();
+
+            var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.GetAll() == prestacoesList);
+
+            var prestacaoService =
+                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
+
+            // Act
+            var result = prestacaoService.GetAllByEmitenteId(id);
+
+            // Assert
+            result.Should().BeEquivalentTo(prestacoesList.Where(x => x.EmitenteId == id));
+        }
+
+        [TestMethod]
+        public void PrestacaoGetAllPrestacoesTiposShouldBeCalledCorrectly()
+        {
+            // Arrange
+
+            var prestacoesTipos = new List<PrestacaoTipo>
+            {
+                new PrestacaoTipo {Id = 1, Tipo = "aaa"},
+                new PrestacaoTipo {Id = 2, Tipo = "BBB"}
+            };
+
+            var prestacoesTiposList = prestacoesTipos.AsQueryable();
+
+            var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.GetAllPrestacaoTipos() == prestacoesTiposList);
+
+            var prestacaoService =
+                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
+
+            // Act
+            var result = prestacaoService.GetAllPrestacaoTipos();
+
+            // Assert
+            result.Should().BeEquivalentTo(prestacoesTiposList);
+        }
+
+        [TestMethod]
+        public void PrestacaoIRejeitarPrestacaoShouldBeCalledCorrectlyWhenInAprovacaoOperacional()
+        {
+            // Arrange
+            const string titulo = "Titulo";
+            const string email = "test@test.com";
+            const int id = 1;
+            const PrestacaoStatuses tipoAprovacao = PrestacaoStatuses.EmAprovacaoOperacional;
+            const string justificativa = "Teste Justificativa";
+
+            var prestacao = new Prestacao
+            {
+                Id = id,
+                Titulo = titulo,
+                EmitenteId = 1,
+                AprovadorId = 2,
+                AprovadorFinanceiroId = 3,
+                StatusId = (int)PrestacaoStatuses.EmAprovacaoOperacional
+            };
+
+
+            var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.GetById(id) == prestacao);
+            var usuarioService = Mock.Of<IUsuarioService>(m => m.GetUsuarioEmailById(prestacao.EmitenteId) == email);
+            var emailHelper = Mock.Of<IEmailHelper>(m => m.EnviarEmail(prestacao, (PrestacaoStatuses)prestacao.StatusId, email));
+
+            var prestacaoService =
+                new PrestacaoService(prestacaoRepository, emailHelper, usuarioService);
+
+            // Act
+            prestacaoService.RejeitarPrestacao(prestacao.Id, justificativa, tipoAprovacao);
+
+            // Assert
+
+            Mock.Get(prestacaoRepository).Verify(m => m.Update(prestacao), Times.Once);
+            Mock.Get(usuarioService).Verify(m => m.GetUsuarioEmailById(prestacao.EmitenteId), Times.Once);
+            Mock.Get(emailHelper).Verify(m => m.EnviarEmail(prestacao, (PrestacaoStatuses)prestacao.StatusId, email), Times.Once);
+            prestacao.StatusId.Should().Be((int)PrestacaoStatuses.Rejeitada);
+        }
+
+        [TestMethod]
+        public void PrestacaoIRejeitarPrestacaoShouldBeCalledCorrectlyWhenInAprovacaoFinanceira()
+        {
+            // Arrange
+            const string titulo = "Titulo";
+            const string email = "test@test.com";
+            const int id = 1;
+            const PrestacaoStatuses tipoAprovacao = PrestacaoStatuses.EmAprovacaoFinanceira;
+            const string justificativa = "Teste Justificativa";
+
+            var prestacao = new Prestacao
+            {
+                Id = id,
+                Titulo = titulo,
+                EmitenteId = 1,
+                AprovadorId = 2,
+                AprovadorFinanceiroId = 3,
+                StatusId = (int)PrestacaoStatuses.EmAprovacaoFinanceira
+            };
+
+
+            var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.GetById(id) == prestacao);
+            var usuarioService = Mock.Of<IUsuarioService>(m => m.GetUsuarioEmailById(prestacao.EmitenteId) == email);
+            var emailHelper = Mock.Of<IEmailHelper>(m => m.EnviarEmail(prestacao, (PrestacaoStatuses)prestacao.StatusId, email));
+
+            var prestacaoService =
+                new PrestacaoService(prestacaoRepository, emailHelper, usuarioService);
+
+            // Act
+            prestacaoService.RejeitarPrestacao(prestacao.Id, justificativa, tipoAprovacao);
+
+            // Assert
+
+            Mock.Get(prestacaoRepository).Verify(m => m.Update(prestacao), Times.Once);
+            Mock.Get(usuarioService).Verify(m => m.GetUsuarioEmailById(prestacao.EmitenteId), Times.Once);
+            Mock.Get(emailHelper).Verify(m => m.EnviarEmail(prestacao, (PrestacaoStatuses)prestacao.StatusId, email), Times.Once);
+            prestacao.StatusId.Should().Be((int)PrestacaoStatuses.Rejeitada);
         }
     }
 }

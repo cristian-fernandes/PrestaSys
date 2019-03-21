@@ -56,8 +56,6 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
                     break;
                 case PrestacaoStatuses.Rejeitada:
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(tipoAprovacao), tipoAprovacao, null);
             }
 
             var emailTo = GetEmailTo(prestacao, (PrestacaoStatuses) prestacao.StatusId);
