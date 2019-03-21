@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using FluentAssertions;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Unisul.PrestaSys.Entidades.Prestacoes;
 using Unisul.PrestaSys.Entidades.Usuarios;
@@ -21,6 +22,11 @@ namespace Unisul.PrestaSys.Tests.Web.Models.Usuarios
         private const string Sobrenome = "Fernandes";
         private static readonly Usuario Gerente = new Usuario();
         private static readonly Usuario GerenteFinanceiro = new Usuario();
+        private static readonly SelectList GerenteFinanceiroSelectList = new SelectList(new List<Usuario>());
+        private static readonly SelectList GerenteSelectList = new SelectList(new List<Usuario>());
+        private static readonly ICollection<Prestacao> PrestacaoEmitente = new List<Prestacao>();
+        private const string ButtonText = "aaa";
+        private const string Action = "aaa";
 
         [TestMethod]
         public void ShouldDisableDeleteButtonShouldBeTrue()
@@ -53,7 +59,12 @@ namespace Unisul.PrestaSys.Tests.Web.Models.Usuarios
                 Id = Id,
                 Nome = Nome,
                 Senha = Senha,
-                Sobrenome = Sobrenome
+                Sobrenome = Sobrenome,
+                GerenteFinanceiroSelectList = GerenteFinanceiroSelectList,
+                GerenteSelectList = GerenteSelectList,
+                PrestacaoEmitente = PrestacaoEmitente,
+                ButtonText = ButtonText,
+                Action = Action
             };
 
             Assert.AreEqual(usuario.Email, Email);
@@ -67,6 +78,11 @@ namespace Unisul.PrestaSys.Tests.Web.Models.Usuarios
             Assert.AreEqual(usuario.Nome, Nome);
             Assert.AreEqual(usuario.Senha, Senha);
             Assert.AreEqual(usuario.Sobrenome, Sobrenome);
+            Assert.AreEqual(usuario.GerenteFinanceiroSelectList, GerenteFinanceiroSelectList);
+            Assert.AreEqual(usuario.GerenteSelectList, GerenteSelectList);
+            Assert.AreEqual(usuario.PrestacaoEmitente, PrestacaoEmitente);
+            Assert.AreEqual(usuario.ButtonText, ButtonText);
+            Assert.AreEqual(usuario.Action, Action);
         }
     }
 }

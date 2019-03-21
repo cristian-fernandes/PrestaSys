@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Unisul.PrestaSys.Comum;
 using Unisul.PrestaSys.Entidades.Prestacoes;
@@ -33,6 +35,9 @@ namespace Unisul.PrestaSys.Tests.Web.Models.Prestacoes
         private static readonly PrestacaoStatus Status = new PrestacaoStatus();
         private static readonly PrestacaoTipo Tipo = new PrestacaoTipo();
         private readonly DateTime _data = DateTime.MinValue;
+        private const string ButtonText = "aaa";
+        private const string Action = "aaa";
+        private static readonly SelectList TipoPrestacaoSelectList = new SelectList(new List<PrestacaoTipo>());
 
         [TestMethod]
         public void ShouldLockPrestacaoShouldBeFalse()
@@ -73,7 +78,10 @@ namespace Unisul.PrestaSys.Tests.Web.Models.Prestacoes
                 Tipo = Tipo,
                 TipoId = TipoId,
                 Titulo = Titulo,
-                Valor = Valor
+                Valor = Valor,
+                ButtonText = ButtonText,
+                Action = Action,
+                TipoPrestacaoSelectList = TipoPrestacaoSelectList
             };
 
             Assert.AreEqual(prestacao.Aprovador, Aprovador);
@@ -95,6 +103,9 @@ namespace Unisul.PrestaSys.Tests.Web.Models.Prestacoes
             Assert.AreEqual(prestacao.TipoId, TipoId);
             Assert.AreEqual(prestacao.Titulo, Titulo);
             Assert.AreEqual(prestacao.Valor, Valor);
+            Assert.AreEqual(prestacao.ButtonText, ButtonText);
+            Assert.AreEqual(prestacao.Action, Action);
+            Assert.AreEqual(prestacao.TipoPrestacaoSelectList, TipoPrestacaoSelectList);
         }
     }
 }
