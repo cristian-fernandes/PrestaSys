@@ -65,7 +65,7 @@ namespace Unisul.PrestaSys.Web.Models.Prestacoes
         [DataType(DataType.Currency)]
         public decimal Valor { get; set; }
 
-        public bool ShouldLockPrestacao => Status?.Id == (int) PrestacaoStatuses.Finalizada;
+        public bool ShouldLockPrestacao => StatusId == (int) PrestacaoStatuses.Finalizada;
 
         public string ButtonText { get; set; }
 
