@@ -443,5 +443,18 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
             result.Should().BeEmpty();
         }
 
+        [TestMethod]
+        public void PrestacaoGetAllParaAprovacaoReturnEmptyList()
+        {
+            // Arrange
+            var prestacaoService =
+                new PrestacaoService(Mock.Of<IPrestacaoRepository>(), Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
+
+            // Act
+            var result = prestacaoService.GetAllParaAprovacao(It.IsAny<int>(), PrestacaoStatuses.Finalizada);
+
+            // Assert
+            result.Should().BeEmpty();
+        }
     }
 }
