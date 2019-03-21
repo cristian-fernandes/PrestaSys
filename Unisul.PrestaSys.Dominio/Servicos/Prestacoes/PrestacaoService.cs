@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Unisul.PrestaSys.Comum;
 using Unisul.PrestaSys.Dominio.Helpers;
@@ -102,7 +103,7 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
                     pr.AprovadorFinanceiroId == aprovadorId &&
                     pr.StatusId == (int) PrestacaoStatuses.EmAprovacaoFinanceira);
 
-            throw new NotSupportedException();
+            return new List<Prestacao>().AsQueryable();
         }
 
         public IQueryable<PrestacaoTipo> GetAllPrestacaoTipos()
@@ -134,8 +135,6 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
                     break;
                 case PrestacaoStatuses.Rejeitada:
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(tipoAprovacao), tipoAprovacao, null);
             }
 
             var emailTo = GetEmailTo(prestacao, (PrestacaoStatuses) prestacao.StatusId);
@@ -148,7 +147,7 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
             return _repository.Update(prestacao);
         }
 
-        private string GetEmailTo(Prestacao prestacao, PrestacaoStatuses statusAtual)
+        public string GetEmailTo(Prestacao prestacao, PrestacaoStatuses statusAtual)
         {
             switch (statusAtual)
             {

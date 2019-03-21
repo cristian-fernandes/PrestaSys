@@ -350,5 +350,98 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
             Mock.Get(emailHelper).Verify(m => m.EnviarEmail(prestacao, (PrestacaoStatuses)prestacao.StatusId, email), Times.Once);
             prestacao.StatusId.Should().Be((int)PrestacaoStatuses.Rejeitada);
         }
+
+        [TestMethod]
+        public void PrestacaoGetAllParaAprovacaoShouldBeCalledCorrectly()
+        {
+            // Arrange
+            const int aprovadorId = 1;
+            var prestacoes = new List<Prestacao>
+            {
+                new Prestacao
+                {
+                    Titulo = "Teste", AprovadorId = aprovadorId, StatusId = (int)PrestacaoStatuses.EmAprovacaoOperacional
+                },
+                new Prestacao
+                {
+                    Titulo = "Teste2", AprovadorFinanceiroId = 9, StatusId = (int)PrestacaoStatuses.EmAprovacaoFinanceira
+                },
+                new Prestacao
+                {
+                    Titulo = "aaaa", EmitenteId = 3, StatusId = (int)PrestacaoStatuses.Rejeitada
+                },
+                new Prestacao
+                {
+                    Titulo = "645485", EmitenteId = 4, StatusId = (int)PrestacaoStatuses.Finalizada
+                }
+            };
+
+            var prestacoesList = prestacoes.AsQueryable();
+
+            var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.GetAll() == prestacoesList);
+
+            var prestacaoService =
+                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
+
+            // Act
+            var result = prestacaoService.GetAllParaAprovacao(aprovadorId, PrestacaoStatuses.EmAprovacaoOperacional);
+
+            // Assert
+            result.Should().BeEquivalentTo(prestacoesList.Where(x => x.AprovadorId == aprovadorId));
+        }
+
+        [TestMethod]
+        public void PrestacaoGetAllParaAprovacaoFinanceiraShouldBeCalledCorrectly()
+        {
+            // Arrange
+            const int aprovadorId = 1;
+            var prestacoes = new List<Prestacao>
+            {
+                new Prestacao
+                {
+                    Titulo = "Teste", AprovadorId = 5, StatusId = (int)PrestacaoStatuses.EmAprovacaoOperacional
+                },
+                new Prestacao
+                {
+                    Titulo = "Teste2", AprovadorFinanceiroId = aprovadorId, StatusId = (int)PrestacaoStatuses.EmAprovacaoFinanceira
+                },
+                new Prestacao
+                {
+                    Titulo = "aaaa", EmitenteId = 3, StatusId = (int)PrestacaoStatuses.Rejeitada
+                },
+                new Prestacao
+                {
+                    Titulo = "645485", EmitenteId = 4, StatusId = (int)PrestacaoStatuses.Finalizada
+                }
+            };
+
+            var prestacoesList = prestacoes.AsQueryable();
+
+            var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.GetAll() == prestacoesList);
+
+            var prestacaoService =
+                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
+
+            // Act
+            var result = prestacaoService.GetAllParaAprovacao(aprovadorId, PrestacaoStatuses.EmAprovacaoFinanceira);
+
+            // Assert
+            result.Should().BeEquivalentTo(prestacoesList.Where(x => x.AprovadorFinanceiroId == aprovadorId));
+        }
+
+        [TestMethod]
+        public void PrestacaoGetEmailToShouldReturnEmptyString()
+        {
+
+            var prestacaoService =
+                new PrestacaoService(Mock.Of<IPrestacaoRepository>(), Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
+
+            // Act
+            var result = prestacaoService.GetEmailTo(new Prestacao(), (PrestacaoStatuses)10);
+
+            // Assert
+            result.Should().BeEmpty();
+        }
+
     }
 }
