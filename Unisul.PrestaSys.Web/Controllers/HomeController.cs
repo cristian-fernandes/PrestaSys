@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using System;
 using Microsoft.AspNetCore.Mvc;
 using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
 using Unisul.PrestaSys.Web.Models.Home;
@@ -17,7 +17,7 @@ namespace Unisul.PrestaSys.Web.Controllers
         {
             return View(new ErrorViewModel
             {
-                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+                RequestId = Guid.NewGuid().ToString()
             });
         }
 
