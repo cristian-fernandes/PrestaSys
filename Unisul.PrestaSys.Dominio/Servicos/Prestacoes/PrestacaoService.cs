@@ -3,7 +3,6 @@ using System.Linq;
 using Unisul.PrestaSys.Comum;
 using Unisul.PrestaSys.Dominio.Servicos.Email;
 using Unisul.PrestaSys.Dominio.Servicos.Prestacoes.PrestacaoStatusActions;
-using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
 using Unisul.PrestaSys.Entidades.Prestacoes;
 using Unisul.PrestaSys.Repositorio.Prestacoes;
 
