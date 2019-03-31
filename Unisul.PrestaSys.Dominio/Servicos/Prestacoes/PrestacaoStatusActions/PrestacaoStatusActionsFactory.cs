@@ -10,7 +10,7 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes.PrestacaoStatusActions
         IPrestacaoStatusActions CreateObject(PrestacaoStatuses status);
     }
 
-    public class PrestacaoStatusActionsFactory
+    public class PrestacaoStatusActionsFactory : IPrestacaoStatusActionsFactory
     {
         private readonly IPrestacaoRepository _repository;
         private readonly IUsuarioService _usuarioService;

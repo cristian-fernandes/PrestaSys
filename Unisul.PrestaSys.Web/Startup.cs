@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Unisul.PrestaSys.Dominio.Servicos.Email;
 using Unisul.PrestaSys.Dominio.Servicos.Prestacoes;
+using Unisul.PrestaSys.Dominio.Servicos.Prestacoes.PrestacaoStatusActions;
 using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
 using Unisul.PrestaSys.Entidades.Notificacoes;
 using Unisul.PrestaSys.Entidades.PdfGeneration;
@@ -113,6 +114,7 @@ namespace Unisul.PrestaSys.Web
 
             services.AddTransient<IViewRenderService, ViewRenderService>();
             services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<IPrestacaoStatusActionsFactory, PrestacaoStatusActionsFactory>();
         }
     }
 }
