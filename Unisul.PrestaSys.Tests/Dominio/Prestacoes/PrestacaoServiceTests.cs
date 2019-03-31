@@ -5,9 +5,9 @@ using FluentAssertions.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Unisul.PrestaSys.Comum;
-using Unisul.PrestaSys.Dominio.Helpers;
+using Unisul.PrestaSys.Dominio.Servicos.Email;
 using Unisul.PrestaSys.Dominio.Servicos.Prestacoes;
-using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
+using Unisul.PrestaSys.Dominio.Servicos.Prestacoes.PrestacaoStatusActions;
 using Unisul.PrestaSys.Entidades.Prestacoes;
 using Unisul.PrestaSys.Repositorio.Prestacoes;
 
@@ -25,9 +25,10 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
 
 
             var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.Create(prestacao) == prestacaoToBeGet);
+            var factory = Mock.Of<IPrestacaoStatusActionsFactory>(m => m.CreateObject(It.IsAny<PrestacaoStatuses>()).GetEmailTo(prestacao) == string.Empty);
 
             var prestacaoService =
-                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
+                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailService>(), factory);
 
             // Act
             var result = prestacaoService.Create(prestacao);
@@ -46,7 +47,7 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
             var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.Exists(prestacaoToBeGet));
 
             var prestacaoService =
-                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
+                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailService>(), Mock.Of<IPrestacaoStatusActionsFactory>());
 
             // Act
             var result = prestacaoService.Exists(prestacaoToBeGet);
@@ -71,7 +72,7 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
             var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.GetAll() == prestacoesList);
 
             var prestacaoService =
-                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
+                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailService>(), Mock.Of<IPrestacaoStatusActionsFactory>());
 
             // Act
             var result = prestacaoService.GetAll();
@@ -92,7 +93,7 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
             var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.GetById(id) == prestacao);
 
             var prestacaoService =
-                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
+                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailService>(), Mock.Of<IPrestacaoStatusActionsFactory>());
 
             // Act
             var result = prestacaoService.GetById(id);
@@ -112,7 +113,7 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
             var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.Delete(id) == expectedResult);
 
             var prestacaoService =
-                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
+                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailService>(), Mock.Of<IPrestacaoStatusActionsFactory>());
 
             // Act
             var result = prestacaoService.Delete(id);
@@ -133,9 +134,11 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
 
 
             var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.Update(prestacao) == id);
+            var factory = Mock.Of<IPrestacaoStatusActionsFactory>(m => m.CreateObject(It.IsAny<PrestacaoStatuses>()).GetEmailTo(prestacao) == string.Empty);
+
 
             var prestacaoService =
-                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
+                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailService>(), factory);
 
             // Act
             prestacaoService.Update(prestacao);
@@ -164,13 +167,15 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
                 StatusId = (int)PrestacaoStatuses.EmAprovacaoOperacional
             };
 
-
             var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.GetById(id) == prestacao);
-            var usuarioService = Mock.Of<IUsuarioService>(m => m.GetUsuarioEmailById(prestacao.AprovadorFinanceiroId) == email);
-            var emailHelper = Mock.Of<IEmailHelper>(m => m.EnviarEmail(prestacao, (PrestacaoStatuses)prestacao.StatusId, email));
+            var factory = Mock.Of<IPrestacaoStatusActionsFactory>(m => m.CreateObject(tipoAprovacao).GetEmailTo(prestacao) == email);
+            Mock.Get(factory).Setup(m => m.CreateObject(tipoAprovacao).AprovarPrestacao(prestacao, justificativa))
+                .Callback(() => prestacao.StatusId = (int)PrestacaoStatuses.EmAprovacaoFinanceira);
+
+            var emailHelper = Mock.Of<IEmailService>(m => m.EnviarEmail(prestacao, (PrestacaoStatuses)prestacao.StatusId, email));
 
             var prestacaoService =
-                new PrestacaoService(prestacaoRepository, emailHelper, usuarioService);
+                new PrestacaoService(prestacaoRepository, emailHelper, factory);
 
             // Act
             prestacaoService.AprovarPrestacao(prestacao.Id, justificativa, tipoAprovacao);
@@ -178,7 +183,7 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
             // Assert
 
             Mock.Get(prestacaoRepository).Verify(m => m.Update(prestacao), Times.Once);
-            Mock.Get(usuarioService).Verify(m => m.GetUsuarioEmailById(prestacao.AprovadorFinanceiroId), Times.Once);
+            Mock.Get(factory).Verify(m => m.CreateObject(tipoAprovacao).GetEmailTo(prestacao), Times.Once);
             Mock.Get(emailHelper).Verify(m => m.EnviarEmail(prestacao, (PrestacaoStatuses)prestacao.StatusId, email), Times.Once);
             prestacao.StatusId.Should().Be((int) PrestacaoStatuses.EmAprovacaoFinanceira);
         }
@@ -205,11 +210,13 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
 
 
             var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.GetById(id) == prestacao);
-            var usuarioService = Mock.Of<IUsuarioService>(m => m.GetUsuarioEmailById(prestacao.EmitenteId) == email);
-            var emailHelper = Mock.Of<IEmailHelper>(m => m.EnviarEmail(prestacao, (PrestacaoStatuses)prestacao.StatusId, email));
+            var factory = Mock.Of<IPrestacaoStatusActionsFactory>(m => m.CreateObject(tipoAprovacao).GetEmailTo(prestacao) == email);
+            Mock.Get(factory).Setup(m => m.CreateObject(tipoAprovacao).AprovarPrestacao(prestacao, justificativa))
+                .Callback(() => prestacao.StatusId = (int)PrestacaoStatuses.Finalizada);
+            var emailHelper = Mock.Of<IEmailService>(m => m.EnviarEmail(prestacao, (PrestacaoStatuses)prestacao.StatusId, email));
 
             var prestacaoService =
-                new PrestacaoService(prestacaoRepository, emailHelper, usuarioService);
+                new PrestacaoService(prestacaoRepository, emailHelper, factory);
 
             // Act
             prestacaoService.AprovarPrestacao(prestacao.Id, justificativa, tipoAprovacao);
@@ -217,7 +224,7 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
             // Assert
 
             Mock.Get(prestacaoRepository).Verify(m => m.Update(prestacao), Times.Once);
-            Mock.Get(usuarioService).Verify(m => m.GetUsuarioEmailById(prestacao.EmitenteId), Times.Once);
+            Mock.Get(factory).Verify(m => m.CreateObject(tipoAprovacao).GetEmailTo(prestacao), Times.Once);
             Mock.Get(emailHelper).Verify(m => m.EnviarEmail(prestacao, (PrestacaoStatuses)prestacao.StatusId, email), Times.Once);
             prestacao.StatusId.Should().Be((int)PrestacaoStatuses.Finalizada);
         }
@@ -239,7 +246,7 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
             var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.GetAll() == prestacoesList);
 
             var prestacaoService =
-                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
+                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailService>(), Mock.Of<IPrestacaoStatusActionsFactory>());
 
             // Act
             var result = prestacaoService.GetAllByEmitenteId(id);
@@ -264,7 +271,7 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
             var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.GetAllPrestacaoTipos() == prestacoesTiposList);
 
             var prestacaoService =
-                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
+                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailService>(), Mock.Of<IPrestacaoStatusActionsFactory>());
 
             // Act
             var result = prestacaoService.GetAllPrestacaoTipos();
@@ -295,11 +302,13 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
 
 
             var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.GetById(id) == prestacao);
-            var usuarioService = Mock.Of<IUsuarioService>(m => m.GetUsuarioEmailById(prestacao.EmitenteId) == email);
-            var emailHelper = Mock.Of<IEmailHelper>(m => m.EnviarEmail(prestacao, (PrestacaoStatuses)prestacao.StatusId, email));
+            var factory = Mock.Of<IPrestacaoStatusActionsFactory>(m => m.CreateObject(tipoAprovacao).GetEmailTo(prestacao) == email);
+            Mock.Get(factory).Setup(m => m.CreateObject(tipoAprovacao).RejeitarPrestacao(prestacao, justificativa))
+                .Callback(() => prestacao.StatusId = (int)PrestacaoStatuses.Rejeitada);
+            var emailHelper = Mock.Of<IEmailService>(m => m.EnviarEmail(prestacao, (PrestacaoStatuses)prestacao.StatusId, email));
 
             var prestacaoService =
-                new PrestacaoService(prestacaoRepository, emailHelper, usuarioService);
+                new PrestacaoService(prestacaoRepository, emailHelper, factory);
 
             // Act
             prestacaoService.RejeitarPrestacao(prestacao.Id, justificativa, tipoAprovacao);
@@ -307,7 +316,7 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
             // Assert
 
             Mock.Get(prestacaoRepository).Verify(m => m.Update(prestacao), Times.Once);
-            Mock.Get(usuarioService).Verify(m => m.GetUsuarioEmailById(prestacao.EmitenteId), Times.Once);
+            Mock.Get(factory).Verify(m => m.CreateObject(tipoAprovacao).GetEmailTo(prestacao), Times.Once);
             Mock.Get(emailHelper).Verify(m => m.EnviarEmail(prestacao, (PrestacaoStatuses)prestacao.StatusId, email), Times.Once);
             prestacao.StatusId.Should().Be((int)PrestacaoStatuses.Rejeitada);
         }
@@ -334,11 +343,14 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
 
 
             var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.GetById(id) == prestacao);
-            var usuarioService = Mock.Of<IUsuarioService>(m => m.GetUsuarioEmailById(prestacao.EmitenteId) == email);
-            var emailHelper = Mock.Of<IEmailHelper>(m => m.EnviarEmail(prestacao, (PrestacaoStatuses)prestacao.StatusId, email));
+            var factory = Mock.Of<IPrestacaoStatusActionsFactory>(m => m.CreateObject(tipoAprovacao).GetEmailTo(prestacao) == email);
+            Mock.Get(factory).Setup(m => m.CreateObject(tipoAprovacao).RejeitarPrestacao(prestacao, justificativa))
+                .Callback(() => prestacao.StatusId = (int)PrestacaoStatuses.Rejeitada);
+
+            var emailHelper = Mock.Of<IEmailService>(m => m.EnviarEmail(prestacao, (PrestacaoStatuses)prestacao.StatusId, email));
 
             var prestacaoService =
-                new PrestacaoService(prestacaoRepository, emailHelper, usuarioService);
+                new PrestacaoService(prestacaoRepository, emailHelper, factory);
 
             // Act
             prestacaoService.RejeitarPrestacao(prestacao.Id, justificativa, tipoAprovacao);
@@ -346,7 +358,7 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
             // Assert
 
             Mock.Get(prestacaoRepository).Verify(m => m.Update(prestacao), Times.Once);
-            Mock.Get(usuarioService).Verify(m => m.GetUsuarioEmailById(prestacao.EmitenteId), Times.Once);
+            Mock.Get(factory).Verify(m => m.CreateObject(tipoAprovacao).GetEmailTo(prestacao), Times.Once);
             Mock.Get(emailHelper).Verify(m => m.EnviarEmail(prestacao, (PrestacaoStatuses)prestacao.StatusId, email), Times.Once);
             prestacao.StatusId.Should().Be((int)PrestacaoStatuses.Rejeitada);
         }
@@ -378,10 +390,12 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
 
             var prestacoesList = prestacoes.AsQueryable();
 
-            var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.GetAll() == prestacoesList);
+            var factory = Mock.Of<IPrestacaoStatusActionsFactory>(m => m.CreateObject(It.IsAny<PrestacaoStatuses>()).GetAllParaAprovacao(It.IsAny<int>()) == prestacoesList.Where(pr =>
+                                                                           pr.AprovadorId == aprovadorId &&
+                                                                           pr.StatusId == (int)PrestacaoStatuses.EmAprovacaoOperacional));
 
             var prestacaoService =
-                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
+                new PrestacaoService(Mock.Of<IPrestacaoRepository>(), Mock.Of<IEmailService>(), factory);
 
             // Act
             var result = prestacaoService.GetAllParaAprovacao(aprovadorId, PrestacaoStatuses.EmAprovacaoOperacional);
@@ -417,10 +431,12 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
 
             var prestacoesList = prestacoes.AsQueryable();
 
-            var prestacaoRepository = Mock.Of<IPrestacaoRepository>(m => m.GetAll() == prestacoesList);
+            var factory = Mock.Of<IPrestacaoStatusActionsFactory>(m => m.CreateObject(It.IsAny<PrestacaoStatuses>()).GetAllParaAprovacao(It.IsAny<int>()) == prestacoesList.Where(pr =>
+                                                                           pr.AprovadorFinanceiroId == aprovadorId &&
+                                                                           pr.StatusId == (int)PrestacaoStatuses.EmAprovacaoFinanceira));
 
             var prestacaoService =
-                new PrestacaoService(prestacaoRepository, Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
+                new PrestacaoService(Mock.Of<IPrestacaoRepository>(), Mock.Of<IEmailService>(), factory);
 
             // Act
             var result = prestacaoService.GetAllParaAprovacao(aprovadorId, PrestacaoStatuses.EmAprovacaoFinanceira);
@@ -433,8 +449,9 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
         public void PrestacaoGetEmailToShouldReturnEmptyString()
         {
 
+            var factory = Mock.Of<IPrestacaoStatusActionsFactory>(m => m.CreateObject(It.IsAny<PrestacaoStatuses>()).GetEmailTo(It.IsAny<Prestacao>()) == string.Empty);
             var prestacaoService =
-                new PrestacaoService(Mock.Of<IPrestacaoRepository>(), Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
+                new PrestacaoService(Mock.Of<IPrestacaoRepository>(), Mock.Of<IEmailService>(), factory);
 
             // Act
             var result = prestacaoService.GetEmailTo(new Prestacao(), (PrestacaoStatuses)10);
@@ -447,8 +464,10 @@ namespace Unisul.PrestaSys.Tests.Dominio.Prestacoes
         public void PrestacaoGetAllParaAprovacaoReturnEmptyList()
         {
             // Arrange
+            var factory = Mock.Of<IPrestacaoStatusActionsFactory>(m => m.CreateObject(It.IsAny<PrestacaoStatuses>()).GetAllParaAprovacao(It.IsAny<int>()) == new List<Prestacao>().AsQueryable());
+
             var prestacaoService =
-                new PrestacaoService(Mock.Of<IPrestacaoRepository>(), Mock.Of<IEmailHelper>(), Mock.Of<IUsuarioService>());
+                new PrestacaoService(Mock.Of<IPrestacaoRepository>(), Mock.Of<IEmailService>(), factory);
 
             // Act
             var result = prestacaoService.GetAllParaAprovacao(It.IsAny<int>(), PrestacaoStatuses.Finalizada);

@@ -4,17 +4,18 @@ using System.Net.Mail;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Options;
 using Unisul.PrestaSys.Comum;
+using Unisul.PrestaSys.Dominio.Servicos.Prestacoes.PrestacaoStatusActions;
 using Unisul.PrestaSys.Entidades.Notificacoes;
 using Unisul.PrestaSys.Entidades.Prestacoes;
 
-namespace Unisul.PrestaSys.Dominio.Helpers
+namespace Unisul.PrestaSys.Dominio.Servicos.Email
 {
-    public interface IEmailHelper
+    public interface IEmailService
     {
         bool EnviarEmail(Prestacao prestacao, PrestacaoStatuses statusAtual, string emailTo);
     }
 
-    public class EmailHelper : IEmailHelper
+    public class EmailService : IEmailService
     {
         private const string Template = @"<h1>PrestaSys - Presta&ccedil;&atilde;o de Contas</h1>
                     <p> <b> Presta&ccedil;&atilde;o: </b> {{TITULO}} </p>
@@ -22,13 +23,15 @@ namespace Unisul.PrestaSys.Dominio.Helpers
                     <p> <i> {{FRASE_FINAL}} </i> </p>";
 
         private readonly EmailSettings _emailSettings;
-
         private readonly IHostingEnvironment _environment;
+        private readonly IPrestacaoStatusActionsFactory _prestacaoStatusActionsFactory;
 
-        public EmailHelper(IOptions<EmailSettings> emailSettings, IHostingEnvironment environment)
+        public EmailService(IOptions<EmailSettings> emailSettings, IHostingEnvironment environment,
+            IPrestacaoStatusActionsFactory prestacaoStatusActionsFactory)
         {
             _emailSettings = emailSettings.Value;
             _environment = environment;
+            _prestacaoStatusActionsFactory = prestacaoStatusActionsFactory;
         }
 
         public bool EnviarEmail(Prestacao prestacao, PrestacaoStatuses statusAtual, string emailTo)
@@ -65,35 +68,11 @@ namespace Unisul.PrestaSys.Dominio.Helpers
             }
         }
 
-        private static string GetEmailBody(Prestacao prestacao, PrestacaoStatuses statusAtual)
+        private string GetEmailBody(Prestacao prestacao, PrestacaoStatuses statusAtual)
         {
-            var text = Template;
-            text = text.Replace("{{TITULO}}", prestacao.Titulo);
+            var text = Template.Replace("{{TITULO}}", prestacao.Titulo);
 
-            switch (statusAtual)
-            {
-                case PrestacaoStatuses.EmAprovacaoOperacional:
-                    text = text.Replace("{{STATUS}}", "Aguardando Aprova&ccedil;&atilde;o Operacional");
-                    text = text.Replace("{{FRASE_FINAL}}",
-                        "Favor verificar a sua lista de presta&ccedil;&otilde;es pendentes de aprova&ccedil;&atilde;o.");
-                    break;
-                case PrestacaoStatuses.EmAprovacaoFinanceira:
-                    text = text.Replace("{{STATUS}}", "Aguardando Aprova&ccedil;&atilde;o Financeira");
-                    text = text.Replace("{{FRASE_FINAL}}",
-                        "Favor verificar a sua lista de presta&ccedil;&otilde;es pendentes de aprova&ccedil;&atilde;o financeira.");
-                    break;
-                case PrestacaoStatuses.Rejeitada:
-                    text = text.Replace("{{STATUS}}", "Rejeitada");
-                    text = text.Replace("{{FRASE_FINAL}}",
-                        "Favor verificar a sua lista de presta&ccedil;&otilde;es criadas.");
-                    break;
-                case PrestacaoStatuses.Finalizada:
-                    text = text.Replace("{{STATUS}}", "Finalizada");
-                    text = text.Replace("{{FRASE_FINAL}}", "Agradecemos o uso do PrestaSys");
-                    break;
-            }
-
-            return text;
+            return _prestacaoStatusActionsFactory.CreateObject(statusAtual).GetEmailBody(text);
         }
     }
 }

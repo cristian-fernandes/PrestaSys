@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Unisul.PrestaSys.Comum;
-using Unisul.PrestaSys.Dominio.Helpers;
+using Unisul.PrestaSys.Dominio.Servicos.Email;
+using Unisul.PrestaSys.Dominio.Servicos.Prestacoes.PrestacaoStatusActions;
 using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
 using Unisul.PrestaSys.Entidades.Prestacoes;
 using Unisul.PrestaSys.Repositorio.Prestacoes;
@@ -25,48 +26,33 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
 
     public class PrestacaoService : IPrestacaoService
     {
-        private readonly IEmailHelper _emailHelper;
+        private readonly IEmailService _emailService;
         private readonly IPrestacaoRepository _repository;
-        private readonly IUsuarioService _usuarioService;
+        private readonly IPrestacaoStatusActionsFactory _prestacaoStatusActionsFactory;
 
-        public PrestacaoService(IPrestacaoRepository repository, IEmailHelper emailHelper,
-            IUsuarioService usuarioService)
+        public PrestacaoService(IPrestacaoRepository repository, IEmailService emailService,
+            IPrestacaoStatusActionsFactory prestacaoStatusActionsFactory)
         {
             _repository = repository;
-            _emailHelper = emailHelper;
-            _usuarioService = usuarioService;
+            _emailService = emailService;
+            _prestacaoStatusActionsFactory = prestacaoStatusActionsFactory;
         }
 
         public int AprovarPrestacao(int prestacaoId, string justificativa, PrestacaoStatuses tipoAprovacao)
         {
             var prestacao = _repository.GetById(prestacaoId);
 
-            switch (tipoAprovacao)
-            {
-                case PrestacaoStatuses.EmAprovacaoOperacional:
-                    prestacao.StatusId = (int) PrestacaoStatuses.EmAprovacaoFinanceira;
-                    prestacao.JustificativaAprovacao = justificativa;
-                    break;
-
-                case PrestacaoStatuses.EmAprovacaoFinanceira:
-                    prestacao.StatusId = (int) PrestacaoStatuses.Finalizada;
-                    prestacao.JustificativaAprovacaoFinanceira = justificativa;
-                    break;
-                case PrestacaoStatuses.Finalizada:
-                    break;
-                case PrestacaoStatuses.Rejeitada:
-                    break;
-            }
+            _prestacaoStatusActionsFactory.CreateObject(tipoAprovacao).AprovarPrestacao(prestacao, justificativa);
 
             var emailTo = GetEmailTo(prestacao, (PrestacaoStatuses) prestacao.StatusId);
-            _emailHelper.EnviarEmail(prestacao, (PrestacaoStatuses) prestacao.StatusId, emailTo);
+            _emailService.EnviarEmail(prestacao, (PrestacaoStatuses) prestacao.StatusId, emailTo);
             return _repository.Update(prestacao);
         }
 
         public int Create(Prestacao prestacao)
         {
             var emailTo = GetEmailTo(prestacao, PrestacaoStatuses.EmAprovacaoOperacional);
-            _emailHelper.EnviarEmail(prestacao, PrestacaoStatuses.EmAprovacaoOperacional, emailTo);
+            _emailService.EnviarEmail(prestacao, PrestacaoStatuses.EmAprovacaoOperacional, emailTo);
             return _repository.Create(prestacao);
         }
 
@@ -92,17 +78,7 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
 
         public IQueryable<Prestacao> GetAllParaAprovacao(int aprovadorId, PrestacaoStatuses tipoAprovacao)
         {
-            if (tipoAprovacao == PrestacaoStatuses.EmAprovacaoOperacional)
-                return _repository.GetAll().Where(pr =>
-                    pr.AprovadorId == aprovadorId &&
-                    pr.StatusId == (int) PrestacaoStatuses.EmAprovacaoOperacional);
-
-            if (tipoAprovacao == PrestacaoStatuses.EmAprovacaoFinanceira)
-                return _repository.GetAll().Where(pr =>
-                    pr.AprovadorFinanceiroId == aprovadorId &&
-                    pr.StatusId == (int) PrestacaoStatuses.EmAprovacaoFinanceira);
-
-            return new List<Prestacao>().AsQueryable();
+            return _prestacaoStatusActionsFactory.CreateObject(tipoAprovacao).GetAllParaAprovacao(aprovadorId);
         }
 
         public IQueryable<PrestacaoTipo> GetAllPrestacaoTipos()
@@ -119,25 +95,10 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
         {
             var prestacao = _repository.GetById(prestacaoId);
 
-            switch (tipoAprovacao)
-            {
-                case PrestacaoStatuses.EmAprovacaoOperacional:
-                    prestacao.StatusId = (int) PrestacaoStatuses.Rejeitada;
-                    prestacao.JustificativaAprovacao = justificativa;
-                    break;
-
-                case PrestacaoStatuses.EmAprovacaoFinanceira:
-                    prestacao.StatusId = (int) PrestacaoStatuses.Rejeitada;
-                    prestacao.JustificativaAprovacaoFinanceira = justificativa;
-                    break;
-                case PrestacaoStatuses.Finalizada:
-                    break;
-                case PrestacaoStatuses.Rejeitada:
-                    break;
-            }
+            _prestacaoStatusActionsFactory.CreateObject(tipoAprovacao).RejeitarPrestacao(prestacao, justificativa);
 
             var emailTo = GetEmailTo(prestacao, (PrestacaoStatuses) prestacao.StatusId);
-            _emailHelper.EnviarEmail(prestacao, (PrestacaoStatuses) prestacao.StatusId, emailTo);
+            _emailService.EnviarEmail(prestacao, (PrestacaoStatuses) prestacao.StatusId, emailTo);
             return _repository.Update(prestacao);
         }
 
@@ -148,18 +109,7 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes
 
         public string GetEmailTo(Prestacao prestacao, PrestacaoStatuses statusAtual)
         {
-            switch (statusAtual)
-            {
-                case PrestacaoStatuses.EmAprovacaoOperacional:
-                    return _usuarioService.GetUsuarioEmailById(prestacao.AprovadorId);
-                case PrestacaoStatuses.EmAprovacaoFinanceira:
-                    return _usuarioService.GetUsuarioEmailById(prestacao.AprovadorFinanceiroId);
-                case PrestacaoStatuses.Rejeitada:
-                case PrestacaoStatuses.Finalizada:
-                    return _usuarioService.GetUsuarioEmailById(prestacao.EmitenteId);
-            }
-
-            return string.Empty;
+            return _prestacaoStatusActionsFactory.CreateObject(statusAtual).GetEmailTo(prestacao);
         }
     }
 }

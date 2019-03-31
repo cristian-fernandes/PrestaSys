@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Unisul.PrestaSys.Dominio.Helpers;
+using Unisul.PrestaSys.Dominio.Servicos.Email;
 using Unisul.PrestaSys.Dominio.Servicos.Prestacoes;
 using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
 using Unisul.PrestaSys.Entidades.Notificacoes;
@@ -112,7 +112,7 @@ namespace Unisul.PrestaSys.Web
             services.AddTransient<IPrestacaoService, PrestacaoService>();
 
             services.AddTransient<IViewRenderService, ViewRenderService>();
-            services.AddTransient<IEmailHelper, EmailHelper>();
+            services.AddTransient<IEmailService, EmailService>();
         }
     }
 }

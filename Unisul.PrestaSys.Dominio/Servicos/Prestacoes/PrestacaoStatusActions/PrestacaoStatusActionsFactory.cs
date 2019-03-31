@@ -1,3 +1,4 @@
+using System;
 using Unisul.PrestaSys.Comum;
 using Unisul.PrestaSys.Dominio.Servicos.Usuarios;
 using Unisul.PrestaSys.Repositorio.Prestacoes;
@@ -30,11 +31,12 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes.PrestacaoStatusActions
                 case PrestacaoStatuses.EmAprovacaoFinanceira:
                     return new AprovacaoFinanceiraActions(_repository, _usuarioService);
                 case PrestacaoStatuses.Finalizada:
+                    return new FinalizadaActions(_repository, _usuarioService);
                 case PrestacaoStatuses.Rejeitada:
-                    return new SemAprovacaoActions(_repository, _usuarioService);
+                    return new RejeitadaActions(_repository, _usuarioService);
             }
 
-            return new SemAprovacaoActions(_repository, _usuarioService);
+            throw new NotSupportedException();
         }
     }
 }

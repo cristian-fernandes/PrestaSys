@@ -9,5 +9,6 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes.PrestacaoStatusActions
         IQueryable<Prestacao> GetAllParaAprovacao(int aprovadorId);
         void RejeitarPrestacao(Prestacao prestacao, string justificativa);
         string GetEmailTo(Prestacao prestacao);
+        string GetEmailBody(string emailText);
     }
 }

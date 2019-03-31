@@ -40,5 +40,14 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes.PrestacaoStatusActions
         {
             return _usuarioService.GetUsuarioEmailById(prestacao.AprovadorId);
         }
+
+        public string GetEmailBody(string emailText)
+        {
+            emailText = emailText.Replace("{{STATUS}}", "Aguardando Aprova&ccedil;&atilde;o Operacional");
+            emailText = emailText.Replace("{{FRASE_FINAL}}",
+                "Favor verificar a sua lista de presta&ccedil;&otilde;es pendentes de aprova&ccedil;&atilde;o.");
+
+            return emailText;
+        }
     }
 }

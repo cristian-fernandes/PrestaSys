@@ -6,11 +6,11 @@ using Unisul.PrestaSys.Repositorio.Prestacoes;
 
 namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes.PrestacaoStatusActions
 {
-    public class SemAprovacaoActions : IPrestacaoStatusActions
+    public class RejeitadaActions : IPrestacaoStatusActions
     {
         private readonly IUsuarioService _usuarioService;
 
-        public SemAprovacaoActions(IPrestacaoRepository repository, IUsuarioService usuarioService)
+        public RejeitadaActions(IPrestacaoRepository repository, IUsuarioService usuarioService)
         {
             _usuarioService = usuarioService;
         }
@@ -33,6 +33,15 @@ namespace Unisul.PrestaSys.Dominio.Servicos.Prestacoes.PrestacaoStatusActions
         public string GetEmailTo(Prestacao prestacao)
         {
             return _usuarioService.GetUsuarioEmailById(prestacao.EmitenteId);
+        }
+
+        public string GetEmailBody(string emailText)
+        {
+            emailText = emailText.Replace("{{STATUS}}", "Rejeitada");
+            emailText = emailText.Replace("{{FRASE_FINAL}}",
+                "Favor verificar a sua lista de presta&ccedil;&otilde;es criadas.");
+
+            return emailText;
         }
     }
 }
