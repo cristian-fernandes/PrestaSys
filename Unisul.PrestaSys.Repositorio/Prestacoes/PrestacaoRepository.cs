@@ -70,7 +70,8 @@ namespace Unisul.PrestaSys.Repositorio.Prestacoes
 
         public int Update(Prestacao prestacao)
         {
-            if (prestacao == null) throw new ArgumentNullException(nameof(prestacao));
+            if (prestacao == null)
+                throw new ArgumentNullException(nameof(prestacao));
 
             try
             {
