@@ -11,7 +11,7 @@ namespace Unisul.PrestaSys.Tests.Web.Models.Usuarios
         [TestMethod]
         public void ShouldHaveAllProperties()
         {
-            const int pageNumber = 84;
+            const int pageNumber = 85;
             const int totalRecords = 50;
             var usuarioList = new List<UsuarioViewModel>();
             var loginViewModel = new UsuarioListViewModel { UsuariosList = usuarioList, TotalRecords = totalRecords, PageNumber = pageNumber};
